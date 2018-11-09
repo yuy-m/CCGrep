@@ -6,5 +6,12 @@
 
 `./ccgrep.sh <options> language needlefile haystackfiles...`
 
-* `-b`   identifier insensitive.
-* `-h`   show help.
+* language
+ - C
+ - C++
+ - Java
+ - Python3
+
+* options
+ - `-b`   identifier insensitive.
+ - `-h`   show help.

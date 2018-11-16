@@ -1,8 +1,9 @@
 package ccgrep;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jargp.*;
 
@@ -13,27 +14,25 @@ public class CCGrep
     {
         final CCGrep ccgrep = new CCGrep();
 
-        final ArgumentProcessor ap = new ArgumentProcessor(
-            new ParameterDef[]{
-                new BoolDef('b', "isBlindEnabled", "blind identifiers and basic types.", true),
-                new BoolDef('l', "isFileNameOnlyEnabled", "print only file name of clones.", true),
-                new BoolDef('N', "isLineNumberEnabled", "NOT print line number.", false),
-                new BoolDef('c', "isCountEnabled", "print only count of clones.", true),
-                new IntDef('m', "maxCount", "stop after NN clones."),
-                new BoolDef('h', "help", "show help", true)
-            }
-        );
+        final ArgumentProcessor ap = new ArgumentProcessor(pd);
         ap.processArgs(args, ccgrep);
 
         if(ccgrep.help)
         {
-            ap.listParameters(80, System.out);
+            showHelp(ap);
             System.exit(0);
         }
 
-        int argidx = 0;
+        if(!ap.getArgs().hasNext())
+        {
+            showHelp(ap);
+            System.exit(2);
+        }
         final String languageName = ap.getArgs().next();
-        final String needleFileName = ap.getArgs().next();
+        if(ccgrep.needleFileName == null)
+        {
+            ccgrep.needleFileName = ap.getArgs().next();
+        }
         String[] haystackNames;
         if(ap.getArgs().hasNext())
         {
@@ -51,13 +50,30 @@ public class CCGrep
         }
 
         final long st = System.nanoTime();
-        final int returnCode = ccgrep.grep(languageName, needleFileName, haystackNames);
+        final int returnCode = ccgrep.grep(languageName, haystackNames);
         final long et = System.nanoTime();
 
         final long milli = (et - st) / 1000000;
         System.err.println((milli / 1000.0) + " sec");
 
         System.exit(returnCode);
+    }
+
+    private static final ParameterDef[] pd = new ParameterDef[]{
+        new BoolDef('b', "isBlindEnabled", "blind identifiers and basic types.", true),
+        new BoolDef('l', "isFileNameOnlyEnabled", "print only file name of clones.", true),
+        new BoolDef('N', "isLineNumberEnabled", "NOT print line number.", false),
+        new BoolDef('c', "isCountEnabled", "print only count of clones.", true),
+        new StringDef('f', "needleFileName", "obtain needle from file. CANNOT give needle as code string at once."),
+        //new IntDef('m', "maxCount", "stop after NN clones."),
+        new BoolDef('h', "help", "show help", true)
+    };
+
+    private static void showHelp(ArgumentProcessor ap)
+    {
+        System.out.println("ccgrep.sh [options]... language needleCode haystackFiles...");
+        System.out.println(" language : c, c++, Java, Python3");
+        ap.listParameters(80, System.out);
     }
 
     static void debugprint(String msg)
@@ -76,38 +92,39 @@ public class CCGrep
         }
     }
 
-    boolean isBlindEnabled;
-    boolean isCountEnabled;
+    boolean isBlindEnabled = false;
+    boolean isCountEnabled = false;
     boolean isLineNumberEnabled = true;
-    boolean isFileNameOnlyEnabled;
+    boolean isFileNameOnlyEnabled = false;
+    String needleFileName = null;
+    String needleCode = null;
     int maxCount = -1;
 
     boolean help;
 
-    int grep(String languageName, String needleFileName, String[] haystackNames)
+    int grep(String languageName, String[] haystackNames)
     {
         final Language language = Language.findByName(languageName);
         language.enableBlind(isBlindEnabled);
 
-        final Tokenizer tokenizer = new Tokenizer(language);
+        final ITokenizer tokenizer = new AntlrTokenizer(language);
 
-        final Detector detector = new Detector(tokenizer, needleFileName);
+        final IDetector detector = needleFileName == null
+            ? new TokenSequenceDetector(tokenizer, needleCode, true)
+            : new TokenSequenceDetector(tokenizer, needleFileName, false);
 
-        final List<Clone> clones = traverseHaystack(detector, haystackNames);
+        debugprintln("traversing...");
+        final Traverser traverser = new Traverser(detector, language::matchesExtension);
+        final List<Clone> clones = Arrays.stream(haystackNames)
+            .map(Paths::get)
+            .map(traverser::traverse)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
+        debugprintln("finish.");
+        debugprintln(clones.size() + " clone(s) found.");
 
         printResult(clones);
         return clones.isEmpty()? 1: 0;
-    }
-
-    List<Clone> traverseHaystack(Detector detector, String[] haystackNames)
-    {
-        debugprintln("traversing...");
-        final List<Clone> clones =
-            new Traverser(detector/*, maxCount*/)
-                .traverse(haystackNames);
-        debugprintln("finish.");
-        debugprintln(clones.size() + " clone(s) found.");
-        return clones;
     }
 
     void printResult(List<Clone> clones)

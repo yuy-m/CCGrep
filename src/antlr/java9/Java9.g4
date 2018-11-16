@@ -1484,6 +1484,8 @@ VOLATILE : 'volatile';
 WHILE : 'while';
 UNDER_SCORE : '_';//Introduced in Java 9
 
+
+
 // §3.10.1 Integer Literals
 
 IntegerLiteral
@@ -1821,6 +1823,12 @@ MOD_ASSIGN : '%=';
 LSHIFT_ASSIGN : '<<=';
 RSHIFT_ASSIGN : '>>=';
 URSHIFT_ASSIGN : '>>>=';
+
+/** v ccgrep v **/
+
+CCG_SPECIAL : '$';
+
+/** ^ ccgrep ^ **/
 
 // §3.8 Identifiers (must appear after all keywords in the grammar)
 

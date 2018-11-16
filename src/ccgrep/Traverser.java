@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,56 +12,46 @@ import java.util.Arrays;
 
 public class Traverser
 {
-    final Detector detector;
+    private final IDetector detector;
+    private final Predicate<String> fileMatcher;
+    private final Predicate<String> directoryMatcher;
     // final int maxCloneCount;
 
     private int fileCount = 0;
 
-    Traverser(Detector detector/*, int maxCloneCount*/)
+    Traverser(IDetector detector, Predicate<String> fileMatcher, Predicate<String> directoryMatcher)
     {
         this.detector = detector;
-        // this.maxCloneCount = maxCloneCount;
+        this.fileMatcher = fileMatcher;
+        this.directoryMatcher = directoryMatcher;
     }
 
-    // "-" means stdin
-    public List<Clone> traverse(String[] haystackNames)
+    Traverser(IDetector detector, Predicate<String> fileMatcher)
     {
-        final List<Clone> clones = new ArrayList<>();
-        Arrays.stream(haystackNames)
-            .parallel()
-            .map(Paths::get)
-            .map(this::traverse)
-            .forEachOrdered(clones::addAll);
-        return clones;
+        this(detector, fileMatcher, (__) -> true);
     }
-
-    /*private boolean isMaxCount()
-    {
-        return maxCloneCount >= 0 && fileCount.size() >= maxCloneCount;
-    }*/
 
     public List<Clone> traverse(Path haystackPath)
     {
-        /*if(isMaxCount())
-        {
-            return Collections.emptyList();
-        }*/
         if(Files.isDirectory(haystackPath))
         {
-            final List<Clone> clones = new ArrayList<>();
-            try{
-                Files.list(haystackPath)
-                    .parallel()
-                    .map(this::traverse)
-                    .forEachOrdered(clones::addAll);
-            }
-            catch(IOException e)
+            if(directoryMatcher.test(haystackPath.toString()))
             {
-                System.err.println(e.getMessage());
+                final List<Clone> clones = new ArrayList<>();
+                try{
+                    Files.list(haystackPath)
+                        .parallel()
+                        .map(this::traverse)
+                        .forEachOrdered(clones::addAll);
+                }
+                catch(IOException e)
+                {
+                    System.err.println(e.getMessage());
+                }
+                return clones;
             }
-            return clones;
         }
-        else if(haystackPath.toString().equals("-") || detector.getLanguage().matchesExtension(haystackPath.toString()))
+        else if("-".equals(haystackPath.toString()) || fileMatcher.test(haystackPath.toString()))
         {
             ++fileCount;
             return detector.detect(haystackPath.toString());

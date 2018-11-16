@@ -6,16 +6,18 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-public class Detector
+public class TokenSequenceDetector implements IDetector
 {
-    final Tokenizer tokenizer;
+    final ITokenizer tokenizer;
     final List<GrepToken> needle;
 
-    Detector(Tokenizer tokenizer, String needleFileName)
+    public TokenSequenceDetector(ITokenizer tokenizer, String needleName, boolean fromCode)
     {
         this.tokenizer = tokenizer;
         CCGrep.debugprint("tokenizing needle...");
-        this.needle = tokenizer.extract(needleFileName);
+        this.needle = fromCode
+            ? tokenizer.extractAsListFromString(needleName)
+            : tokenizer.extractAsListFromFile(needleName);
         // needle.forEach(CCGrep::printToken);
         CCGrep.debugprintln("finish.");
         if(needle.size() == 0)
@@ -27,11 +29,13 @@ public class Detector
         CCGrep.debugprintln("the needle has " + needle.size() + " token(s).");
     }
 
+    @Override
     public List<Clone> detect(final String haystackFileName)
     {
-        CCGrep.debugprint(" detecting " + haystackFileName + "...");
-        final List<GrepToken> haystack = tokenizer.extract(haystackFileName);
+        CCGrep.debugprint(" tokenizing " + haystackFileName + "...");
+        final List<GrepToken> haystack = tokenizer.extractAsListFromFile(haystackFileName);
         CCGrep.debugprint("(" + haystack.size() + ")");
+        CCGrep.debugprint(" detecting " + haystackFileName + "...");
         if(needle.size() > haystack.size())
         {
             return Collections.emptyList();

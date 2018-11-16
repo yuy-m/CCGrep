@@ -39,3 +39,4 @@ bin
 grammars-v4-master/
 needle*
 result*
+!lib/*

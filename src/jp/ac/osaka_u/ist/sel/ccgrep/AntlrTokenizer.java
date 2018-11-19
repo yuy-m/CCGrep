@@ -61,7 +61,7 @@ public class AntlrTokenizer implements ITokenizer
         while (tokens.LA(1) != Token.EOF)
         {
             final Token token = tokens.LT(1);
-            tokenList.add(new GrepToken(token, token.getInputStream().getSourceName(), language));
+            tokenList.add(new GrepToken(token));
             tokens.consume();
         }
         return tokenList;

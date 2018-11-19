@@ -7,6 +7,10 @@ import java.util.stream.Collectors;
 
 import org.jargp.*;
 
+import jp.ac.osaka_u.ist.sel.ccgrep.BlindLevel;
+import jp.ac.osaka_u.ist.sel.ccgrep.GrepPrinter;
+import jp.ac.osaka_u.ist.sel.ccgrep.TokenSequenceDetector;
+
 public class CCGrep
 {
     static boolean DEBUG = false;
@@ -60,9 +64,10 @@ public class CCGrep
     }
 
     private static final ParameterDef[] pd = new ParameterDef[]{
-        new StringDef('b', "blindMode", "blind identifiers and basic types."),
+        new StringDef('b', "blindLevelName", "blind identifiers and basic types."),
         new BoolDef('l', "isFileNameOnlyEnabled", "print only file name of clones.", true),
         new BoolDef('N', "isLineNumberEnabled", "NOT print line number.", false),
+        new BoolDef('e', "isEscapeEnabled", "comment out printed information other than source code.", true),
         new BoolDef('c', "isCountEnabled", "print only count of clones.", true),
         new StringDef('f', "needleFileName", "obtain needle from file. CANNOT give needle as code string at once."),
         //new IntDef('m', "maxCount", "stop after NN clones."),
@@ -92,10 +97,11 @@ public class CCGrep
         }
     }
 
-    String blindMode;
+    String blindLevelName = "";
     boolean isCountEnabled = false;
     boolean isLineNumberEnabled = true;
     boolean isFileNameOnlyEnabled = false;
+    boolean isEscapeEnabled = false;
     String needleFileName = null;
     String needleCode = null;
     int maxCount = -1;
@@ -108,13 +114,11 @@ public class CCGrep
 
         final ITokenizer tokenizer = new AntlrTokenizer(language);
 
-        final int mode = "full".equals(blindMode)? TokenSequenceDetector.BLIND_FULL
-                       : "consistent".equals(blindMode)? TokenSequenceDetector.BLIND_CONSISTENT
-                       : TokenSequenceDetector.BLIND_NO;
+        final BlindLevel blindLevel = BlindLevel.findByName(blindLevelName);
 
         final IDetector detector = needleFileName == null
-            ? new TokenSequenceDetector(tokenizer, needleCode, true, mode)
-            : new TokenSequenceDetector(tokenizer, needleFileName, false, mode);
+            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, needleCode, blindLevel)
+            : TokenSequenceDetector.withNeedleFromFile(tokenizer, needleFileName, blindLevel);
 
         debugprintln("traversing...");
         final Traverser traverser = new Traverser(detector, language::matchesExtension);
@@ -126,11 +130,11 @@ public class CCGrep
         debugprintln("finish.");
         debugprintln(clones.size() + " clone(s) found.");
 
-        printResult(clones);
+        printResult(clones, language);
         return clones.isEmpty()? 1: 0;
     }
 
-    void printResult(List<Clone> clones)
+    void printResult(List<Clone> clones, Language language)
     {
         debugprint("printing...");
         if(isCountEnabled)
@@ -139,7 +143,14 @@ public class CCGrep
         }
         else
         {
-            new GrepPrinter(clones).println(true, isLineNumberEnabled, !isFileNameOnlyEnabled);
+            new GrepPrinter(clones)
+                .println(
+                    new GrepPrinter.Option(language)
+                        .enableFileName(true)
+                        .enableLine(isLineNumberEnabled)
+                        .enableCode(!isFileNameOnlyEnabled)
+                        .enableEscape(isEscapeEnabled)
+                );
         }
         debugprintln("finish.");
     }

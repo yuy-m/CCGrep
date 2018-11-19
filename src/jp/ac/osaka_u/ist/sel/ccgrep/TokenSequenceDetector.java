@@ -8,26 +8,44 @@ public class TokenSequenceDetector implements IDetector
 {
     final ITokenizer tokenizer;
     final List<GrepToken> needle;
-
     final BlindLevel blindLevel;
 
-    public TokenSequenceDetector(ITokenizer tokenizer, String needleName, boolean fromCode, int blindMode)
+    public TokenSequenceDetector(ITokenizer tokenizer, List<GrepToken> needle, BlindLevel blindLevel)
     {
         this.tokenizer = tokenizer;
-        this.blindLevel = blindMode;
+        this.blindLevel = blindLevel;
+        this.needle = needle;
+        // needle.forEach(System.err::println);
+    }
+
+    public static TokenSequenceDetector withNeedleFromCode(ITokenizer tokenizer, String needleCode, BlindLevel blindLevel)
+    {
         CCGrep.debugprint("tokenizing needle...");
-        this.needle = fromCode
-            ? tokenizer.extractAsListFromString(needleName)
-            : tokenizer.extractAsListFromFile(needleName);
-        // needle.forEach(CCGrep::printToken);
+        final List<GrepToken> needle = tokenizer.extractAsListFromString(needleCode);
+        CCGrep.debugprintln("finish.");
         CCGrep.debugprintln("finish.");
         if(needle.size() == 0)
         {
             CCGrep.debugprintln("Error: No token found in the needle.");
             System.exit(1);
         }
-        // needle.forEach(CCGrep::debugprintln);
         CCGrep.debugprintln("the needle has " + needle.size() + " token(s).");
+        return new TokenSequenceDetector(tokenizer, needle, blindLevel);
+    }
+
+    public static TokenSequenceDetector withNeedleFromFile(ITokenizer tokenizer, String needleName, BlindLevel blindLevel)
+    {
+        CCGrep.debugprint("tokenizing needle...");
+        final List<GrepToken> needle = tokenizer.extractAsListFromFile(needleName);
+        CCGrep.debugprintln("finish.");
+        CCGrep.debugprintln("finish.");
+        if(needle.size() == 0)
+        {
+            CCGrep.debugprintln("Error: No token found in the needle.");
+            System.exit(1);
+        }
+        CCGrep.debugprintln("the needle has " + needle.size() + " token(s).");
+        return new TokenSequenceDetector(tokenizer, needle, blindLevel);
     }
 
     @Override
@@ -46,12 +64,13 @@ public class TokenSequenceDetector implements IDetector
         final List<Clone> clones = new ArrayList<>();
         IntStream.range(0, haystack.size() - needle.size() + 1)
             .parallel()
-            .filter(idx -> submatch(haystack.subList(idx, idx + needle.size())))
-            .mapToObj(idx ->
+            .mapToObj(idx -> haystack.subList(idx, idx + needle.size()))
+            .filter(subHaystack -> submatch(subHaystack))
+            .map(subHaystack ->
                 new Clone(
-                    haystack.get(idx).getFileName(),
-                    haystack.get(idx),
-                    haystack.get(idx + needle.size() - 1)
+                    subHaystack.get(0).getFileName(),
+                    subHaystack.get(0),
+                    subHaystack.get(needle.size() - 1)
                 )
             )
             .forEachOrdered(clones::add);
@@ -59,60 +78,14 @@ public class TokenSequenceDetector implements IDetector
         return clones;
     }
 
-    /*private boolean submatch(List<GrepToken> subHaystack)
-    {
-        return needle.equals(subHaystack);
-    }*/
-
     private boolean submatch(List<GrepToken> subHaystack)
     {
-        final Iterator<GrepToken> ni = needle.iterator();
-        final Iterator<GrepToken> hi = subHaystack.iterator();
-        final Map<String, GrepToken> idmap = blindLevel == BlindLevel.CONSISTENT? new HashMap<>(): null;
-        while(ni.hasNext() && hi.hasNext())
-        {
-            final GrepToken nt = ni.next();
-            final GrepToken ht = hi.next();
-            switch(blindLevel)
-            {
-            case NONE:
-                if(!nt.equals(ht))
-                {
-                    return false;
-                }
-                break;
-            case FULL:
-                if(
-                    !getLanguage().isBlindableIdentifier(nt.getType())
-                || !getLanguage().isBlindableIdentifier(ht.getType())
-                )
-                {
-                    if(!nt.equals(ht))
-                    {
-                        return false;
-                    }
-                }
-                break;
-            case CONSISTENT:
-                if(getLanguage().isBlindableIdentifier(nt.getType())
-                    && getLanguage().isBlindableIdentifier(ht.getType()))
-                {
-                    idmap.putIfAbsent(nt.getText(), ht);
-                    if(!idmap.get(nt.getText()).equals(ht))
-                    {
-                        return false;
-                    }
-                }
-                else if(!nt.equals(ht))
-                {
-                    return false;
-                }
-                break;
-            default:
-                assert false;
-            }
-        }
-        return true;
+        final Map<String, GrepToken> idmap =
+            blindLevel == BlindLevel.CONSISTENT
+                ? new HashMap<>(): Collections.emptyMap();
+        return IntStream.range(0, needle.size())
+                .allMatch(idx -> getLanguage()
+                            .checkTokenEquality(needle.get(idx), subHaystack.get(idx), blindLevel, idmap));
     }
 
     private Language getLanguage()

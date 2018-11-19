@@ -5,14 +5,10 @@ import org.antlr.v4.runtime.CharStream;
 
 class GrepToken
 {
-    final Token token;
-    final String filename;
-    final Language language;
-    public GrepToken(Token token, String filename, Language language)
+    private final Token token;
+    public GrepToken(Token token)
     {
         this.token = token;
-        this.filename = filename;
-        this.language = language;
     }
     public String getText()
     {
@@ -20,7 +16,7 @@ class GrepToken
     }
     public String getFileName()
     {
-        return filename;
+        return token.getInputStream().getSourceName();
     }
     @Override
     public boolean equals(Object obj)
@@ -29,35 +25,44 @@ class GrepToken
         {
             return true;
         }
-        if(obj == null)
+        if(obj instanceof GrepToken)
         {
-            return false;
+            final GrepToken rhs = (GrepToken)obj;
+            return rhs.getType() == getType() && rhs.getText().equals(this.getText());
+        }
+        return false;
+    }
+    public boolean equalsAsSpecialTo(Object obj)
+    {
+        if(obj == this)
+        {
+            return true;
         }
         if(obj instanceof GrepToken)
         {
             final GrepToken rhs = (GrepToken)obj;
-            return rhs.getText().equals(this.getText());
+            return getText().substring(1).equals(rhs.getText());
         }
         return false;
     }
     @Override
     public String toString()
     {
-        return "[" + getLine() + ":" + getCharPositionInLine() + ":`" + getText() + "`]";
+        return "[" + getLine() + ":" + getCharPositionInLine() + ":(" + getType() + ")`" + getText() + "`]";
     }
 
-    static void printToken(Token t)
+    void printDetail()
     {
-        System.out.println("getChannel           : " + t.getChannel());
-        System.out.println("getCharPositionInLine: " + t.getCharPositionInLine());
-        // System.out.println("getInputStream       : " + t.getInputStream());
-        System.out.println("getLine              : " + t.getLine());
-        System.out.println("getStartIndex        : " + t.getStartIndex());
-        System.out.println("getStopIndex         : " + t.getStopIndex());
-        System.out.println("getText              : " + t.getText());
-        System.out.println("getTokenIndex        : " + t.getTokenIndex());
-        // System.out.println("getTokenSource       : " + t.getTokenSource());
-        System.out.println("getType              : " + t.getType());
+        // System.out.println("getChannel           : " + getChannel());
+        System.out.println("getCharPositionInLine: " + getCharPositionInLine());
+        // System.out.println("getInputStream       : " + getInputStream());
+        System.out.println("getLine              : " + getLine());
+        System.out.println("getStartIndex        : " + getStartIndex());
+        System.out.println("getStopIndex         : " + getStopIndex());
+        System.out.println("getText              : " + getText());
+        System.out.println("getTokenIndex        : " + getTokenIndex());
+        // System.out.println("getTokenSource       : " + getTokenSource());
+        System.out.println("getType              : " + getType());
         System.out.println();
     }
     public int getLine()

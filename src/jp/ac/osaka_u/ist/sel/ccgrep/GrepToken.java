@@ -28,7 +28,7 @@ class GrepToken
         if(obj instanceof GrepToken)
         {
             final GrepToken rhs = (GrepToken)obj;
-            return rhs.getType() == getType() && rhs.getText().equals(this.getText());
+            return rhs.getText().equals(this.getText());
         }
         return false;
     }

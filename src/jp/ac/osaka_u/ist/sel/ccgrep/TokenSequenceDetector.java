@@ -15,14 +15,13 @@ public class TokenSequenceDetector implements IDetector
         this.tokenizer = tokenizer;
         this.blindLevel = blindLevel;
         this.needle = needle;
-        // needle.forEach(System.err::println);
+        needle.forEach(CCGrep::debugprintln);
     }
 
     public static TokenSequenceDetector withNeedleFromCode(ITokenizer tokenizer, String needleCode, BlindLevel blindLevel)
     {
         CCGrep.debugprint("tokenizing needle...");
         final List<GrepToken> needle = tokenizer.extractAsListFromString(needleCode);
-        CCGrep.debugprintln("finish.");
         CCGrep.debugprintln("finish.");
         if(needle.size() == 0)
         {
@@ -38,7 +37,6 @@ public class TokenSequenceDetector implements IDetector
         CCGrep.debugprint("tokenizing needle...");
         final List<GrepToken> needle = tokenizer.extractAsListFromFile(needleName);
         CCGrep.debugprintln("finish.");
-        CCGrep.debugprintln("finish.");
         if(needle.size() == 0)
         {
             CCGrep.debugprintln("Error: No token found in the needle.");
@@ -53,11 +51,10 @@ public class TokenSequenceDetector implements IDetector
     {
         CCGrep.debugprint(" tokenizing " + haystackFileName + "...");
         final List<GrepToken> haystack = tokenizer.extractAsListFromFile(haystackFileName);
-        CCGrep.debugprint("(" + haystack.size() + ")");
-
-        CCGrep.debugprint(" detecting " + haystackFileName + "...");
+        CCGrep.debugprint("(" + haystack.size() + ").detecting ...");
         if(needle.size() > haystack.size())
         {
+            CCGrep.debugprintln("(0) finish.");
             return Collections.emptyList();
         }
 
@@ -74,7 +71,7 @@ public class TokenSequenceDetector implements IDetector
                 )
             )
             .forEachOrdered(clones::add);
-        CCGrep.debugprintln("finish.");
+        CCGrep.debugprintln("(" + clones.size() + ") finish.");
         return clones;
     }
 

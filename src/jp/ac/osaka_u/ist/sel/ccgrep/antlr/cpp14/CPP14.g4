@@ -2367,3 +2367,11 @@ LineComment
 :
 	'//' ~[\r\n]* -> skip
 ;
+
+/** v ccgrep v **/
+
+CCG_SPECIAL_ID : '$' Identifier;
+CCG_SPECIAL_EXPR : '$()';
+CCG_SPECIAL_BLOCK : '${}';
+
+/** ^ ccgrep ^ **/

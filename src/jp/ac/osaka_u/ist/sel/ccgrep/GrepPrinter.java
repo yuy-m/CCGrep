@@ -28,10 +28,16 @@ public class GrepPrinter
         {
             final String fn = "file:" + clone.filename;
             stream.print(option.escapeEnabled? option.language.lineCommented(fn): fn);
+            stream.println(" ("
+                + clone.start.getLine()
+                    + ":" + clone.start.getCharPositionInLine()
+                + "-"
+                + clone.end.getLine()
+                    + ":" + clone.start.getCharPositionInLine()
+                + ")");
         }
         if(option.codeEnabled)
         {
-            stream.println();
             IntStream.range(0, lines.size())
                 .forEach(idx -> {
                     if(option.lineEnabled)
@@ -41,10 +47,6 @@ public class GrepPrinter
                     }
                     stream.println(lines.get(idx));
                 });
-        }
-        else if(option.lineEnabled)
-        {
-            stream.println(" (" + clone.start.getLine() + "-" + clone.end.getLine() + ")");
         }
     }
     public static class Option

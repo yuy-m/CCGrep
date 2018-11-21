@@ -13,7 +13,7 @@ import jp.ac.osaka_u.ist.sel.ccgrep.TokenSequenceDetector;
 
 public class CCGrep
 {
-    static boolean DEBUG = false;
+    static final boolean DEBUG = false;
     public static void main(String[] args)
     {
         final CCGrep ccgrep = new CCGrep();
@@ -50,7 +50,7 @@ public class CCGrep
         }
         else
         {
-            haystackNames = new String[]{"-"};
+            haystackNames = new String[]{"."};
         }
 
         final long st = System.nanoTime();
@@ -81,19 +81,19 @@ public class CCGrep
         ap.listParameters(80, System.out);
     }
 
-    static void debugprint(String msg)
+    static void debugprint(Object msg)
     {
         if(DEBUG)
         {
-            System.err.print(msg);
+            System.err.print(msg.toString());
         }
     }
 
-    static void debugprintln(String msg)
+    static void debugprintln(Object msg)
     {
         if(DEBUG)
         {
-            System.err.println(msg);
+            System.err.println(msg.toString());
         }
     }
 
@@ -111,10 +111,12 @@ public class CCGrep
     int grep(String languageName, String[] haystackNames)
     {
         final Language language = Language.findByName(languageName);
+        debugprintln("language: " + language);
 
         final ITokenizer tokenizer = new AntlrTokenizer(language);
 
         final BlindLevel blindLevel = BlindLevel.findByName(blindLevelName);
+        debugprintln("blind level: " + blindLevel);
 
         final IDetector detector = needleFileName == null
             ? TokenSequenceDetector.withNeedleFromCode(tokenizer, needleCode, blindLevel)
@@ -128,6 +130,11 @@ public class CCGrep
             .flatMap(List::stream)
             .collect(Collectors.toList());
         debugprintln("finish.");
+        if(traverser.getFileCount() == 0)
+        {
+            debugprintln("no file found.");
+            return 2;
+        }
         debugprintln(clones.size() + " clone(s) found.");
 
         printResult(clones, language);

@@ -31,7 +31,17 @@ public class Traverser
         this(detector, fileMatcher, (__) -> true);
     }
 
+    int getFileCount()
+    {
+        return fileCount;
+    }
+
     public List<Clone> traverse(Path haystackPath)
+    {
+        return traverseImpl(haystackPath);
+    }
+
+    public final List<Clone> traverseImpl(Path haystackPath)
     {
         if(Files.isDirectory(haystackPath))
         {
@@ -41,7 +51,7 @@ public class Traverser
                 try{
                     Files.list(haystackPath)
                         .parallel()
-                        .map(this::traverse)
+                        .map(this::traverseImpl)
                         .forEachOrdered(clones::addAll);
                 }
                 catch(IOException e)

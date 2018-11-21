@@ -118,6 +118,7 @@ LineComment=117
 CCG_SPECIAL_ID=118
 CCG_SPECIAL_EXPR=119
 CCG_SPECIAL_BLOCK=120
+IncludeDerective=121
 '__extension__'=1
 '__builtin_va_arg'=2
 '__builtin_offsetof'=3

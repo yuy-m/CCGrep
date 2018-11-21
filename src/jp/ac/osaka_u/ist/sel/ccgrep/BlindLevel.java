@@ -34,11 +34,11 @@ public enum BlindLevel
 
     public static BlindLevel findByName(String levelName)
     {
-        if("none".equalsIgnoreCase(levelName) || "".equals(levelName))
+        if("none".equalsIgnoreCase(levelName))
         {
             return BlindLevel.NONE;
         }
-        else if("consistent".equalsIgnoreCase(levelName))
+        else if("consistent".equalsIgnoreCase(levelName) || "".equals(levelName))
         {
             return BlindLevel.CONSISTENT;
         }

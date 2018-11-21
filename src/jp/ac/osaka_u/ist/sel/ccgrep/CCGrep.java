@@ -9,6 +9,7 @@ import org.jargp.*;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.BlindLevel;
 import jp.ac.osaka_u.ist.sel.ccgrep.GrepPrinter;
+import jp.ac.osaka_u.ist.sel.ccgrep.Language;
 import jp.ac.osaka_u.ist.sel.ccgrep.TokenSequenceDetector;
 
 public class CCGrep
@@ -27,15 +28,9 @@ public class CCGrep
             System.exit(0);
         }
 
-        if(!ap.getArgs().hasNext())
-        {
-            showHelp(ap);
-            System.exit(2);
-        }
-        final String languageName = ap.getArgs().next();
         if(ccgrep.needleFileName == null)
         {
-            ccgrep.needleFileName = ap.getArgs().next();
+            ccgrep.needleCode = ap.getArgs().next();
         }
         String[] haystackNames;
         if(ap.getArgs().hasNext())
@@ -54,7 +49,7 @@ public class CCGrep
         }
 
         final long st = System.nanoTime();
-        final int returnCode = ccgrep.grep(languageName, haystackNames);
+        final int returnCode = ccgrep.grep(haystackNames);
         final long et = System.nanoTime();
 
         final long milli = (et - st) / 1000000;
@@ -64,11 +59,9 @@ public class CCGrep
     }
 
     private static final ParameterDef[] pd = new ParameterDef[]{
-        new StringDef('b', "blindLevelName", "blind identifiers and basic types."),
-        new BoolDef('l', "isFileNameOnlyEnabled", "print only file name of clones.", true),
-        new BoolDef('N', "isLineNumberEnabled", "NOT print line number.", false),
-        new BoolDef('e', "isEscapeEnabled", "comment out printed information other than source code.", true),
-        new BoolDef('c', "isCountEnabled", "print only count of clones.", true),
+        new StringDef('b', "blindLevelName", "set blind level none / consistent(by default) / full."),
+        new StringDef('l', "languageName", "set target language c / c++ / java(by default) / python3."),
+        new StringDef('p', "printOption", "set printing option l/N/f/e/c like `-p lN`. When `l` set, print only file names. When `N` set, Not print line numbers. When `f` set, print whole code of clones. When `e` set with `f`, comment out the file name and line numbers. When `c` set, print only the count of clones."),
         new StringDef('f', "needleFileName", "obtain needle from file. CANNOT give needle as code string at once."),
         //new IntDef('m', "maxCount", "stop after NN clones."),
         new BoolDef('h', "help", "show help", true)
@@ -76,8 +69,7 @@ public class CCGrep
 
     private static void showHelp(ArgumentProcessor ap)
     {
-        System.out.println("ccgrep.sh [options]... language needleCode haystackFiles...");
-        System.out.println(" language : c, c++, Java, Python3");
+        System.out.println("ccgrep.sh [options]... needleCode haystackFiles...");
         ap.listParameters(80, System.out);
     }
 
@@ -97,20 +89,18 @@ public class CCGrep
         }
     }
 
+    String languageName = null;
+    String printOption = "";
     String blindLevelName = "";
-    boolean isCountEnabled = false;
-    boolean isLineNumberEnabled = true;
-    boolean isFileNameOnlyEnabled = false;
-    boolean isEscapeEnabled = false;
     String needleFileName = null;
     String needleCode = null;
-    int maxCount = -1;
+    // int maxCount = -1;
 
     boolean help;
 
-    int grep(String languageName, String[] haystackNames)
+    int grep(String[] haystackNames)
     {
-        final Language language = Language.findByName(languageName);
+        final Language language = findLanguage();
         debugprintln("language: " + language);
 
         final ITokenizer tokenizer = new AntlrTokenizer(language);
@@ -141,10 +131,42 @@ public class CCGrep
         return clones.isEmpty()? 1: 0;
     }
 
-    void printResult(List<Clone> clones, Language language)
+    private Language findLanguage()
+    {
+        if(languageName != null)
+        {
+            try{
+                return Language.findByName(languageName);
+            }
+            catch(NoSuchElementException e)
+            {
+                System.err.println("The language " + languageName + " is not supported.");
+                System.exit(2);
+            }
+        }
+        else if(needleFileName != null)
+        {
+            try{
+                return Language.findByFileNameWithExtension(needleFileName);
+            }
+            catch(NoSuchElementException e)
+            {
+                System.err.println("No language found from the extension of " + needleFileName);
+                System.err.println("specify languge by `-l LANG` or `-f FILE.EXT`");
+                System.exit(2);
+            }
+        }
+        else
+        {
+            return Language.findByName("java");
+        }
+        return null;
+    }
+
+    private void printResult(List<Clone> clones, Language language)
     {
         debugprint("printing...");
-        if(isCountEnabled)
+        if(printOption.contains("c"))
         {
             System.out.println(clones.size());
         }
@@ -153,10 +175,11 @@ public class CCGrep
             new GrepPrinter(clones)
                 .println(
                     new GrepPrinter.Option(language)
+                        .enableGrepLike(!printOption.equals("f"))
                         .enableFileName(true)
-                        .enableLine(isLineNumberEnabled)
-                        .enableCode(!isFileNameOnlyEnabled)
-                        .enableEscape(isEscapeEnabled)
+                        .enableLine(!printOption.contains("N"))
+                        .enableCode(!printOption.contains("l"))
+                        .enableEscape(printOption.contains("e"))
                 );
         }
         debugprintln("finish.");

@@ -9,18 +9,25 @@ CCGrep is a lighthearted code clone detector like grep command.
 Many code clone detectors already exist, but their install, configuration and execution are difficult.
 CCGrep is a simple clone detector based on grep command interface and you can use it instantly.
 
-CCGrep detects Type 1, 2 clones.
+CCGrep detects Type 1, 2(p-match or not) clones.
 
 ## Demo
 ## VS. 
 ## Requirement
+ - Java8
 ## Usage
-`$ ccgrep.sh [options]... [needleCode] haystackFiles...`
+ - `$ ccgrep.sh [options]... needleCode haystackFiles...`
+ - `$ ccgrep.sh [options]... -f needleFile haystackFiles...`
+
+For Windows, use `ccgrep.bat` instead of `ccgrep.sh`.
+
 ### Language
- - c[^1]: c/c++ detection has a bug in tokenizing preprocessor macros.
- - c++[^1]
+ - c [^c-bug]
+ - c++ [^c-bug]
  - Java
  - Python3
+
+[^c-bug]:c/c++ detection has a bug in tokenizing preprocessor macros.
 
 ### Options
  - `-b` LEVEL : set [blind level](#Blind). none / consistent(by default) / full.
@@ -36,29 +43,32 @@ CCGrep detects Type 1, 2 clones.
  - `-h`       : show help
 
 ### Example
- - `$ ./ccgrep.sh -f needle.c c src`
- - `$ ./ccgrep.sh java "int a = 0;" src`
+ - `$ ./ccgrep.sh -f needle.c src/`
+ - `$ ./ccgrep.sh 'int a = 0;' src/`
 
+Note: You should not use double quotation `"` to specify needle code because it leads to variable expansion.
 
 ### Blind
-CCGrep has token blind system.
-For Java example `value.get()` matches either `object.toString()` or `integer.hashCode()`.
+CCGrep has token blind system, which enables ccgrep to detect type 2 clones.
+For Java example, `value.get()` matches either `object.toString()` or `integer.hashCode()`.
 
 Each blindable tokens belong to Blind Group.
-Blind Groups are now **Identifiers**, **Binary or unary operators**, and **Assign operators**.
+Blind Groups are now **Identifiers** and **Literals** (**Literals** only `none` or `full`.).
+
 Tokens in same group are potential treated as same token with the blind system.
 On the other hand, ones in different groups are NEVER.
 
 #### Mode
 Blind level can be set by command line option `-b MODE`.
- - `none`       : Matches exact same tokens (No blind).
- - `consistent` : Matches any token in a same group but same tokens matches same ones(p-match).(**by default**)
- - `full`       : Matches any token in a same group.
+ - `none`       : Matches exact same tokens (Type 1 clones).
+ - `consistent` : Matches any token in a same group but same tokens matches same ones(p-match clones).(**by default**)
+ - `full`       : Matches any token in a same group (All type 2 clones).
 
 ### Fixed Token
 Identifiers starting with `$` are fixed identifiers.
-These identifiers matches exact same identifiers regardless of the [blind level](#Blind).
- [^2]: Assume that the languages uses no `$` in their grammar.
+These identifiers matches exact same identifiers regardless of the [blind level](#Blind). [^dollar-assumption]
+
+[^dollar-assumption]: Assume that the languages uses no `$` in their grammar.
 
 
 ## Install

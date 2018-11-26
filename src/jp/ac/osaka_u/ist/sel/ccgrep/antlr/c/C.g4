@@ -957,7 +957,7 @@ CCG_SPECIAL_ID : '$' Identifier;
 CCG_SPECIAL_EXPR : '$()';
 CCG_SPECIAL_BLOCK : '${}';
 
-LineAfterPreprocessing
+/*LineAfterPreprocessing
     :   '#line' Whitespace* ~[\r\n]*
         -> skip
     ;
@@ -979,37 +979,11 @@ MultiLineMacro
 
 Directive
 :
-	'#'
-@lexer::members {
-private List<RecognitionException> exceptions;
+	'#';*/
 
-@Override
-public void reportError(RecognitionException e) {
-    // skip
-}
-
-@Override
-public void recover(RecognitionException re) {
-    if (exceptions == null) {
-        exceptions = new ArrayList<RecognitionException>();
-    }
-    // avoid re-recovering
-    if (!exceptions.isEmpty() && exceptions.get(exceptions.size() - 1) == re) {
-        return;
-    }
-    exceptions.add(re);
-    input.consume();
-    // skip identifier
-    if (Character.isJavaIdentifierPart(re.c)) {
-        while (true) {
-            int next = input.LA(1);
-            if (!(next >= 0 && Character.isJavaIdentifierPart(next))) {
-                break;
-            }
-            input.consume();
-        }
-    }
-}
-}
+Directive
+    :   '#' ~[\r\n]* BlockComment? ('\\' [\r\n] ~[\r\n]* BlockComment?)* [\r\n]?
+        -> skip
+    ;
 
 /** ^ ccgrep ^ **/

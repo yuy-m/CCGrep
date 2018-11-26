@@ -30,7 +30,15 @@ public class CCGrep
 
         if(ccgrep.needleFileName == null)
         {
-            ccgrep.needleCode = ap.getArgs().next();
+            if(ap.getArgs().hasNext())
+            {
+                ccgrep.needleCode = ap.getArgs().next();
+            }
+            else
+            {
+                System.err.println("Illegal arguments.");
+                System.exit(2);
+            }
         }
         String[] haystackNames;
         if(ap.getArgs().hasNext())
@@ -53,7 +61,7 @@ public class CCGrep
         final long et = System.nanoTime();
 
         final long milli = (et - st) / 1000000;
-        System.err.println((milli / 1000.0) + " sec");
+        // System.err.println((milli / 1000.0) + " sec");
 
         System.exit(returnCode);
     }
@@ -86,6 +94,14 @@ public class CCGrep
         if(DEBUG)
         {
             System.err.println(msg.toString());
+        }
+    }
+
+    static void debugprintln()
+    {
+        if(DEBUG)
+        {
+            System.err.println();
         }
     }
 

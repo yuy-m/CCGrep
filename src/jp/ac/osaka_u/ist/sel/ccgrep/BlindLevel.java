@@ -1,5 +1,6 @@
 package jp.ac.osaka_u.ist.sel.ccgrep;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.BiPredicate;
@@ -9,47 +10,42 @@ import java.util.function.Supplier;
 public enum BlindLevel
 {
     NONE(
+        new String[]{"none"},
         0,
         (t1, t2, c) -> t1.equals(t2)
     ),
     CONSISTENT(
+        new String[]{"consistent", ""},
         50,
         (t1, t2, c) -> {
             final GrepToken t = c.putIfAbsent(t1.getText(), t2);
-            return  t == null? true: t.equals(t2);
+            return t == null
+                ? true//!c.containsValue(t2)
+                : t.equals(t2);
         }
     ),
     FULL(
+        new String[]{"full"},
         100,
         (t1, t2, c) -> true
     );
 
+    private final String[] names;
     public final int value;
     private final EqualityStrategy equalityStrategy;
-    BlindLevel(int value, EqualityStrategy equalityStrategy)
+    BlindLevel(String[] names, int value, EqualityStrategy equalityStrategy)
     {
+        this.names = names;
         this.value = value;
         this.equalityStrategy = equalityStrategy;
     }
 
     public static BlindLevel findByName(String levelName)
     {
-        if("none".equalsIgnoreCase(levelName))
-        {
-            return BlindLevel.NONE;
-        }
-        else if("consistent".equalsIgnoreCase(levelName) || "".equals(levelName))
-        {
-            return BlindLevel.CONSISTENT;
-        }
-        else if("full".equalsIgnoreCase(levelName))
-        {
-            return BlindLevel.FULL;
-        }
-        else
-        {
-            throw new NoSuchElementException("BlindLevel `" + levelName + "` is not supported.");
-        }
+        return Arrays.stream(BlindLevel.values())
+            .filter(bl -> Arrays.stream(bl.names).anyMatch(levelName::equalsIgnoreCase))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("BlindLevel `" + levelName + "` is not supported."));
     }
 
     public boolean checkTokenEquality(GrepToken token1, GrepToken token2, Map<String, GrepToken> constraint)

@@ -13,22 +13,17 @@ import java.util.Arrays;
 public class Traverser
 {
     private final IDetector detector;
+    private final boolean isRecursiveEnabled;
     private final Predicate<String> fileMatcher;
-    private final Predicate<String> directoryMatcher;
-    // final int maxCloneCount;
+    private final Predicate<String> directoryMatcher = (__) -> true;
 
     private int fileCount = 0;
 
-    Traverser(IDetector detector, Predicate<String> fileMatcher, Predicate<String> directoryMatcher)
+    Traverser(IDetector detector, boolean isRecursiveEnabled, Predicate<String> fileMatcher)
     {
         this.detector = detector;
+        this.isRecursiveEnabled = isRecursiveEnabled;
         this.fileMatcher = fileMatcher;
-        this.directoryMatcher = directoryMatcher;
-    }
-
-    Traverser(IDetector detector, Predicate<String> fileMatcher)
-    {
-        this(detector, fileMatcher, (__) -> true);
     }
 
     int getFileCount()
@@ -38,20 +33,20 @@ public class Traverser
 
     public List<Clone> traverse(Path haystackPath)
     {
-        return traverseImpl(haystackPath);
+        return traverseImpl(haystackPath, true);
     }
 
-    public final List<Clone> traverseImpl(Path haystackPath)
+    public final List<Clone> traverseImpl(Path haystackPath, boolean alwaysMatch)
     {
         if(Files.isDirectory(haystackPath))
         {
-            if(directoryMatcher.test(haystackPath.toString()))
+            if(alwaysMatch || (isRecursiveEnabled && directoryMatcher.test(haystackPath.toString())))
             {
                 final List<Clone> clones = new ArrayList<>();
                 try{
                     Files.list(haystackPath)
                         .parallel()
-                        .map(this::traverseImpl)
+                        .map(dirPath -> traverseImpl(dirPath, false))
                         .forEachOrdered(clones::addAll);
                 }
                 catch(IOException e)
@@ -61,7 +56,7 @@ public class Traverser
                 return clones;
             }
         }
-        else if("-".equals(haystackPath.toString()) || fileMatcher.test(haystackPath.toString()))
+        else if(alwaysMatch || "-".equals(haystackPath.toString()) || fileMatcher.test(haystackPath.toString()))
         {
             ++fileCount;
             return detector.detect(haystackPath.toString());

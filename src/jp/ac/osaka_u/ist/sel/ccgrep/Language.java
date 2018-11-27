@@ -103,7 +103,7 @@ public enum Language
         return Arrays.stream(Language.values())
             .filter(l -> Arrays.stream(l.names).anyMatch(languageName::equalsIgnoreCase))
             .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("Language `" + languageName + "` is not supported."));
+            .orElse(null);
     }
 
     public static Language findByFileNameWithExtension(String fileName)
@@ -111,7 +111,7 @@ public enum Language
         return Arrays.stream(Language.values())
             .filter(l -> Arrays.stream(l.extensions).anyMatch(fileName::endsWith))
             .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("Language not found from `" + fileName + "`."));
+            .orElse(null);
     }
 
     public Lexer createLexer(CharStream stream)

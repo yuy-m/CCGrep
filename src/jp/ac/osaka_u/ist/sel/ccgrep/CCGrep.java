@@ -5,8 +5,6 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.jargp.*;
-
 import jp.ac.osaka_u.ist.sel.ccgrep.BlindLevel;
 import jp.ac.osaka_u.ist.sel.ccgrep.GrepPrinter;
 import jp.ac.osaka_u.ist.sel.ccgrep.Language;
@@ -17,25 +15,25 @@ public class CCGrep
     static final boolean DEBUG = false;
     public static void main(String[] args)
     {
-        final int returnCode = new CCGrep().frontend(args);
+        final Frontend fe = Frontend.process(args);
+        if(fe == null)
+        {
+            System.exit(2);
+        }
+        else if(fe.isHelpEnabled)
+        {
+            System.exit(0);
+        }
+        final CCGrep ccgrep = new CCGrep(fe);
+
+        final long st = System.nanoTime();
+        final int returnCode = ccgrep.grep();
+        final long et = System.nanoTime();
+
+        final long milli = (et - st) / 1000000;
+        // System.err.println((milli / 1000.0) + " sec");
+
         System.exit(returnCode);
-    }
-
-    private static final ParameterDef[] pd = new ParameterDef[]{
-        new StringDef('b', "blindLevelName", "set blind level none / consistent(by default) / full."),
-        new StringDef('l', "languageName", "set target language c / c++ / java(by default) / python3."),
-        new StringDef('p', "printOption", "set printing option l/N/f/e/c like `-p lN`. When `l` set, print only file names. When `N` set, Not print line numbers. When `f` set, print whole code of clones. When `e` set, comment out the file name and line numbers. When `c` set, print only the count of clones."),
-        new StringDef('f', "needleFileName", "obtain needle from file. CANNOT give needle as code string at once."),
-        //new IntDef('m', "maxCount", "stop after NN clones."),
-        new BoolDef('h', "help", "show help", true)
-    };
-
-    private static void showHelp(ArgumentProcessor ap)
-    {
-        System.out.println("ccgrep.sh [options]... -f needleFile haystackFiles...");
-        System.out.println("ccgrep.sh [options]... needleCode haystackFiles...");
-        System.out.println(" For Windows, use ccgrep.bat instead.");
-        ap.listParameters(80, System.out);
     }
 
     static void debugprint(Object msg)
@@ -62,123 +60,14 @@ public class CCGrep
         }
     }
 
-    String languageName = null;
-    String printOption = "";
-    String blindLevelName = "";
-    String needleFileName = null;
-    String needleCode = null;
-    // int maxCount = -1;
+    private final Frontend frontend;
 
-    boolean help;
-
-    int frontend(String[] args)
+    CCGrep(Frontend frontend)
     {
-        /*final Options options = new Options();
-        options.addOption( // blindLevelName
-            Option.builder("b")
-            .longOpt("blind-level")
-            .desc("set blind level none / consistent(by default) / full.")
-            .hasArg()
-            .argName("LEVEL")
-        );
-        options.addOption( // languageName
-            Option.builder("l")
-            .longOpt("language")
-            .desc("set target language c / c++ / java(by default) / python3.")
-            .hasArg()
-            .argName("LANG")
-        );
-        options.addOption( // printOption
-            Option.builder("p")
-            .longOpt("print-option")
-            .desc("set printing option l/N/f/e/c like `-p lN`."
-            + " When `l` set, print only file names."
-            + " When `N` set, Not print line numbers."
-            + " When `f` set, print whole code of clones."
-            + " When `e` set, comment out the file name and line numbers."
-            + " When `c` set, print only the count of clones.")
-            .hasArg()
-            .argName("OPTION")
-        );
-        options.addOption( // needleFileName
-            Option.builder("f")
-            .longOpt("file")
-            .desc("obtain needle from file. CANNOT give needle as code string at once.")
-            .hasArgs()
-            .argName("FILES")
-        );
-        options.addOption( // help
-            Option.builder("h")
-            .longOpt("help")
-            .desc("show help.")
-        );
-
-        try {
-            // parse the command line arguments
-            CommandLine line = parser.parse( options, args );
-
-            // validate that block-size has been set
-            if( line.hasOption( "block-size" ) ) {
-                // print the value of block-size
-                System.out.println( line.getOptionValue( "block-size" ) );
-            }
-        }
-        catch( ParseException exp ) {
-            System.out.println( "Unexpected exception:" + exp.getMessage() );
-        }*/
-
-
-
-
-        final ArgumentProcessor ap = new ArgumentProcessor(pd);
-        ap.processArgs(args, this);
-
-        if(this.help)
-        {
-            showHelp(ap);
-            return 0;
-        }
-
-        if(this.needleFileName == null)
-        {
-            if(ap.getArgs().hasNext())
-            {
-                this.needleCode = ap.getArgs().next();
-            }
-            else
-            {
-                System.err.println("Illegal arguments.");
-                showHelp(ap);
-                return 2;
-            }
-        }
-        String[] haystackNames;
-        if(ap.getArgs().hasNext())
-        {
-            final List<String> l = new ArrayList<>();
-            while(ap.getArgs().hasNext())
-            {
-                l.add(ap.getArgs().next());
-            }
-            haystackNames = new String[l.size()];
-            l.toArray(haystackNames);
-        }
-        else
-        {
-            haystackNames = new String[]{"."};
-        }
-
-        final long st = System.nanoTime();
-        final int returnCode = grep(haystackNames);
-        final long et = System.nanoTime();
-
-        final long milli = (et - st) / 1000000;
-        // System.err.println((milli / 1000.0) + " sec");
-
-        return returnCode;
+        this.frontend = frontend;
     }
 
-    int grep(String[] haystackNames)
+    public int grep()
     {
         final Language language = findLanguage();
         if(language == null)
@@ -189,26 +78,21 @@ public class CCGrep
 
         final ITokenizer tokenizer = new AntlrTokenizer(language);
 
-        final BlindLevel blindLevel = BlindLevel.findByName(blindLevelName);
+        final BlindLevel blindLevel = BlindLevel.findByName(frontend.blindLevelName);
         debugprintln("blind level: " + blindLevel);
 
-        final IDetector detector = needleFileName == null
-            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, needleCode, blindLevel)
-            : TokenSequenceDetector.withNeedleFromFile(tokenizer, needleFileName, blindLevel);
+        final IDetector detector = frontend.needleFileName == null
+            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, frontend.needleCode, blindLevel)
+            : TokenSequenceDetector.withNeedleFromFile(tokenizer, frontend.needleFileName, blindLevel);
 
         debugprintln("traversing...");
-        final Traverser traverser = new Traverser(detector, language::matchesExtension);
-        final List<Clone> clones = Arrays.stream(haystackNames)
+        final Traverser traverser = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension);
+        final List<Clone> clones = frontend.haystackNames.stream()
             .map(Paths::get)
             .map(traverser::traverse)
             .flatMap(List::stream)
             .collect(Collectors.toList());
         debugprintln("finish.");
-        if(traverser.getFileCount() == 0)
-        {
-            debugprintln("no file found.");
-            return 2;
-        }
         debugprintln(clones.size() + " clone(s) found.");
 
         printResult(clones, language);
@@ -217,28 +101,24 @@ public class CCGrep
 
     private Language findLanguage()
     {
-        if(languageName != null)
+        if(frontend.languageName != null)
         {
-            try{
-                return Language.findByName(languageName);
-            }
-            catch(NoSuchElementException e)
+            final Language l = Language.findByName(frontend.languageName);
+            if(l == null)
             {
-                System.err.println("The language " + languageName + " is not supported.");
-                return null;
+                System.err.println("The language " + frontend.languageName + " is not supported.");
             }
+            return l;
         }
-        else if(needleFileName != null)
+        else if(frontend.needleFileName != null)
         {
-            try{
-                return Language.findByFileNameWithExtension(needleFileName);
-            }
-            catch(NoSuchElementException e)
+            final Language l = Language.findByFileNameWithExtension(frontend.needleFileName);
+            if(l == null)
             {
-                System.err.println("No language found from the extension of " + needleFileName);
+                System.err.println("No language found from the extension of " + frontend.needleFileName);
                 System.err.println("specify languge by `-l LANG` or `-f FILE.EXT`");
-                return null;
             }
+            return l;
         }
         else
         {
@@ -249,7 +129,7 @@ public class CCGrep
     private void printResult(List<Clone> clones, Language language)
     {
         debugprint("printing...");
-        if(printOption.contains("c"))
+        if(frontend.printOption.contains("c"))
         {
             System.out.println(clones.size());
         }
@@ -258,11 +138,11 @@ public class CCGrep
             new GrepPrinter(clones)
                 .println(
                     new GrepPrinter.Option(language)
-                        .enableGrepLike(!printOption.contains("f"))
+                        .enableGrepLike(!frontend.printOption.contains("f"))
                         .enableFileName(true)
-                        .enableLine(!printOption.contains("N"))
-                        .enableCode(!printOption.contains("l"))
-                        .enableEscape(printOption.contains("e"))
+                        .enableLine(!frontend.printOption.contains("N"))
+                        .enableCode(!frontend.printOption.contains("l"))
+                        .enableEscape(frontend.printOption.contains("e"))
                 );
         }
         debugprintln("finish.");

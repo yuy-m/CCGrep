@@ -15,6 +15,8 @@ CCGrep detects Type 1, 2(p-match or not) clones.
 ## VS. 
 ## Requirement
  - Java8
+ - Apache Ant *(for build)*
+
 ## Usage
  - `$ ccgrep.sh [options]... needleCode haystackFiles...`
  - `$ ccgrep.sh [options]... -f needleFile haystackFiles...`
@@ -37,7 +39,7 @@ For Windows, use `ccgrep.bat` instead of `ccgrep.sh`.
                 When `l` set, print only file names.
                 When `N` set, Not print line numbers.
                 When `f` set, print whole code of clones.
-                When `e` set with `f`, comment out the file name and line numbers.
+                When `e` set, comment out the file name and line numbers.
                 When `c` set, print only the count of clones.
  - `-f` FILE  : obtain needle from file. CANNOT give needle as code string at once.
  - `-h`       : show help

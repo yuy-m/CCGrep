@@ -18,10 +18,19 @@ public enum BlindLevel
         new String[]{"consistent", ""},
         50,
         (t1, t2, c) -> {
-            final GrepToken t = c.putIfAbsent(t1.getText(), t2);
-            return t == null
-                ? true//!c.containsValue(t2)
-                : t.equals(t2);
+            if(c.containsKey(t1.getText()))
+            {
+                return c.get(t1.getText()).equals(t2);
+            }
+            else if(c.containsValue(t2))
+            {
+                return false;
+            }
+            else
+            {
+                c.put(t1.getText(), t2);
+                return true;
+            }
         }
     ),
     FULL(

@@ -20,7 +20,7 @@ public enum Language
         new SpecialSet(CLexer.CCG_SPECIAL_ID, CLexer.CCG_SPECIAL_EXPR, CLexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
         new BlindSet[]{
-            new BlindSet(CLexer.Char, CLexer.Double, CLexer.Float, CLexer.Int, CLexer.Long, CLexer.Short, CLexer.Void, CLexer.Bool, CLexer.Identifier),
+            new BlindSet(BlindLevel.NONE, CLexer.Char, CLexer.Double, CLexer.Float, CLexer.Int, CLexer.Long, CLexer.Short, CLexer.Void, CLexer.Bool, CLexer.Identifier),
             new BlindSet(BlindLevel.FULL, CLexer.Constant, CLexer.DigitSequence, CLexer.StringLiteral)/*,
             new BlindSet(BlindLevel.FULL, CLexer.Less, CLexer.LessEqual, CLexer.Greater, CLexer.GreaterEqual, CLexer.LeftShift, CLexer.RightShift, CLexer.Plus, CLexer.PlusPlus, CLexer.Minus, CLexer.MinusMinus, CLexer.Star, CLexer.Div, CLexer.Mod, CLexer.And, CLexer.AndAnd, CLexer.OrOr, CLexer.Caret, CLexer.Not, CLexer.Tilde),
             new BlindSet(BlindLevel.FULL, CLexer.Assign, CLexer.StarAssign, CLexer.DivAssign, CLexer.ModAssign, CLexer.PlusAssign, CLexer.MinusAssign, CLexer.LeftShiftAssign, CLexer.RightShiftAssign, CLexer.AndAssign, CLexer.XorAssign, CLexer.OrAssign, CLexer.Equal, CLexer.NotEqual)*/
@@ -34,7 +34,7 @@ public enum Language
         new SpecialSet(-1, -1, -1),
         new CommentSet("//", "/*", "*/"),
         new BlindSet[]{
-            new BlindSet(CPP14Lexer.Auto, CPP14Lexer.Bool, CPP14Lexer.Char, CPP14Lexer.Char16, CPP14Lexer.Char32, CPP14Lexer.Double, CPP14Lexer.Float, CPP14Lexer.Int, CPP14Lexer.Long, CPP14Lexer.Short, CPP14Lexer.Void, CPP14Lexer.Wchar, CPP14Lexer.Identifier),
+            new BlindSet(BlindLevel.NONE, CPP14Lexer.Auto, CPP14Lexer.Bool, CPP14Lexer.Char, CPP14Lexer.Char16, CPP14Lexer.Char32, CPP14Lexer.Double, CPP14Lexer.Float, CPP14Lexer.Int, CPP14Lexer.Long, CPP14Lexer.Short, CPP14Lexer.Void, CPP14Lexer.Wchar, CPP14Lexer.Identifier),
             new BlindSet(BlindLevel.FULL, CPP14Lexer.False, CPP14Lexer.Nullptr, CPP14Lexer.True, CPP14Lexer.Integerliteral, CPP14Lexer.Decimalliteral, CPP14Lexer.Octalliteral, CPP14Lexer.Hexadecimalliteral, CPP14Lexer.Binaryliteral, CPP14Lexer.Characterliteral, CPP14Lexer.Floatingliteral, CPP14Lexer.Stringliteral, CPP14Lexer.Userdefinedintegerliteral, CPP14Lexer.Userdefinedfloatingliteral, CPP14Lexer.Userdefinedstringliteral, CPP14Lexer.Userdefinedcharacterliteral)/*,
             new BlindSet(BlindLevel.FULL, CPP14Lexer.Plus, CPP14Lexer.Minus, CPP14Lexer.Star, CPP14Lexer.Div, CPP14Lexer.Mod, CPP14Lexer.Caret, CPP14Lexer.And, CPP14Lexer.Or, CPP14Lexer.Tilde, CPP14Lexer.Not, CPP14Lexer.Less, CPP14Lexer.Greater, CPP14Lexer.LeftShift, CPP14Lexer.Equal, CPP14Lexer.NotEqual, CPP14Lexer.LessEqual, CPP14Lexer.GreaterEqual, CPP14Lexer.AndAnd, CPP14Lexer.OrOr, CPP14Lexer.PlusPlus, CPP14Lexer.MinusMinus),
             new BlindSet(BlindLevel.FULL, CPP14Lexer.Assign, CPP14Lexer.PlusAssign, CPP14Lexer.MinusAssign, CPP14Lexer.StarAssign, CPP14Lexer.DivAssign, CPP14Lexer.ModAssign, CPP14Lexer.XorAssign, CPP14Lexer.AndAssign, CPP14Lexer.OrAssign, CPP14Lexer.LeftShiftAssign)*/
@@ -48,7 +48,7 @@ public enum Language
         new SpecialSet(Java9Lexer.CCG_SPECIAL_ID, Java9Lexer.CCG_SPECIAL_EXPR, Java9Lexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
         new BlindSet[]{
-            new BlindSet(Java9Lexer.BOOLEAN, Java9Lexer.BYTE, Java9Lexer.CHAR, Java9Lexer.DOUBLE, Java9Lexer.FLOAT, Java9Lexer.INT, Java9Lexer.LONG, Java9Lexer.SHORT, Java9Lexer.SUPER, Java9Lexer.THIS, Java9Lexer.VOID, Java9Lexer.Identifier),
+            new BlindSet(BlindLevel.NONE, Java9Lexer.BOOLEAN, Java9Lexer.BYTE, Java9Lexer.CHAR, Java9Lexer.DOUBLE, Java9Lexer.FLOAT, Java9Lexer.INT, Java9Lexer.LONG, Java9Lexer.SHORT, Java9Lexer.SUPER, Java9Lexer.THIS, Java9Lexer.VOID, Java9Lexer.Identifier),
             new BlindSet(BlindLevel.FULL, Java9Lexer.IntegerLiteral, Java9Lexer.FloatingPointLiteral, Java9Lexer.BooleanLiteral, Java9Lexer.CharacterLiteral, Java9Lexer.StringLiteral, Java9Lexer.NullLiteral)/*,
             new BlindSet(BlindLevel.FULL, Java9Lexer.GT, Java9Lexer.LT, Java9Lexer.TILDE, Java9Lexer.EQUAL, Java9Lexer.LE, Java9Lexer.GE, Java9Lexer.NOTEQUAL, Java9Lexer.AND, Java9Lexer.OR, Java9Lexer.INC, Java9Lexer.DEC, Java9Lexer.ADD, Java9Lexer.SUB, Java9Lexer.MUL, Java9Lexer.DIV, Java9Lexer.BITAND, Java9Lexer.BITOR, Java9Lexer.CARET, Java9Lexer.MOD),
             new BlindSet(BlindLevel.FULL, Java9Lexer.ASSIGN, Java9Lexer.ADD_ASSIGN, Java9Lexer.SUB_ASSIGN, Java9Lexer.MUL_ASSIGN, Java9Lexer.DIV_ASSIGN, Java9Lexer.AND_ASSIGN, Java9Lexer.OR_ASSIGN, Java9Lexer.XOR_ASSIGN, Java9Lexer.MOD_ASSIGN, Java9Lexer.LSHIFT_ASSIGN, Java9Lexer.RSHIFT_ASSIGN, Java9Lexer.URSHIFT_ASSIGN)*/
@@ -62,7 +62,7 @@ public enum Language
         new SpecialSet(-1, -1, -1),
         new CommentSet("#", "\"\"\"", "\"\"\""),
         new BlindSet[]{
-            new BlindSet(Python3Lexer.NAME),
+            new BlindSet(BlindLevel.NONE, Python3Lexer.NAME),
             new BlindSet(BlindLevel.FULL, Python3Lexer.STRING, Python3Lexer.NUMBER, Python3Lexer.INTEGER, Python3Lexer.NONE, Python3Lexer.TRUE, Python3Lexer.FALSE, Python3Lexer.STRING_LITERAL, Python3Lexer.BYTES_LITERAL, Python3Lexer.DECIMAL_INTEGER, Python3Lexer.OCT_INTEGER, Python3Lexer.HEX_INTEGER, Python3Lexer.BIN_INTEGER, Python3Lexer.FLOAT_NUMBER, Python3Lexer.IMAG_NUMBER)/*,
             new BlindSet(BlindLevel.FULL, Python3Lexer.IN, Python3Lexer.OR, Python3Lexer.AND, Python3Lexer.NOT, Python3Lexer.IS, Python3Lexer.STAR, Python3Lexer.POWER, Python3Lexer.OR_OP, Python3Lexer.XOR, Python3Lexer.AND_OP, Python3Lexer.LEFT_SHIFT, Python3Lexer.RIGHT_SHIFT, Python3Lexer.ADD, Python3Lexer.MINUS, Python3Lexer.DIV, Python3Lexer.MOD, Python3Lexer.IDIV, Python3Lexer.NOT_OP, Python3Lexer.LESS_THAN, Python3Lexer.GREATER_THAN, Python3Lexer.EQUALS, Python3Lexer.GT_EQ, Python3Lexer.LT_EQ, Python3Lexer.NOT_EQ_1, Python3Lexer.NOT_EQ_2, Python3Lexer.AT),
             new BlindSet(BlindLevel.FULL, Python3Lexer.ASSIGN, Python3Lexer.ADD_ASSIGN, Python3Lexer.SUB_ASSIGN, Python3Lexer.MULT_ASSIGN, Python3Lexer.AT_ASSIGN, Python3Lexer.DIV_ASSIGN, Python3Lexer.MOD_ASSIGN, Python3Lexer.AND_ASSIGN, Python3Lexer.OR_ASSIGN, Python3Lexer.XOR_ASSIGN, Python3Lexer.LEFT_SHIFT_ASSIGN, Python3Lexer.RIGHT_SHIFT_ASSIGN, Python3Lexer.POWER_ASSIGN, Python3Lexer.IDIV_ASSIGN)*/
@@ -158,6 +158,16 @@ public enum Language
         return commentSet.blockBegin + str + commentSet.blockEnd;
     }
 
+    public String blockCommentBegin()
+    {
+        return commentSet.blockBegin;
+    }
+
+    public String blockCommentEnd()
+    {
+        return commentSet.blockEnd;
+    }
+
 
     public int specialId()
     {
@@ -209,11 +219,6 @@ public enum Language
             this.minLevel = minLevel;
             Arrays.sort(blindTypes);
             this.blindTypes = blindTypes;
-        }
-
-        BlindSet(int... blindTypes)
-        {
-            this(BlindLevel.NONE, blindTypes);
         }
 
         boolean contains(int type)

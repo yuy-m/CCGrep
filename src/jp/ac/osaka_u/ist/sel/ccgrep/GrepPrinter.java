@@ -28,34 +28,33 @@ public class GrepPrinter
 
         if(option.grepLikeEnabled)
         {
-            final StringJoiner sj = new StringJoiner(":");
+            final StringJoiner sj = new StringJoiner(":", option.escapeEnabled? option.language.blockCommentBegin(): "", "");
             if(option.fileNameEnabled)
             {
                 sj.add(clone.filename);
             }
             if(option.lineEnabled)
             {
-                sj.add(String.valueOf(clone.start.getLine()));
+                final String s = String.valueOf(clone.start.getLine());
+                sj.add(s);
             }
             if(option.codeEnabled)
             {
-                sj.add(lines.get(0));
+                sj.add((option.escapeEnabled? option.language.blockCommentEnd(): "") + lines.get(0));
+                stream.println(sj);
             }
-            stream.println(sj);
+            else if(option.escapeEnabled)
+            {
+                stream.print(sj);
+                stream.println(option.language.blockCommentEnd());
+            }
         }
         else
         {
             if(option.fileNameEnabled)
             {
-                final String fn = "file:" + clone.filename;
-                stream.print(option.escapeEnabled? option.language.lineCommented(fn): fn);
-                stream.println(" ("
-                    + clone.start.getLine()
-                        + ":" + clone.start.getCharPositionInLine()
-                    + "-"
-                    + clone.end.getLine()
-                        + ":" + clone.start.getCharPositionInLine()
-                    + ")");
+                final String fn = "file:" + clone.filename + " (" + clone.getRangeString() + ")";
+                stream.println(option.escapeEnabled? option.language.lineCommented(fn): fn);
             }
             if(option.codeEnabled)
             {

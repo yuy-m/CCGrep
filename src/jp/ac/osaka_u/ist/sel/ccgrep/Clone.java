@@ -27,6 +27,13 @@ public class Clone
             .subList(start.getLine() - 1, end.getLine());
     }
 
+    public String getRangeString()
+    {
+        return start.getLine() + ":" + start.getCharPositionInLine()
+        + "-"
+        + end.getLine() + ":" + (end.getCharPositionInLine() + end.getText().length());
+    }
+
     @Override
     public String toString()
     {

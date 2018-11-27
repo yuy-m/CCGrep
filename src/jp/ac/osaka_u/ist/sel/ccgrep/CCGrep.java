@@ -73,6 +73,63 @@ public class CCGrep
 
     int frontend(String[] args)
     {
+        /*final Options options = new Options();
+        options.addOption( // blindLevelName
+            Option.builder("b")
+            .longOpt("blind-level")
+            .desc("set blind level none / consistent(by default) / full.")
+            .hasArg()
+            .argName("LEVEL")
+        );
+        options.addOption( // languageName
+            Option.builder("l")
+            .longOpt("language")
+            .desc("set target language c / c++ / java(by default) / python3.")
+            .hasArg()
+            .argName("LANG")
+        );
+        options.addOption( // printOption
+            Option.builder("p")
+            .longOpt("print-option")
+            .desc("set printing option l/N/f/e/c like `-p lN`."
+            + " When `l` set, print only file names."
+            + " When `N` set, Not print line numbers."
+            + " When `f` set, print whole code of clones."
+            + " When `e` set, comment out the file name and line numbers."
+            + " When `c` set, print only the count of clones.")
+            .hasArg()
+            .argName("OPTION")
+        );
+        options.addOption( // needleFileName
+            Option.builder("f")
+            .longOpt("file")
+            .desc("obtain needle from file. CANNOT give needle as code string at once.")
+            .hasArgs()
+            .argName("FILES")
+        );
+        options.addOption( // help
+            Option.builder("h")
+            .longOpt("help")
+            .desc("show help.")
+        );
+
+        try {
+            // parse the command line arguments
+            CommandLine line = parser.parse( options, args );
+
+            // validate that block-size has been set
+            if( line.hasOption( "block-size" ) ) {
+                // print the value of block-size
+                System.out.println( line.getOptionValue( "block-size" ) );
+            }
+        }
+        catch( ParseException exp ) {
+            System.out.println( "Unexpected exception:" + exp.getMessage() );
+        }*/
+
+
+
+
         final ArgumentProcessor ap = new ArgumentProcessor(pd);
         ap.processArgs(args, this);
 

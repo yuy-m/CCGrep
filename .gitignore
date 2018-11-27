@@ -1,6 +1,6 @@
 # Java
-*.class
-*.jar
+#*.class
+#*.jar
 *.war
 *.ear
 
@@ -24,7 +24,7 @@ Thumbs.db
 !gradle-wrapper.jar
 
 # Maven
-target
+#target
 
 # Build
 out

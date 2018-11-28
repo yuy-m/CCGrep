@@ -36,8 +36,10 @@ bin
 *.swp
 *.bak
 
-needle*
-result*
 target/
+target/classes
+target/depencencies
 !lib/*
 !CCGrep.jar
+needle*
+result*

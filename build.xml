@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="CCGrep" default="makeJar" basedir=".">
+<project name="CCGrep" default="build" basedir=".">
     <dirname property="base" file="${ant.file}"/>
 
-    <property name="mainclass" value="ccgrep.CCGrep" />
+    <property name="name" value="CCGrep" />
+    <property name="mainclass" value="jp.ac.osaka_u.ist.sel.ccgrep.CCGrep" />
 
-    <property name="jarname" value="${mainclass}" />
+    <property name="jar.name" value="${name}.jar" />
 
-    <property name="zipname" value="${mainclass}Zip" />
+    <property name="zipname" value="${name}Zip" />
 
     <property name="dir.target" value="target" />
     <property name="dir.target.classes" value="${dir.target}/classes" />
-    <property name="dir.target.resources" value="${dir.target}/resources" />
     <property name="dir.target.dependencies" value="${dir.target}/dependencies" />
+    <property name="dir.target.jar" value="${dir.target}/jar" />
 
     <property name="dir.src" value="src" />
     <property name="dir.resources" value="resources" />
@@ -24,50 +25,16 @@
     -->
     <path id="build.lib">
         <fileset dir="${dir.lib}" >
-            <include name="*" />
+            <include name="*.jar" />
         </fileset>
     </path>
 
-    <target name="makeJar" description="make jar">
+    <target name="build">
         <antcall target="compile"/>
-        <jar basedir="${dir.target.classes}" destfile="${base}/${dir.target}/${jarname}.jar">
-            <manifest>
-                <attribute name="Main-class" value="${mainclass}"/>
-                <attribute name="Class-Path" value=". lib/*"/>
-            </manifest>
-        </jar>
-        <!--<antcall target="filecopy">
-            <param name="dir.env" value="${dir.resources}" />
-        </antcall>-->
+        <antcall target="makejar"/>
     </target>
 
-    <target name="filecopy" description="copy">
-        <echo message="クラスファイル以外の必要なファイルのコピーを行います。" />
-
-        <!-- 古いファイルを削除 -->
-        <delete file="${dir.target.resources}/*" />
-        <delete file="${dir.target.dependencies}/*" />
-
-        <!-- 新しいフォルダを作成 -->
-        <mkdir dir="${dir.target.resources}" />
-        <mkdir dir="${dir.target.dependencies}" />
-
-        <!-- resourceファイルをコピー -->
-        <copy todir="${dir.target.resources}">
-            <fileset dir="${dir.env}">
-                <include name="*" />
-            </fileset>
-        </copy>
-
-        <!-- 依存性のあるファイルをコピー -->
-        <copy todir="${dir.target.dependencies}">
-            <fileset dir="${dir.lib}">
-                <include name="*" />
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="compile" description="compile">
+    <target name="compile">
         <mkdir dir="${dir.target.classes}" />
         <javac classpathref="build.lib"
             srcdir="${dir.src}"
@@ -79,7 +46,32 @@
             debug="true"/>
     </target>
 
+    <target name="makejar">
+        <available file="${dir.target.dependencies}" property="unjarred"/>
+        <antcall target="unjar_deps"/>
+
+        <jar destfile="${jar.name}">
+            <fileset dir="${dir.target.classes}" includes="**/*.class" />
+            <fileset dir="${dir.target.dependencies}" includes="**/*.class" />
+            <manifest>
+                <attribute name="Main-Class" value="${mainclass}"/>
+            </manifest>
+        </jar>
+   </target>
+
+   <target name="unjar_deps" unless="unjarred">
+        <mkdir dir="${dir.target.dependencies}" />
+        <unjar dest="${dir.target.dependencies}" overwrite="no">
+            <fileset dir="${dir.lib}" includes="*.jar"/>
+        </unjar>
+   </target>
+
     <target name="clean" description="clean">
         <delete dir="${dir.target}" />
+    </target>
+
+    <target name="cleanall" description="clean">
+        <delete dir="${dir.target}" />
+        <delete dir="${jar.name}" />
     </target>
 </project>

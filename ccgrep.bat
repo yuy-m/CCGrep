@@ -1,3 +1,13 @@
 @echo off
-set DNAME=%~dp0
-java -cp "%DNAME%\target\classes;%DNAME%\lib\antlr-runtime-4.7.1.jar;%DNAME%\lib\commons-cli-1.4.jar" jp.ac.osaka_u.ist.sel.ccgrep.CCGrep %*
+
+set DPATH=%~dp0
+set JARNAME="CCGrep.jar"
+
+if exist %JARNAME% (
+  java -jar "%DPATH%\%JARNAME%" %*
+) else if exist "%DPATH%\target\classes" (
+  java -cp "%DPATH%\target\classes;%DPATH%\lib\antlr-runtime-4.7.1.jar;%DPATH%\lib\commons-cli-1.4.jar" jp.ac.osaka_u.ist.sel.ccgrep.CCGrep %*
+) else (
+  echo "No jar-file or class-file"
+  exit 2
+)

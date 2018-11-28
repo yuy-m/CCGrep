@@ -1,81 +1,81 @@
 CCGrep
 ====
-*Now writing*
+*Now writing.*
 
-CCGrep is a lighthearted code clone detector like grep command.
-
+CCGrep is a easy-to-use code clone detector like *grep* command.
 
 ## Description
-Many code clone detectors already exist, but their install, configuration and execution are difficult.
+Many code clone detectors already exist, but their install, configuration and execution are difficult to use.
 CCGrep is a simple clone detector based on grep command interface and you can use it instantly.
 
-CCGrep detects Type 1, 2(p-match or not) clones.
+CCGrep can detect Type 1, 2(p-match or not) clones.
+
+#### Language
+ - c
+ - c++
+ - Java
+ - Python3
 
 ## Demo
-## VS. 
+## VS.
 ## Requirement
  - Java8
  - Apache Ant *(for build)*
 
-## Usage
- - `$ ccgrep.sh [options]... needleCode haystackFiles...`
- - `$ ccgrep.sh [options]... -f needleFile haystackFiles...`
-
-For Windows, use `ccgrep.bat` instead of `ccgrep.sh`.
-
-### Language
- - c [^c-bug]
- - c++ [^c-bug]
- - Java
- - Python3
-
-[^c-bug]:c/c++ detection has a bug in tokenizing preprocessor macros.
-
-### Options
- - `-b` LEVEL : set [blind level](#Blind). none / consistent(by default) / full.
- - `-l` LANG  : set target language. c / c++ / java(by default) / python3.
-                If you use `-f` option, the language is set automatically from the file extension.
- - `-p` MODE  : set printing option l/N/f/e/c like `-p lN`.
-                When `l` set, print only file names.
-                When `N` set, Not print line numbers.
-                When `f` set, print whole code of clones.
-                When `e` set, comment out the file name and line numbers.
-                When `c` set, print only the count of clones.
- - `-f` FILE  : obtain needle from file. CANNOT give needle as code string at once.
- - `-h`       : show help
-
-### Example
- - `$ ./ccgrep.sh -f needle.c src/`
- - `$ ./ccgrep.sh 'int a = 0;' src/`
-
-Note: You should not use double quotation `"` to specify needle code because it leads to variable expansion.
-
-### Blind
-CCGrep has token blind system, which enables ccgrep to detect type 2 clones.
-For Java example, `value.get()` matches either `object.toString()` or `integer.hashCode()`.
-
-Each blindable tokens belong to Blind Group.
-Blind Groups are now **Identifiers** and **Literals** (**Literals** only `none` or `full`.).
-
-Tokens in same group are potential treated as same token with the blind system.
-On the other hand, ones in different groups are NEVER.
-
-#### Mode
-Blind level can be set by command line option `-b MODE`.
- - `none`       : Matches exact same tokens (Type 1 clones).
- - `consistent` : Matches any token in a same group but same tokens matches same ones(p-match clones).(**by default**)
- - `full`       : Matches any token in a same group (All type 2 clones).
-
-### Fixed Token
-Identifiers starting with `$` are fixed identifiers.
-These identifiers matches exact same identifiers regardless of the [blind level](#Blind). [^dollar-assumption]
-
-[^dollar-assumption]: Assume that the languages uses no `$` in their grammar.
-
-
 ## Install
+Install is optional.
+Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
 
-`$ ant compile`
+#### Unix
+*Not implemented yet*
+
+#### Windows
+*Not implemented yet*
+
+## Usage
+ - `$ ccgrep [options]... needleCode haystackFiles...`
+ - `$ ccgrep [options]... -f needleFile haystackFiles...`
+
+#### Options
+ - `-b,--blind <LEVEL>`     set blind level. none(Type 1) /
+                        consistent(p-match)(by default) / full(Type 2).
+ - `-f,--file <FILES>`      obtain needle from file. CANNOT give needle as
+                        code string at once.
+ - `-h,--help`              show help.
+
+ - `-l,--language <LANG>`   set target language. c / c++ / java(by default) /
+                        python3. With `-f` option, the language can be
+                        inferred from the file extension.
+ - `-p,--print <OPTION>`    set printing option l/N/f/e/c like `-p fN`. When
+                        `l` set, print only file names. When `N` set, NOT
+                        print line numbers. When `f` set, print whole code
+                        of clones. When `e` set, comment out the file name
+                        and line numbers. When `c` set, print only the
+                        count of clones.
+ - `-r,--recursive`         traverse directories recursively.
+
+#### Example
+ - `$ ./ccgrep -f needle.c src/`
+ - `$ ./ccgrep 'int a = 0;' src/`
+
+Note: to specify query code, you should use SINGLE quotes `'` instead of DOUBLE quotes `"` because the variable expansion leads to unexpected results.
+
+#### ClonesToDetect
+Clone type to detect can be set by command line option `-b MODE`.
+ - `none`       : Each token matches exact same token (Type 1 clones).
+ - `full`       : Each *identifier* token matches any *identifier* token. also *literal* token (Type 2).
+ - `consistent` : Same as `full`, except that same tokens in the query match same ones in targets (p-match clones).(**by default**)
+clones).
+
+#### FixedToken
+In query, identifiers can starts with `$`.
+These identifiers match exact same identifiers regardless of the [blind level](#ClonesToDetect).
+
+Note: assume that the languages uses no `$` in their grammar.
+
+## Build
+
+`$ ant`
 
 ## Contribution
 ## Licence

@@ -20,6 +20,10 @@ public class Frontend
     public static Frontend process(String[] args)
     {
         final Frontend fe = new Frontend();
+        if(args.length == 0)
+        {
+            args = new String[]{"-h"};
+        }
         try {
             final CommandLine cl = new DefaultParser().parse(options, args);
 

@@ -1,24 +1,21 @@
 #!/bin/bash
 
-echo Not implemented yet.
-exit
-
 INSTPATH="/usr/local/lib/ccgrep/"
 BINPATH="/usr/local/bin"
 
-rm -rf "$INSTPATH"
-rm "$BINPATH/ccgrep"
+rm -fv "$BINPATH/ccgrep"
+rm -rfv "$INSTPATH"
 
 if [ "$1" != "clean" ]; then
-    DPATH=${DPATH:-`dirname ${0}`}
+    echo installing...
+    FROMPATH=${FROMPATH:-`dirname ${0}`}
     mkdir "$INSTPATH"
-    cp "$DPATH/ccgrep" "$INSTPATH"
-    cp "$DPATH/CCGrep.jar" "$INSTPATH"
-    cp "$DPATH/install" "$INSTPATH"
-    cp "$DPATH/LICENSE.txt" "$INSTPATH"
-    cp "$DPATH/README.md" "$INSTPATH"
-    cp "$DPATH/build.xml" "$INSTPATH"
-    cp -r "$DPATH/lib/" "$INSTPATH"
-    cp -r "$DPATH/src/" "$INSTPATH"
-    cp "$DPATH/ccgrep" "$BINPATH"
+    #cp -r "$FROMPATH/lib/" "$INSTPATH"
+    #cp -r "$FROMPATH/src/" "$INSTPATH"
+    cp "$FROMPATH/install" "$INSTPATH"
+    cp "$FROMPATH/LICENSE.txt" "$INSTPATH"
+    cp "$FROMPATH/README.md" "$INSTPATH"
+    cp "$FROMPATH/CCGrep.jar" "$INSTPATH"
+    cp "$FROMPATH/ccgrep" "$BINPATH"
+    echo finish.
 fi

@@ -23,11 +23,11 @@ CCGrep can detect Type 1, 2(p-match or not) clones.
  - Apache Ant *(for build)*
 
 ## Install
-Install is optional.
+Optional.
 Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
 
 #### Unix
-*Not implemented yet*
+`$ ./install`
 
 #### Windows
 *Not implemented yet*

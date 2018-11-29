@@ -17,5 +17,6 @@ if [ "$1" != "clean" ]; then
     cp "$FROMPATH/README.md" "$INSTPATH"
     cp "$FROMPATH/CCGrep.jar" "$INSTPATH"
     cp "$FROMPATH/ccgrep" "$BINPATH"
+    chmod a+x "$BINPATH/ccgrep"
     echo finish.
 fi

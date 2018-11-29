@@ -58,7 +58,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
  - `$ ./ccgrep -f needle.c src/`
  - `$ ./ccgrep 'int a = 0;' src/`
 
-Note: to specify query code, you should use SINGLE quotes `'` instead of DOUBLE quotes `"` because the variable expansion leads to unexpected results.
+Note: to specify a query code, you should use SINGLE quotes `'` instead of DOUBLE quotes `"` because the variable expansion leads to unexpected results.
 
 #### ClonesToDetect
 Clone type to detect can be set by command line option `-b MODE`.
@@ -67,11 +67,20 @@ Clone type to detect can be set by command line option `-b MODE`.
  - `consistent` : Same as `full`, except that same tokens in the query match same ones in targets (p-match clones).(**by default**)
 clones).
 
-#### FixedToken
-In query, identifiers can starts with `$`.
+#### FixedIdentifier `$id`
+In a query, identifiers can starts with `$` (e.g. `$value`).
 These identifiers match exact same identifiers regardless of the [blind level](#ClonesToDetect).
 
+Note: No spaces are allowed between `$` and identifier.  
 Note: assume that the languages uses no `$` in their grammar.
+
+#### AnyTokenSequence `$$`
+Special token `$$` in a query matches any token sequences (0 or more length) with balanced parentheses/braces/brackets
+ (e.g. `{ set(get()).value(); }`).
+
+Example: `if($$){$$ return v;}` detects if-statements returning value at the end.
+
+Note: `$$` cannot use as first/final token in a query (e.g. `$$ { aaa }`, `{ aaa } $$`).
 
 ## Build
 

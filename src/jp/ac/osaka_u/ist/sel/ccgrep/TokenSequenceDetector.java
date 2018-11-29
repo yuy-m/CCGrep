@@ -36,13 +36,13 @@ public class TokenSequenceDetector implements IDetector
         CCGrep.debugprintln("finish.");
         if(needle.size() == 0)
         {
-            CCGrep.debugprintln("Error: No token found in the query.");
-            System.exit(1);
+            System.err.println("Error: No token found in the query.");
+            System.exit(2);
         }
         final int specialSeq = tokenizer.getLanguage().specialSeq();
         if(needle.get(0).getType() == specialSeq || needle.get(needle.size() - 1).getType() == specialSeq)
         {
-            CCGrep.debugprintln("Error: Query cannot start/end with special sequence `$$`.");
+            System.err.println("Error: Query cannot start/end with special token `$$`.");
             System.exit(2);
         }
         CCGrep.debugprintln("The query has " + needle.size() + " token(s).");

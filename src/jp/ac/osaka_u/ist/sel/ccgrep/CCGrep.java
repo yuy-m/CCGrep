@@ -12,7 +12,7 @@ import jp.ac.osaka_u.ist.sel.ccgrep.TokenSequenceDetector;
 
 public class CCGrep
 {
-    static final boolean DEBUG = false;
+    static boolean DEBUG = false;
     public static void main(String[] args)
     {
         final Frontend fe = Frontend.process(args);
@@ -24,6 +24,7 @@ public class CCGrep
         {
             System.exit(0);
         }
+        DEBUG = fe.isLogEnabled;
         final CCGrep ccgrep = new CCGrep(fe);
 
         final long st = System.nanoTime();
@@ -128,7 +129,7 @@ public class CCGrep
 
     private void printResult(List<Clone> clones, Language language)
     {
-        debugprint("printing...");
+        debugprintln("printing...");
         if(frontend.printOption.contains("c"))
         {
             System.out.println(clones.size());

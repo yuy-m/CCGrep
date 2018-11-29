@@ -11,10 +11,10 @@ CCGrep is a simple clone detector based on grep command interface and you can us
 CCGrep can detect Type 1, 2(p-match or not) clones.
 
 #### Language
- - c
- - c++
+ - C
+ - C++
  - Java
- - Python3
+ - Python3 (*experimental*)
 
 ## Demo
 ## VS.

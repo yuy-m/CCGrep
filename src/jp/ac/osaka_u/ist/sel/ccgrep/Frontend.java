@@ -9,6 +9,7 @@ public class Frontend
 {
     boolean isHelpEnabled = false;
     boolean isRecursiveEnabled = false;
+    boolean isLogEnabled = false;
     String blindLevelName = "";
     String languageName = null;
     String printOption = "";
@@ -32,6 +33,10 @@ public class Frontend
                 fe.isHelpEnabled = true;
                 showHelp();
                 return fe;
+            }
+            if(cl.hasOption("log"))
+            {
+                fe.isLogEnabled = true;
             }
             if(cl.hasOption("recursive"))
             {
@@ -144,6 +149,12 @@ public class Frontend
             Option.builder("h")
             .longOpt("help")
             .desc("show help.")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("log")
+            .desc("print debug log to standard error.")
             .build()
         );
 }

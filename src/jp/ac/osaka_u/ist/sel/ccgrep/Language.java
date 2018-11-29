@@ -17,8 +17,13 @@ public enum Language
         new String[]{".c", ".h"},
         CLexer::new,
         CParser::new,
-        new SpecialSet(CLexer.CCG_SPECIAL_ID, CLexer.CCG_SPECIAL_EXPR, CLexer.CCG_SPECIAL_BLOCK),
+        new SpecialSet(CLexer.CCG_SPECIAL_ID, CLexer.CCG_SPECIAL_SEQ, CLexer.CCG_SPECIAL_EXPR, CLexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
+        new BracketPair[]{
+            new BracketPair(CLexer.LeftParen, CLexer.RightParen),
+            new BracketPair(CLexer.LeftBracket, CLexer.RightBracket),
+            new BracketPair(CLexer.LeftBrace, CLexer.RightBrace)
+        },
         new BlindSet[]{
             new BlindSet(BlindLevel.NONE, CLexer.Char, CLexer.Double, CLexer.Float, CLexer.Int, CLexer.Long, CLexer.Short, CLexer.Void, CLexer.Bool, CLexer.Identifier),
             new BlindSet(BlindLevel.FULL, CLexer.Constant, CLexer.DigitSequence, CLexer.StringLiteral)/*,
@@ -31,8 +36,13 @@ public enum Language
         new String[]{".cpp", ".cc", ".c++", ".cxx", ".c", ".h", ".hpp"},
         CPP14Lexer::new,
         CPP14Parser::new,
-        new SpecialSet(-1, -1, -1),
+        new SpecialSet(CPP14Lexer.CCG_SPECIAL_ID, CPP14Lexer.CCG_SPECIAL_SEQ, CPP14Lexer.CCG_SPECIAL_EXPR, CPP14Lexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
+        new BracketPair[]{
+            new BracketPair(CPP14Lexer.LeftParen, CPP14Lexer.RightParen),
+            new BracketPair(CPP14Lexer.LeftBracket, CPP14Lexer.RightBracket),
+            new BracketPair(CPP14Lexer.LeftBrace, CPP14Lexer.RightBrace)
+        },
         new BlindSet[]{
             new BlindSet(BlindLevel.NONE, CPP14Lexer.Auto, CPP14Lexer.Bool, CPP14Lexer.Char, CPP14Lexer.Char16, CPP14Lexer.Char32, CPP14Lexer.Double, CPP14Lexer.Float, CPP14Lexer.Int, CPP14Lexer.Long, CPP14Lexer.Short, CPP14Lexer.Void, CPP14Lexer.Wchar, CPP14Lexer.Identifier),
             new BlindSet(BlindLevel.FULL, CPP14Lexer.False, CPP14Lexer.Nullptr, CPP14Lexer.True, CPP14Lexer.Integerliteral, CPP14Lexer.Decimalliteral, CPP14Lexer.Octalliteral, CPP14Lexer.Hexadecimalliteral, CPP14Lexer.Binaryliteral, CPP14Lexer.Characterliteral, CPP14Lexer.Floatingliteral, CPP14Lexer.Stringliteral, CPP14Lexer.Userdefinedintegerliteral, CPP14Lexer.Userdefinedfloatingliteral, CPP14Lexer.Userdefinedstringliteral, CPP14Lexer.Userdefinedcharacterliteral)/*,
@@ -45,8 +55,13 @@ public enum Language
         new String[]{".java"},
         Java9Lexer::new,
         Java9Parser::new,
-        new SpecialSet(Java9Lexer.CCG_SPECIAL_ID, Java9Lexer.CCG_SPECIAL_EXPR, Java9Lexer.CCG_SPECIAL_BLOCK),
+        new SpecialSet(Java9Lexer.CCG_SPECIAL_ID, Java9Lexer.CCG_SPECIAL_SEQ, Java9Lexer.CCG_SPECIAL_EXPR, Java9Lexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
+        new BracketPair[]{
+            new BracketPair(Java9Lexer.LPAREN, Java9Lexer.RPAREN),
+            new BracketPair(Java9Lexer.LBRACE, Java9Lexer.RBRACE),
+            new BracketPair(Java9Lexer.LBRACK, Java9Lexer.RBRACK)
+        },
         new BlindSet[]{
             new BlindSet(BlindLevel.NONE, Java9Lexer.BOOLEAN, Java9Lexer.BYTE, Java9Lexer.CHAR, Java9Lexer.DOUBLE, Java9Lexer.FLOAT, Java9Lexer.INT, Java9Lexer.LONG, Java9Lexer.SHORT, Java9Lexer.SUPER, Java9Lexer.THIS, Java9Lexer.VOID, Java9Lexer.Identifier),
             new BlindSet(BlindLevel.FULL, Java9Lexer.IntegerLiteral, Java9Lexer.FloatingPointLiteral, Java9Lexer.BooleanLiteral, Java9Lexer.CharacterLiteral, Java9Lexer.StringLiteral, Java9Lexer.NullLiteral)/*,
@@ -59,8 +74,13 @@ public enum Language
         new String[]{".py"},
         Python3Lexer::new,
         Python3Parser::new,
-        new SpecialSet(-1, -1, -1),
+        new SpecialSet(Python3Lexer.CCG_SPECIAL_ID, Python3Lexer.CCG_SPECIAL_SEQ, Python3Lexer.CCG_SPECIAL_EXPR, Python3Lexer.CCG_SPECIAL_BLOCK),
         new CommentSet("#", "\"\"\"", "\"\"\""),
+        new BracketPair[]{
+            new BracketPair(Python3Lexer.OPEN_PAREN, Python3Lexer.CLOSE_PAREN),
+            new BracketPair(Python3Lexer.OPEN_BRACK, Python3Lexer.CLOSE_BRACK),
+            new BracketPair(Python3Lexer.OPEN_BRACE, Python3Lexer.CLOSE_BRACE),
+        },
         new BlindSet[]{
             new BlindSet(BlindLevel.NONE, Python3Lexer.NAME),
             new BlindSet(BlindLevel.FULL, Python3Lexer.STRING, Python3Lexer.NUMBER, Python3Lexer.INTEGER, Python3Lexer.NONE, Python3Lexer.TRUE, Python3Lexer.FALSE, Python3Lexer.STRING_LITERAL, Python3Lexer.BYTES_LITERAL, Python3Lexer.DECIMAL_INTEGER, Python3Lexer.OCT_INTEGER, Python3Lexer.HEX_INTEGER, Python3Lexer.BIN_INTEGER, Python3Lexer.FLOAT_NUMBER, Python3Lexer.IMAG_NUMBER)/*,
@@ -76,6 +96,7 @@ public enum Language
 
     private final SpecialSet specialSet;
     private final CommentSet commentSet;
+    private final BracketPair[] bracketPairs;
     private final BlindSet[] blindSets;
 
     Language(
@@ -84,6 +105,7 @@ public enum Language
         Function<TokenStream, Parser> parserCreater,
         SpecialSet specialSet,
         CommentSet commentSet,
+        BracketPair[] bracketPairs,
         BlindSet[] blindSets)
     {
         Arrays.sort(names);
@@ -95,6 +117,7 @@ public enum Language
 
         this.specialSet = specialSet;
         this.commentSet = commentSet;
+        this.bracketPairs = bracketPairs;
         this.blindSets = blindSets;
     }
 
@@ -169,9 +192,35 @@ public enum Language
     }
 
 
+    boolean isOpenBracket(int type)
+    {
+        return Arrays.stream(bracketPairs)
+            .mapToInt(p -> p.open)
+            .anyMatch(i -> i == type);
+    }
+
+    boolean isCloseBracket(int type)
+    {
+        return Arrays.stream(bracketPairs)
+            .mapToInt(p -> p.close)
+            .anyMatch(i -> i == type);
+    }
+
+    boolean isBracketPair(int open, int close)
+    {
+        return Arrays.stream(bracketPairs)
+            .anyMatch(p -> p.open == open && p.close == close);
+    }
+
+
     public int specialId()
     {
         return specialSet.id;
+    }
+
+    public int specialSeq()
+    {
+        return specialSet.seq;
     }
 
     public int specialExpr()
@@ -184,20 +233,22 @@ public enum Language
         return specialSet.block;
     }
 
-    private static class SpecialSet
+    private static final class SpecialSet
     {
         final int id;
+        final int seq;
         final int expr;
         final int block;
-        SpecialSet(int id, int expr, int block)
+        SpecialSet(int id, int seq, int expr, int block)
         {
             this.id = id;
+            this.seq = seq;
             this.expr = expr;
             this.block = block;
         }
     }
 
-    private static class CommentSet
+    private static final class CommentSet
     {
         final String line;
         final String blockBegin;
@@ -210,7 +261,18 @@ public enum Language
         }
     }
 
-    private static class BlindSet
+    private static final class BracketPair
+    {
+        final int open;
+        final int close;
+        BracketPair(int open, int close)
+        {
+            this.open = open;
+            this.close = close;
+        }
+    }
+
+    private static final class BlindSet
     {
         final BlindLevel minLevel;
         final int[] blindTypes;

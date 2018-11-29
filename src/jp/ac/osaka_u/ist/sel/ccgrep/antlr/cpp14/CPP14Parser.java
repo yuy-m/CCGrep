@@ -43,7 +43,7 @@ public class CPP14Parser extends Parser {
 		Characterliteral=132, Floatingliteral=133, Stringliteral=134, Userdefinedintegerliteral=135, 
 		Userdefinedfloatingliteral=136, Userdefinedstringliteral=137, Userdefinedcharacterliteral=138, 
 		Whitespace=139, Newline=140, BlockComment=141, LineComment=142, CCG_SPECIAL_ID=143, 
-		CCG_SPECIAL_EXPR=144, CCG_SPECIAL_BLOCK=145, PreprocessorHeader=146;
+		CCG_SPECIAL_SEQ=144, CCG_SPECIAL_EXPR=145, CCG_SPECIAL_BLOCK=146;
 	public static final int
 		RULE_translationunit = 0, RULE_primaryexpression = 1, RULE_idexpression = 2, 
 		RULE_unqualifiedid = 3, RULE_qualifiedid = 4, RULE_nestednamespecifier = 5, 
@@ -186,7 +186,7 @@ public class CPP14Parser extends Parser {
 		"'&&'", "'||'", "'++'", "'--'", "','", "'->*'", "'->'", "'?'", "':'", 
 		"'::'", "';'", "'.'", "'.*'", "'...'", null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, "'$()'", "'${}'", "'#'"
+		null, "'$$'", "'$()'", "'${}'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "MultiLineMacro", "Directive", "Alignas", "Alignof", "Asm", "Auto", 
@@ -211,8 +211,8 @@ public class CPP14Parser extends Parser {
 		"Binaryliteral", "Integersuffix", "Characterliteral", "Floatingliteral", 
 		"Stringliteral", "Userdefinedintegerliteral", "Userdefinedfloatingliteral", 
 		"Userdefinedstringliteral", "Userdefinedcharacterliteral", "Whitespace", 
-		"Newline", "BlockComment", "LineComment", "CCG_SPECIAL_ID", "CCG_SPECIAL_EXPR", 
-		"CCG_SPECIAL_BLOCK", "PreprocessorHeader"
+		"Newline", "BlockComment", "LineComment", "CCG_SPECIAL_ID", "CCG_SPECIAL_SEQ", 
+		"CCG_SPECIAL_EXPR", "CCG_SPECIAL_BLOCK"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 

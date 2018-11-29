@@ -1153,3 +1153,12 @@ fragment ID_CONTINUE
  | [\uFF10-\uFF19]
  | '\uFF3F'
  ;
+
+/** v ccgrep v **/
+
+CCG_SPECIAL_ID : '$' NAME;
+CCG_SPECIAL_SEQ : '$$';
+CCG_SPECIAL_EXPR : '$()';
+CCG_SPECIAL_BLOCK : '${}';
+
+/** ^ ccgrep ^ **/

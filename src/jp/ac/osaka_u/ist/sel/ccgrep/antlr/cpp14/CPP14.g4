@@ -2371,6 +2371,7 @@ LineComment
 /** v ccgrep v **/
 
 CCG_SPECIAL_ID : '$' Identifier;
+CCG_SPECIAL_SEQ : '$$';
 CCG_SPECIAL_EXPR : '$()';
 CCG_SPECIAL_BLOCK : '${}';
 

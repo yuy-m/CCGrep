@@ -34,7 +34,8 @@ public class Python3Parser extends Parser {
 		AT=81, ARROW=82, ADD_ASSIGN=83, SUB_ASSIGN=84, MULT_ASSIGN=85, AT_ASSIGN=86, 
 		DIV_ASSIGN=87, MOD_ASSIGN=88, AND_ASSIGN=89, OR_ASSIGN=90, XOR_ASSIGN=91, 
 		LEFT_SHIFT_ASSIGN=92, RIGHT_SHIFT_ASSIGN=93, POWER_ASSIGN=94, IDIV_ASSIGN=95, 
-		SKIP_=96, UNKNOWN_CHAR=97, INDENT=98, DEDENT=99;
+		SKIP_=96, UNKNOWN_CHAR=97, CCG_SPECIAL_ID=98, CCG_SPECIAL_SEQ=99, CCG_SPECIAL_EXPR=100, 
+		CCG_SPECIAL_BLOCK=101, INDENT=102, DEDENT=103;
 	public static final int
 		RULE_single_input = 0, RULE_file_input = 1, RULE_eval_input = 2, RULE_decorator = 3, 
 		RULE_decorators = 4, RULE_decorated = 5, RULE_async_funcdef = 6, RULE_funcdef = 7, 
@@ -89,7 +90,8 @@ public class Python3Parser extends Parser {
 		"'['", "']'", "'|'", "'^'", "'&'", "'<<'", "'>>'", "'+'", "'-'", "'/'", 
 		"'%'", "'//'", "'~'", "'{'", "'}'", "'<'", "'>'", "'=='", "'>='", "'<='", 
 		"'<>'", "'!='", "'@'", "'->'", "'+='", "'-='", "'*='", "'@='", "'/='", 
-		"'%='", "'&='", "'|='", "'^='", "'<<='", "'>>='", "'**='", "'//='"
+		"'%='", "'&='", "'|='", "'^='", "'<<='", "'>>='", "'**='", "'//='", null, 
+		null, null, "'$$'", "'$()'", "'${}'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "STRING", "NUMBER", "INTEGER", "DEF", "RETURN", "RAISE", "FROM", 
@@ -106,6 +108,7 @@ public class Python3Parser extends Parser {
 		"AT", "ARROW", "ADD_ASSIGN", "SUB_ASSIGN", "MULT_ASSIGN", "AT_ASSIGN", 
 		"DIV_ASSIGN", "MOD_ASSIGN", "AND_ASSIGN", "OR_ASSIGN", "XOR_ASSIGN", "LEFT_SHIFT_ASSIGN", 
 		"RIGHT_SHIFT_ASSIGN", "POWER_ASSIGN", "IDIV_ASSIGN", "SKIP_", "UNKNOWN_CHAR", 
+		"CCG_SPECIAL_ID", "CCG_SPECIAL_SEQ", "CCG_SPECIAL_EXPR", "CCG_SPECIAL_BLOCK", 
 		"INDENT", "DEDENT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -7173,7 +7176,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3e\u0452\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3i\u0452\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -7460,9 +7463,9 @@ public class Python3Parser extends Parser {
 		"\2\2\u02c1\u02c7\7\30\2\2\u02c2\u02c5\5d\63\2\u02c3\u02c4\7\13\2\2\u02c4"+
 		"\u02c6\7*\2\2\u02c5\u02c3\3\2\2\2\u02c5\u02c6\3\2\2\2\u02c6\u02c8\3\2"+
 		"\2\2\u02c7\u02c2\3\2\2\2\u02c7\u02c8\3\2\2\2\u02c8a\3\2\2\2\u02c9\u02d4"+
-		"\5\36\20\2\u02ca\u02cb\7)\2\2\u02cb\u02cd\7d\2\2\u02cc\u02ce\5\34\17\2"+
+		"\5\36\20\2\u02ca\u02cb\7)\2\2\u02cb\u02cd\7h\2\2\u02cc\u02ce\5\34\17\2"+
 		"\u02cd\u02cc\3\2\2\2\u02ce\u02cf\3\2\2\2\u02cf\u02cd\3\2\2\2\u02cf\u02d0"+
-		"\3\2\2\2\u02d0\u02d1\3\2\2\2\u02d1\u02d2\7e\2\2\u02d2\u02d4\3\2\2\2\u02d3"+
+		"\3\2\2\2\u02d0\u02d1\3\2\2\2\u02d1\u02d2\7i\2\2\u02d2\u02d4\3\2\2\2\u02d3"+
 		"\u02c9\3\2\2\2\u02d3\u02ca\3\2\2\2\u02d4c\3\2\2\2\u02d5\u02db\5l\67\2"+
 		"\u02d6\u02d7\7\17\2\2\u02d7\u02d8\5l\67\2\u02d8\u02d9\7\21\2\2\u02d9\u02da"+
 		"\5d\63\2\u02da\u02dc\3\2\2\2\u02db\u02d6\3\2\2\2\u02db\u02dc\3\2\2\2\u02dc"+

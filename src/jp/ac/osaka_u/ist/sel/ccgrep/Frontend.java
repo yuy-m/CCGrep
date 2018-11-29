@@ -42,17 +42,17 @@ public class Frontend
             {
                 fe.isRecursiveEnabled = true;
             }
-            if(cl.hasOption("blind-level"))
+            if(cl.hasOption("blind"))
             {
-                fe.blindLevelName = cl.getOptionValue("blind-level");
+                fe.blindLevelName = cl.getOptionValue("blind");
             }
             if(cl.hasOption("language"))
             {
                 fe.languageName = cl.getOptionValue("language");
             }
-            if(cl.hasOption("print-option"))
+            if(cl.hasOption("print"))
             {
-                fe.printOption = cl.getOptionValue("print-option");
+                fe.printOption = cl.getOptionValue("print");
             }
             if(cl.hasOption("file"))
             {

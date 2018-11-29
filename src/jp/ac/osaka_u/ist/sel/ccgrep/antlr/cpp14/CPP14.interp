@@ -143,9 +143,9 @@ null
 null
 null
 null
+'$$'
 '$()'
 '${}'
-'#'
 
 token symbolic names:
 null
@@ -292,9 +292,9 @@ Newline
 BlockComment
 LineComment
 CCG_SPECIAL_ID
+CCG_SPECIAL_SEQ
 CCG_SPECIAL_EXPR
 CCG_SPECIAL_BLOCK
-PreprocessorHeader
 
 rule names:
 translationunit

@@ -43,7 +43,7 @@ public class CPP14Lexer extends Lexer {
 		Characterliteral=132, Floatingliteral=133, Stringliteral=134, Userdefinedintegerliteral=135, 
 		Userdefinedfloatingliteral=136, Userdefinedstringliteral=137, Userdefinedcharacterliteral=138, 
 		Whitespace=139, Newline=140, BlockComment=141, LineComment=142, CCG_SPECIAL_ID=143, 
-		CCG_SPECIAL_EXPR=144, CCG_SPECIAL_BLOCK=145, PreprocessorHeader=146;
+		CCG_SPECIAL_SEQ=144, CCG_SPECIAL_EXPR=145, CCG_SPECIAL_BLOCK=146;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
 	};
@@ -81,7 +81,7 @@ public class CPP14Lexer extends Lexer {
 		"Encodingprefix", "Schar", "Rawstring", "Userdefinedintegerliteral", "Userdefinedfloatingliteral", 
 		"Userdefinedstringliteral", "Userdefinedcharacterliteral", "Udsuffix", 
 		"Whitespace", "Newline", "BlockComment", "LineComment", "CCG_SPECIAL_ID", 
-		"CCG_SPECIAL_EXPR", "CCG_SPECIAL_BLOCK", "PreprocessorHeader"
+		"CCG_SPECIAL_SEQ", "CCG_SPECIAL_EXPR", "CCG_SPECIAL_BLOCK"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -104,7 +104,7 @@ public class CPP14Lexer extends Lexer {
 		"'&&'", "'||'", "'++'", "'--'", "','", "'->*'", "'->'", "'?'", "':'", 
 		"'::'", "';'", "'.'", "'.*'", "'...'", null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, "'$()'", "'${}'", "'#'"
+		null, "'$$'", "'$()'", "'${}'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "MultiLineMacro", "Directive", "Alignas", "Alignof", "Asm", "Auto", 
@@ -129,8 +129,8 @@ public class CPP14Lexer extends Lexer {
 		"Binaryliteral", "Integersuffix", "Characterliteral", "Floatingliteral", 
 		"Stringliteral", "Userdefinedintegerliteral", "Userdefinedfloatingliteral", 
 		"Userdefinedstringliteral", "Userdefinedcharacterliteral", "Whitespace", 
-		"Newline", "BlockComment", "LineComment", "CCG_SPECIAL_ID", "CCG_SPECIAL_EXPR", 
-		"CCG_SPECIAL_BLOCK", "PreprocessorHeader"
+		"Newline", "BlockComment", "LineComment", "CCG_SPECIAL_ID", "CCG_SPECIAL_SEQ", 
+		"CCG_SPECIAL_EXPR", "CCG_SPECIAL_BLOCK"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -190,7 +190,7 @@ public class CPP14Lexer extends Lexer {
 	public ATN getATN() { return _ATN; }
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\u0094\u05bd\b\1\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\u0094\u05be\b\1\4"+
 		"\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n"+
 		"\4\13\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22"+
 		"\t\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31"+
@@ -305,38 +305,38 @@ public class CPP14Lexer extends Lexer {
 		"\u00a8\3\u00a8\3\u00a8\3\u00a8\7\u00a8\u059c\n\u00a8\f\u00a8\16\u00a8"+
 		"\u059f\13\u00a8\3\u00a8\3\u00a8\3\u00a8\3\u00a8\3\u00a8\3\u00a9\3\u00a9"+
 		"\3\u00a9\3\u00a9\7\u00a9\u05aa\n\u00a9\f\u00a9\16\u00a9\u05ad\13\u00a9"+
-		"\3\u00a9\3\u00a9\3\u00aa\3\u00aa\3\u00aa\3\u00ab\3\u00ab\3\u00ab\3\u00ab"+
-		"\3\u00ac\3\u00ac\3\u00ac\3\u00ac\3\u00ad\3\u00ad\7\u015f\u0552\u0559\u0560"+
-		"\u059d\2\u00ae\3\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13\25\f\27\r\31\16"+
-		"\33\17\35\20\37\21!\22#\23%\24\'\25)\26+\27-\30/\31\61\32\63\33\65\34"+
-		"\67\359\36;\37= ?!A\"C#E$G%I&K\'M(O)Q*S+U,W-Y.[/]\60_\61a\62c\63e\64g"+
-		"\65i\66k\67m8o9q:s;u<w=y>{?}@\177A\u0081B\u0083C\u0085D\u0087E\u0089F"+
-		"\u008bG\u008dH\u008fI\u0091J\u0093K\u0095L\u0097M\u0099N\u009bO\u009d"+
-		"P\u009fQ\u00a1R\u00a3S\u00a5T\u00a7U\u00a9V\u00abW\u00adX\u00afY\u00b1"+
-		"Z\u00b3[\u00b5\\\u00b7]\u00b9^\u00bb_\u00bd`\u00bfa\u00c1b\u00c3c\u00c5"+
-		"d\u00c7e\u00c9f\u00cbg\u00cdh\u00cfi\u00d1j\u00d3k\u00d5l\u00d7m\u00d9"+
-		"n\u00dbo\u00ddp\u00dfq\u00e1r\u00e3s\u00e5t\u00e7u\u00e9v\u00ebw\u00ed"+
-		"x\u00efy\u00f1z\u00f3{\u00f5|\u00f7}\u00f9~\u00fb\2\u00fd\2\u00ff\177"+
-		"\u0101\2\u0103\2\u0105\2\u0107\u0080\u0109\u0081\u010b\u0082\u010d\u0083"+
-		"\u010f\u0084\u0111\2\u0113\2\u0115\2\u0117\2\u0119\u0085\u011b\2\u011d"+
-		"\2\u011f\2\u0121\u0086\u0123\2\u0125\2\u0127\2\u0129\2\u012b\2\u012d\u0087"+
-		"\u012f\2\u0131\2\u0133\2\u0135\2\u0137\2\u0139\u0088\u013b\2\u013d\2\u013f"+
-		"\2\u0141\u0089\u0143\u008a\u0145\u008b\u0147\u008c\u0149\2\u014b\u008d"+
-		"\u014d\u008e\u014f\u008f\u0151\u0090\u0153\u0091\u0155\u0092\u0157\u0093"+
-		"\u0159\u0094\3\2\22\3\2\f\f\5\2C\\aac|\3\2\62;\3\2\63;\3\2\629\5\2\62"+
-		";CHch\3\2\62\63\4\2WWww\4\2NNnn\6\2\f\f\17\17))^^\4\2--//\6\2HHNNhhnn"+
-		"\5\2NNWWww\6\2\f\f\17\17$$^^\4\2\13\13\"\"\4\2\f\f\17\17\2\u05fb\2\3\3"+
-		"\2\2\2\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2"+
-		"\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2\2\2\2\31\3"+
-		"\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2"+
-		"%\3\2\2\2\2\'\3\2\2\2\2)\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61"+
-		"\3\2\2\2\2\63\3\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2\29\3\2\2\2\2;\3\2\2\2"+
-		"\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2\2C\3\2\2\2\2E\3\2\2\2\2G\3\2\2\2\2I"+
-		"\3\2\2\2\2K\3\2\2\2\2M\3\2\2\2\2O\3\2\2\2\2Q\3\2\2\2\2S\3\2\2\2\2U\3\2"+
-		"\2\2\2W\3\2\2\2\2Y\3\2\2\2\2[\3\2\2\2\2]\3\2\2\2\2_\3\2\2\2\2a\3\2\2\2"+
-		"\2c\3\2\2\2\2e\3\2\2\2\2g\3\2\2\2\2i\3\2\2\2\2k\3\2\2\2\2m\3\2\2\2\2o"+
-		"\3\2\2\2\2q\3\2\2\2\2s\3\2\2\2\2u\3\2\2\2\2w\3\2\2\2\2y\3\2\2\2\2{\3\2"+
-		"\2\2\2}\3\2\2\2\2\177\3\2\2\2\2\u0081\3\2\2\2\2\u0083\3\2\2\2\2\u0085"+
+		"\3\u00a9\3\u00a9\3\u00aa\3\u00aa\3\u00aa\3\u00ab\3\u00ab\3\u00ab\3\u00ac"+
+		"\3\u00ac\3\u00ac\3\u00ac\3\u00ad\3\u00ad\3\u00ad\3\u00ad\7\u015f\u0552"+
+		"\u0559\u0560\u059d\2\u00ae\3\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13\25"+
+		"\f\27\r\31\16\33\17\35\20\37\21!\22#\23%\24\'\25)\26+\27-\30/\31\61\32"+
+		"\63\33\65\34\67\359\36;\37= ?!A\"C#E$G%I&K\'M(O)Q*S+U,W-Y.[/]\60_\61a"+
+		"\62c\63e\64g\65i\66k\67m8o9q:s;u<w=y>{?}@\177A\u0081B\u0083C\u0085D\u0087"+
+		"E\u0089F\u008bG\u008dH\u008fI\u0091J\u0093K\u0095L\u0097M\u0099N\u009b"+
+		"O\u009dP\u009fQ\u00a1R\u00a3S\u00a5T\u00a7U\u00a9V\u00abW\u00adX\u00af"+
+		"Y\u00b1Z\u00b3[\u00b5\\\u00b7]\u00b9^\u00bb_\u00bd`\u00bfa\u00c1b\u00c3"+
+		"c\u00c5d\u00c7e\u00c9f\u00cbg\u00cdh\u00cfi\u00d1j\u00d3k\u00d5l\u00d7"+
+		"m\u00d9n\u00dbo\u00ddp\u00dfq\u00e1r\u00e3s\u00e5t\u00e7u\u00e9v\u00eb"+
+		"w\u00edx\u00efy\u00f1z\u00f3{\u00f5|\u00f7}\u00f9~\u00fb\2\u00fd\2\u00ff"+
+		"\177\u0101\2\u0103\2\u0105\2\u0107\u0080\u0109\u0081\u010b\u0082\u010d"+
+		"\u0083\u010f\u0084\u0111\2\u0113\2\u0115\2\u0117\2\u0119\u0085\u011b\2"+
+		"\u011d\2\u011f\2\u0121\u0086\u0123\2\u0125\2\u0127\2\u0129\2\u012b\2\u012d"+
+		"\u0087\u012f\2\u0131\2\u0133\2\u0135\2\u0137\2\u0139\u0088\u013b\2\u013d"+
+		"\2\u013f\2\u0141\u0089\u0143\u008a\u0145\u008b\u0147\u008c\u0149\2\u014b"+
+		"\u008d\u014d\u008e\u014f\u008f\u0151\u0090\u0153\u0091\u0155\u0092\u0157"+
+		"\u0093\u0159\u0094\3\2\22\3\2\f\f\5\2C\\aac|\3\2\62;\3\2\63;\3\2\629\5"+
+		"\2\62;CHch\3\2\62\63\4\2WWww\4\2NNnn\6\2\f\f\17\17))^^\4\2--//\6\2HHN"+
+		"Nhhnn\5\2NNWWww\6\2\f\f\17\17$$^^\4\2\13\13\"\"\4\2\f\f\17\17\2\u05fc"+
+		"\2\3\3\2\2\2\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2"+
+		"\2\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2\2\2"+
+		"\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2"+
+		"\2\2\2%\3\2\2\2\2\'\3\2\2\2\2)\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2"+
+		"\2\2\61\3\2\2\2\2\63\3\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2\29\3\2\2\2\2;\3"+
+		"\2\2\2\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2\2C\3\2\2\2\2E\3\2\2\2\2G\3\2\2"+
+		"\2\2I\3\2\2\2\2K\3\2\2\2\2M\3\2\2\2\2O\3\2\2\2\2Q\3\2\2\2\2S\3\2\2\2\2"+
+		"U\3\2\2\2\2W\3\2\2\2\2Y\3\2\2\2\2[\3\2\2\2\2]\3\2\2\2\2_\3\2\2\2\2a\3"+
+		"\2\2\2\2c\3\2\2\2\2e\3\2\2\2\2g\3\2\2\2\2i\3\2\2\2\2k\3\2\2\2\2m\3\2\2"+
+		"\2\2o\3\2\2\2\2q\3\2\2\2\2s\3\2\2\2\2u\3\2\2\2\2w\3\2\2\2\2y\3\2\2\2\2"+
+		"{\3\2\2\2\2}\3\2\2\2\2\177\3\2\2\2\2\u0081\3\2\2\2\2\u0083\3\2\2\2\2\u0085"+
 		"\3\2\2\2\2\u0087\3\2\2\2\2\u0089\3\2\2\2\2\u008b\3\2\2\2\2\u008d\3\2\2"+
 		"\2\2\u008f\3\2\2\2\2\u0091\3\2\2\2\2\u0093\3\2\2\2\2\u0095\3\2\2\2\2\u0097"+
 		"\3\2\2\2\2\u0099\3\2\2\2\2\u009b\3\2\2\2\2\u009d\3\2\2\2\2\u009f\3\2\2"+
@@ -399,7 +399,7 @@ public class CPP14Lexer extends Lexer {
 		"\2\2\u013f\u054e\3\2\2\2\u0141\u0571\3\2\2\2\u0143\u057d\3\2\2\2\u0145"+
 		"\u057f\3\2\2\2\u0147\u0582\3\2\2\2\u0149\u0585\3\2\2\2\u014b\u0588\3\2"+
 		"\2\2\u014d\u0593\3\2\2\2\u014f\u0597\3\2\2\2\u0151\u05a5\3\2\2\2\u0153"+
-		"\u05b0\3\2\2\2\u0155\u05b3\3\2\2\2\u0157\u05b7\3\2\2\2\u0159\u05bb\3\2"+
+		"\u05b0\3\2\2\2\u0155\u05b3\3\2\2\2\u0157\u05b6\3\2\2\2\u0159\u05ba\3\2"+
 		"\2\2\u015b\u0167\7%\2\2\u015c\u015e\n\2\2\2\u015d\u015c\3\2\2\2\u015e"+
 		"\u0161\3\2\2\2\u015f\u0160\3\2\2\2\u015f\u015d\3\2\2\2\u0160\u0162\3\2"+
 		"\2\2\u0161\u015f\3\2\2\2\u0162\u0164\7^\2\2\u0163\u0165\7\17\2\2\u0164"+
@@ -736,16 +736,16 @@ public class CPP14Lexer extends Lexer {
 		"\2\u05a9\u05a8\3\2\2\2\u05aa\u05ad\3\2\2\2\u05ab\u05a9\3\2\2\2\u05ab\u05ac"+
 		"\3\2\2\2\u05ac\u05ae\3\2\2\2\u05ad\u05ab\3\2\2\2\u05ae\u05af\b\u00a9\3"+
 		"\2\u05af\u0152\3\2\2\2\u05b0\u05b1\7&\2\2\u05b1\u05b2\5\u00ff\u0080\2"+
-		"\u05b2\u0154\3\2\2\2\u05b3\u05b4\7&\2\2\u05b4\u05b5\7*\2\2\u05b5\u05b6"+
-		"\7+\2\2\u05b6\u0156\3\2\2\2\u05b7\u05b8\7&\2\2\u05b8\u05b9\7}\2\2\u05b9"+
-		"\u05ba\7\177\2\2\u05ba\u0158\3\2\2\2\u05bb\u05bc\7%\2\2\u05bc\u015a\3"+
-		"\2\2\2G\2\u015f\u0164\u0169\u016e\u0176\u0428\u042d\u042f\u0434\u043c"+
-		"\u0440\u0444\u0448\u044a\u044e\u0453\u0458\u045d\u0464\u0468\u046d\u0474"+
-		"\u0478\u047d\u048a\u048e\u0492\u0496\u0498\u04a2\u04a8\u04b1\u04ba\u04c3"+
-		"\u04c7\u04cc\u04d1\u04e9\u04f6\u04fe\u0502\u0505\u050a\u050c\u050f\u0516"+
-		"\u051a\u051f\u0522\u0528\u052d\u0533\u0539\u053e\u0542\u0547\u054c\u0552"+
-		"\u0559\u0560\u0571\u0575\u057d\u058a\u0590\u0593\u059d\u05ab\4\2\3\2\b"+
-		"\2\2";
+		"\u05b2\u0154\3\2\2\2\u05b3\u05b4\7&\2\2\u05b4\u05b5\7&\2\2\u05b5\u0156"+
+		"\3\2\2\2\u05b6\u05b7\7&\2\2\u05b7\u05b8\7*\2\2\u05b8\u05b9\7+\2\2\u05b9"+
+		"\u0158\3\2\2\2\u05ba\u05bb\7&\2\2\u05bb\u05bc\7}\2\2\u05bc\u05bd\7\177"+
+		"\2\2\u05bd\u015a\3\2\2\2G\2\u015f\u0164\u0169\u016e\u0176\u0428\u042d"+
+		"\u042f\u0434\u043c\u0440\u0444\u0448\u044a\u044e\u0453\u0458\u045d\u0464"+
+		"\u0468\u046d\u0474\u0478\u047d\u048a\u048e\u0492\u0496\u0498\u04a2\u04a8"+
+		"\u04b1\u04ba\u04c3\u04c7\u04cc\u04d1\u04e9\u04f6\u04fe\u0502\u0505\u050a"+
+		"\u050c\u050f\u0516\u051a\u051f\u0522\u0528\u052d\u0533\u0539\u053e\u0542"+
+		"\u0547\u054c\u0552\u0559\u0560\u0571\u0575\u057d\u058a\u0590\u0593\u059d"+
+		"\u05ab\4\2\3\2\b\2\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

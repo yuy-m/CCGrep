@@ -48,7 +48,7 @@
 
     <target name="makejar">
         <available file="${dir.target.dependencies}" property="unjarred"/>
-        <antcall target="unjar_deps"/>
+        <antcall target="unjar_dependencies"/>
 
         <jar destfile="${jar.name}">
             <fileset dir="${dir.target.classes}" includes="**/*.class" />
@@ -59,7 +59,7 @@
         </jar>
    </target>
 
-   <target name="unjar_deps" unless="unjarred">
+   <target name="unjar_dependencies" unless="unjarred">
         <mkdir dir="${dir.target.dependencies}" />
         <unjar dest="${dir.target.dependencies}" overwrite="no">
             <fileset dir="${dir.lib}" includes="*.jar"/>

@@ -1,11 +1,14 @@
 package jp.ac.osaka_u.ist.sel.ccgrep;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.*;
 
@@ -31,7 +34,7 @@ public class AntlrTokenizer implements ITokenizer
 
     public CommonTokenStream extractAsStreamFromString(String code)
     {
-        return extractAsStream(CharStreams.fromString(code));
+        return extractAsStream(CharStreams.fromString(code, "<string>"));
     }
 
     @Override
@@ -44,9 +47,18 @@ public class AntlrTokenizer implements ITokenizer
     public CommonTokenStream extractAsStreamFromFile(String filename)
     {
         try{
-            return extractAsStream(filename.equals("-")
-                ? CharStreams.fromStream(System.in)
-                : CharStreams.fromFileName(filename));
+            if(filename.equals("-"))
+            {
+                final String code =
+                    new BufferedReader(new InputStreamReader(System.in))
+                        .lines()
+                        .collect(Collectors.joining(System.lineSeparator()));
+                return extractAsStream(CharStreams.fromString(code, "<standard-input>"));
+            }
+            else
+            {
+                return extractAsStream(CharStreams.fromFileName(filename));
+            }
         }
         catch(IOException e)
         {

@@ -91,8 +91,12 @@ public class Frontend
         final String appName = "ccgrep";
         final String appSyntax = appName + " [OPTIONS]... QUERY_CODE [TARGETS]..." + System.lineSeparator()
                                 + "       " + appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
-        final String header = "\nCode clone detector like grep command.\n\n";
-        final String footer = "\nWhen TARGETS is -, read standard input."
+
+        final String header = "\nCode clone detector like grep command.\n\n"
+                            + "Example: ccgrep -r -f query.java target/\n"
+                            + "         ccgrep -r 'int a = 1;' target/\n\n";
+
+                            final String footer = "\nWhen TARGETS is -, read standard input."
             + " With no TARGETS, read . if a command-line -r is given, - otherwise."
             + " Exit status is 0 if any clone is detected, 1 otherwise;"
             + " if any error occurs, the exit status is 2.";
@@ -101,7 +105,7 @@ public class Frontend
     }
 
     private static final Options options = new Options()
-        .addOption( // blindLevelName
+        .addOption(
             Option.builder("b")
             .longOpt("blind")
             .desc("set blind level. none(Type 1) / consistent(p-match)(by default) / full(Type 2).")
@@ -109,7 +113,7 @@ public class Frontend
             .argName("LEVEL")
             .build()
         )
-        .addOption( // languageName
+        .addOption(
             Option.builder("l")
             .longOpt("language")
             .desc("set target language. c / c++ / java(by default) / python3."
@@ -118,7 +122,7 @@ public class Frontend
             .argName("LANG")
             .build()
         )
-        .addOption( // printOption
+        .addOption(
             Option.builder("p")
             .longOpt("print")
             .desc("set printing option l/N/f/e/c like `-p fN`."
@@ -131,7 +135,7 @@ public class Frontend
             .argName("OPTION")
             .build()
         )
-        .addOption( // needleFileName
+        .addOption(
             Option.builder("f")
             .longOpt("file")
             .desc("obtain needle from file. CANNOT give needle as code string at once.")
@@ -145,7 +149,7 @@ public class Frontend
             .desc("traverse directories recursively.")
             .build()
         )
-        .addOption( // help
+        .addOption(
             Option.builder("h")
             .longOpt("help")
             .desc("show help.")

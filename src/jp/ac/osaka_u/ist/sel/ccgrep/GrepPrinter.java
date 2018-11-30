@@ -53,7 +53,7 @@ public class GrepPrinter
         {
             if(option.fileNameEnabled)
             {
-                final String fn = "file:" + clone.filename + " (" + clone.getRangeString() + ")";
+                final String fn = "file:" + clone.filename + " (" + getRangeString(clone) + ")";
                 stream.println(option.escapeEnabled? option.language.lineCommented(fn): fn);
             }
             if(option.codeEnabled)
@@ -70,6 +70,14 @@ public class GrepPrinter
             }
         }
     }
+
+    private static String getRangeString(Clone clone)
+    {
+        return clone.start.getLine() + "." + clone.start.getCharPositionInLine()
+            + "-"
+            + clone.end.getLine() + "." + (clone.end.getCharPositionInLine() + clone.end.getText().length());
+    }
+
     public static class Option
     {
         Language language;

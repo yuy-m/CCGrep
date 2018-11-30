@@ -61,13 +61,14 @@ public class TokenSequenceDetector implements IDetector
             return Collections.emptyList();
         }
 
-        final List<Clone> clones = new ArrayList<>();
+        final List<Clone> clones = //new ArrayList<>();
         IntStream.range(0, haystack.size() - needle.size() + 1)
-            .parallel()
+            //.parallel()
             .mapToObj(idx -> haystack.subList(idx, haystack.size()))
             .map(subHaystack -> submatch(subHaystack))
             .filter(Objects::nonNull)
-            .forEachOrdered(clones::add);
+            .collect(Collectors.toList());
+            //.forEachOrdered(clones::add);
         CCGrep.debugprintln("(" + clones.size() + ") finish.");
         return clones;
     }

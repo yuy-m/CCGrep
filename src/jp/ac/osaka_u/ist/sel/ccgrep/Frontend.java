@@ -93,8 +93,8 @@ public class Frontend
                                 + "       " + appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
 
         final String header = "\nCode clone detector like grep command.\n\n"
-                            + "Example: ccgrep -r -f query.java target/\n"
-                            + "         ccgrep -r 'int a = 1;' target/\n\n";
+                            + "Example: ccgrep -r -p n -f query.java target/ \n"
+                            + "         ccgrep -r -p fn 'int a = 1;' target/\n\n";
 
                             final String footer = "\nWhen TARGETS is -, read standard input."
             + " With no TARGETS, read . if a command-line -r is given, - otherwise."
@@ -125,12 +125,14 @@ public class Frontend
         .addOption(
             Option.builder("p")
             .longOpt("print")
-            .desc("set printing option l/N/f/e/c like `-p fN`."
-                + " When `l` set, print only file names."
-                + " When `N` set, Not print line numbers."
+            .desc("set printing option c/l/n/f/e like `-p fn`."
+                + " When `c` set, print ONLY the count of clones."
+                + " When `l` set, print ONLY file name per matched files."
+                + " When `h` set, NOT print file names."
+                + " When `n` set, print line numbers."
                 + " When `f` set, print whole code of clones."
                 + " When `e` set, comment out the file name and line numbers."
-                + " When `c` set, print only the count of clones.")
+            )
             .hasArg()
             .argName("OPTION")
             .build()

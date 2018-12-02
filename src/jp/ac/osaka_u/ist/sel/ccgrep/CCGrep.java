@@ -88,7 +88,7 @@ public class CCGrep
 
         debugprintln("traversing...");
         final Traverser traverser = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension);
-        final List<Clone> clones = frontend.haystackNames.stream()
+        final List<CloneList> clones = frontend.haystackNames.stream()
             .map(Paths::get)
             .map(traverser::traverse)
             .flatMap(List::stream)
@@ -127,7 +127,7 @@ public class CCGrep
         }
     }
 
-    private void printResult(List<Clone> clones, Language language)
+    private void printResult(List<CloneList> clones, Language language)
     {
         debugprintln("printing...");
         if(frontend.printOption.contains("c"))
@@ -137,14 +137,7 @@ public class CCGrep
         else
         {
             new GrepPrinter(clones)
-                .println(
-                    new GrepPrinter.Option(language)
-                        .enableGrepLike(!frontend.printOption.contains("f"))
-                        .enableFileName(true)
-                        .enableLine(!frontend.printOption.contains("N"))
-                        .enableCode(!frontend.printOption.contains("l"))
-                        .enableEscape(frontend.printOption.contains("e"))
-                );
+                .println(new PrintOption(language, frontend.printOption));
         }
         debugprintln("finish.");
     }

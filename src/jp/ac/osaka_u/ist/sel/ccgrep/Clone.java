@@ -7,12 +7,10 @@ import org.antlr.v4.runtime.misc.Interval;
 
 public class Clone
 {
-    public final String filename;
     public final GrepToken start;
     public final GrepToken end;
-    public Clone(String filename, GrepToken start, GrepToken end)
+    public Clone(GrepToken start, GrepToken end)
     {
-        this.filename = filename;
         this.start = start;
         this.end = end;
     }
@@ -27,9 +25,14 @@ public class Clone
             .subList(start.getLine() - 1, end.getLine());
     }
 
+    String getFileName()
+    {
+        return start.getFileName();
+    }
+
     @Override
     public String toString()
     {
-        return filename + ":" + start + "-" + end;
+        return getFileName() + ":" + start + "-" + end;
     }
 }

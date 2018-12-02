@@ -50,7 +50,7 @@ public class TokenSequenceDetector implements IDetector
     }
 
     @Override
-    public List<Clone> detect(final String haystackFileName)
+    public CloneList detect(final String haystackFileName)
     {
         CCGrep.debugprint(" tokenizing " + haystackFileName + "...");
         final List<GrepToken> haystack = tokenizer.extractAsListFromFile(haystackFileName);
@@ -58,19 +58,17 @@ public class TokenSequenceDetector implements IDetector
         if(needle.size() > haystack.size())
         {
             CCGrep.debugprintln("(0) finish.");
-            return Collections.emptyList();
+            return new CloneList(haystackFileName);
         }
 
-        final List<Clone> clones = //new ArrayList<>();
-        IntStream.range(0, haystack.size() - needle.size() + 1)
-            //.parallel()
-            .mapToObj(idx -> haystack.subList(idx, haystack.size()))
-            .map(subHaystack -> submatch(subHaystack))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-            //.forEachOrdered(clones::add);
+        final List<Clone> clones =
+            IntStream.range(0, haystack.size() - needle.size() + 1)
+                .mapToObj(idx -> haystack.subList(idx, haystack.size()))
+                .map(subHaystack -> submatch(subHaystack))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         CCGrep.debugprintln("(" + clones.size() + ") finish.");
-        return clones;
+        return new CloneList(haystackFileName, clones);
     }
 
     private Clone submatch(List<GrepToken> subHaystack)
@@ -113,7 +111,6 @@ public class TokenSequenceDetector implements IDetector
         return needleIdx < needle.size()
             ? null
             : new Clone(
-                subHaystack.get(0).getFileName(),
                 subHaystack.get(0),
                 subHaystack.get(haystackIdx - 1)
             );

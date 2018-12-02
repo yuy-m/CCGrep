@@ -7,67 +7,80 @@ import java.io.PrintStream;
 
 public class GrepPrinter
 {
-    final List<Clone> clones;
+    final List<CloneList> clones;
     final PrintStream stream;
-    GrepPrinter(List<Clone> clones, PrintStream stream)
+    GrepPrinter(List<CloneList> clones, PrintStream stream)
     {
         this.clones = clones;
         this.stream = stream;
     }
-    GrepPrinter(List<Clone> clones)
+    GrepPrinter(List<CloneList> clones)
     {
         this(clones, System.out);
     }
-    void println(Option option)
+    public void println(PrintOption option)
     {
-        clones.forEach(clone -> printCloneln(clone, option));
-    }
-    void printCloneln(Clone clone, Option option)
-    {
-        final List<String> lines = clone.getCodeByLine();
-
-        if(option.grepLikeEnabled)
+        if(option.isCountOnlyEnabled)
         {
-            final StringJoiner sj = new StringJoiner(":", option.escapeEnabled? option.language.blockCommentBegin(): "", "");
-            if(option.fileNameEnabled)
-            {
-                sj.add(clone.filename);
-            }
-            if(option.lineEnabled)
-            {
-                final String s = String.valueOf(clone.start.getLine());
-                sj.add(s);
-            }
-            if(option.codeEnabled)
-            {
-                sj.add((option.escapeEnabled? option.language.blockCommentEnd(): "") + lines.get(0));
-                stream.println(sj);
-            }
-            else if(option.escapeEnabled)
-            {
-                stream.print(sj);
-                stream.println(option.language.blockCommentEnd());
-            }
+            stream.println(
+                clones.stream()
+                    .mapToInt(clonesByFile -> clonesByFile.size())
+                    .sum()
+            );
+        }
+        else if(option.isFileNameOnlyEnabled)
+        {
+            clones.stream()
+                .map(clonesByFile -> clonesByFile.filename)
+                .forEach(stream::println);
         }
         else
         {
-            if(option.fileNameEnabled)
+            clones.forEach(
+                clonesByFile -> clonesByFile.forEach(
+                    clone -> printCloneln(clone, option)
+                )
+            );
+        }
+    }
+    private void printCloneln(Clone clone, PrintOption option)
+    {
+        final List<String> lines = clone.getCodeByLine();
+
+        if(option.isCodeEnabled)
+        {
+            if(option.isFileNameEnabled)
             {
-                final String fn = "file:" + clone.filename + " (" + getRangeString(clone) + ")";
-                stream.println(option.escapeEnabled? option.language.lineCommented(fn): fn);
+                stream.println(option.isEscapeEnabled
+                    ? option.language.lineCommented(clone.getFileName())
+                    : clone.getFileName());
             }
-            if(option.codeEnabled)
+            IntStream.range(0, lines.size())
+                .forEach(idx -> {
+                    if(option.isLineEnabled)
+                    {
+                        final String ln = (clone.start.getLine() + idx) + ":";
+                        stream.print(option.isEscapeEnabled? option.language.blockCommented(ln): ln);
+                    }
+                    stream.println(lines.get(idx));
+                });
+        }
+        else
+        {
+            final StringJoiner sj = new StringJoiner(":", option.isEscapeEnabled? option.language.blockCommentBegin(): "", "");
+            if(option.isFileNameEnabled)
             {
-                IntStream.range(0, lines.size())
-                    .forEach(idx -> {
-                        if(option.lineEnabled)
-                        {
-                            final String ln = (clone.start.getLine() + idx) + ":";
-                            stream.print(option.escapeEnabled? option.language.blockCommented(ln): ln);
-                        }
-                        stream.println(lines.get(idx));
-                    });
+                sj.add(clone.getFileName());
             }
+            if(option.isLineEnabled)
+            {
+                sj.add(String.valueOf(clone.start.getLine()));
+            }
+            sj.add(option.isEscapeEnabled
+                ? option.language.blockCommentEnd() + lines.get(0)
+                : lines.get(0)
+            );
+            stream.println(sj);
         }
     }
 
@@ -76,44 +89,5 @@ public class GrepPrinter
         return clone.start.getLine() + "." + clone.start.getCharPositionInLine()
             + "-"
             + clone.end.getLine() + "." + (clone.end.getCharPositionInLine() + clone.end.getText().length());
-    }
-
-    public static class Option
-    {
-        Language language;
-        boolean grepLikeEnabled = true;
-        boolean fileNameEnabled = true;
-        boolean lineEnabled = true;
-        boolean codeEnabled = true;
-        boolean escapeEnabled = false;
-        public Option(Language language)
-        {
-            this.language = language;
-        }
-        public Option enableGrepLike(boolean enabled)
-        {
-            this.grepLikeEnabled = enabled;
-            return this;
-        }
-        public Option enableFileName(boolean enabled)
-        {
-            this.fileNameEnabled = enabled;
-            return this;
-        }
-        public Option enableLine(boolean enabled)
-        {
-            this.lineEnabled = enabled;
-            return this;
-        }
-        public Option enableCode(boolean enabled)
-        {
-            this.codeEnabled = enabled;
-            return this;
-        }
-        public Option enableEscape(boolean enabled)
-        {
-            this.escapeEnabled = enabled;
-            return this;
-        }
     }
 }

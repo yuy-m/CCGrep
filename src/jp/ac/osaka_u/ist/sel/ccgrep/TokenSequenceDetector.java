@@ -11,25 +11,30 @@ public class TokenSequenceDetector implements IDetector
     final List<GrepToken> needle;
     final BlindLevel blindLevel;
 
-    public TokenSequenceDetector(ITokenizer tokenizer, List<GrepToken> needle, BlindLevel blindLevel)
+    private final Map<String, String> defaultIdmap = new HashMap<>();
+
+    public TokenSequenceDetector(ITokenizer tokenizer, List<GrepToken> needle, BlindLevel blindLevel, String[] fixedIds)
     {
         this.tokenizer = tokenizer;
         this.blindLevel = blindLevel;
         this.needle = needle;
+        Arrays.stream(fixedIds)
+            .forEach(id -> defaultIdmap.put(id, id));
         needle.forEach(CCGrep::debugprintln);
     }
 
-    public static TokenSequenceDetector withNeedleFromCode(ITokenizer tokenizer, String needleCode, BlindLevel blindLevel)
+    public static TokenSequenceDetector withNeedleFromCode(ITokenizer tokenizer, String needleCode, BlindLevel blindLevel, String[] fixedIds)
     {
-        return withNeedleImpl(tokenizer, blindLevel, () -> tokenizer.extractAsListFromString(needleCode));
+        return withNeedleImpl(tokenizer, blindLevel, fixedIds, () -> tokenizer.extractAsListFromString(needleCode));
     }
 
-    public static TokenSequenceDetector withNeedleFromFile(ITokenizer tokenizer, String needleName, BlindLevel blindLevel)
+    public static TokenSequenceDetector withNeedleFromFile(ITokenizer tokenizer, String needleName, BlindLevel blindLevel, String[] fixedIds)
     {
-        return withNeedleImpl(tokenizer, blindLevel, () -> tokenizer.extractAsListFromFile(needleName));
+        return withNeedleImpl(tokenizer, blindLevel, fixedIds, () -> tokenizer.extractAsListFromFile(needleName));
     }
 
-    private static TokenSequenceDetector withNeedleImpl(ITokenizer tokenizer, BlindLevel blindLevel, Supplier<List<GrepToken>> needleSupplier)
+    private static TokenSequenceDetector withNeedleImpl(
+        ITokenizer tokenizer, BlindLevel blindLevel, String[] fixedIds, Supplier<List<GrepToken>> needleSupplier)
     {
         CCGrep.debugprint("tokenizing query...");
         final List<GrepToken> needle = needleSupplier.get();
@@ -37,16 +42,16 @@ public class TokenSequenceDetector implements IDetector
         if(needle.size() == 0)
         {
             System.err.println("Error: No token found in the query.");
-            System.exit(2);
+            return null;
         }
         final int specialSeq = tokenizer.getLanguage().specialSeq();
         if(needle.get(0).getType() == specialSeq || needle.get(needle.size() - 1).getType() == specialSeq)
         {
             System.err.println("Error: Query cannot start/end with special token `$$`.");
-            System.exit(2);
+            return null;
         }
         CCGrep.debugprintln("The query has " + needle.size() + " token(s).");
-        return new TokenSequenceDetector(tokenizer, needle, blindLevel);
+        return new TokenSequenceDetector(tokenizer, needle, blindLevel, fixedIds);
     }
 
     @Override
@@ -73,9 +78,7 @@ public class TokenSequenceDetector implements IDetector
 
     private Clone submatch(List<GrepToken> subHaystack)
     {
-        final Map<String, GrepToken> idmap =
-            blindLevel == BlindLevel.CONSISTENT
-                ? new HashMap<>(): Collections.emptyMap();
+        final Map<String, String> idmap = blindLevel.createConstraint(defaultIdmap);
 
         // Chaotic Implementation!
         int needleIdx = 0;
@@ -119,7 +122,7 @@ public class TokenSequenceDetector implements IDetector
                             .checkTokenEquality(needle.get(idx), subHaystack.get(idx), blindLevel, idmap)); //*/
     }
 
-    private int matchSpecialSequence(GrepToken nt, List<GrepToken> subHaystack, int haystackIdx, Map<String, GrepToken> idmap)
+    private int matchSpecialSequence(GrepToken nt, List<GrepToken> subHaystack, int haystackIdx, Map<String, String> idmap)
     {
         final ArrayDeque<Integer> brackets = new ArrayDeque<>();
         while(haystackIdx < subHaystack.size())

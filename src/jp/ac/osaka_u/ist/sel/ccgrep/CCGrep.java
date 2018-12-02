@@ -80,11 +80,22 @@ public class CCGrep
         final ITokenizer tokenizer = new AntlrTokenizer(language);
 
         final BlindLevel blindLevel = BlindLevel.findByName(frontend.blindLevelName);
+        if(blindLevel == null)
+        {
+            System.err.println("BlindLevel `" + frontend.blindLevelName + "` is not supported.");
+            return 2;
+        }
         debugprintln("blind level: " + blindLevel);
 
+        final String[] fixedIds = frontend.fixedIds.split("\\|");
+
         final IDetector detector = frontend.needleFileName == null
-            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, frontend.needleCode, blindLevel)
-            : TokenSequenceDetector.withNeedleFromFile(tokenizer, frontend.needleFileName, blindLevel);
+            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, frontend.needleCode, blindLevel, fixedIds)
+            : TokenSequenceDetector.withNeedleFromFile(tokenizer, frontend.needleFileName, blindLevel, fixedIds);
+        if(detector == null)
+        {
+            return 2;
+        }
 
         debugprintln("traversing...");
         final Traverser traverser = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension);

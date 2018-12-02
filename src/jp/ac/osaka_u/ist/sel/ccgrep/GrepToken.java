@@ -10,41 +10,34 @@ class GrepToken
     {
         this.token = token;
     }
+
     public String getText()
     {
         return token.getText();
     }
+
     public String getFileName()
     {
         return token.getInputStream().getSourceName();
     }
+
     @Override
     public boolean equals(Object obj)
     {
-        if(obj == this)
-        {
-            return true;
-        }
-        if(obj instanceof GrepToken)
-        {
-            final GrepToken rhs = (GrepToken)obj;
-            return rhs.getText().equals(this.getText());
-        }
-        return false;
+        return obj == this? true
+            : obj instanceof GrepToken? ((GrepToken)obj).getText().equals(this.getText())
+            : obj instanceof String? this.getText().equals((String)obj)
+            : false;
     }
+
     public boolean equalsAsSpecialTo(Object obj)
     {
-        if(obj == this)
-        {
-            return true;
-        }
-        if(obj instanceof GrepToken)
-        {
-            final GrepToken rhs = (GrepToken)obj;
-            return getText().substring(1).equals(rhs.getText());
-        }
-        return false;
+        return obj == this? true
+            : obj instanceof GrepToken? getText().substring(1).equals(((GrepToken)obj).getText())
+            : obj instanceof String? getText().substring(1).equals((String)obj)
+            : false;
     }
+
     @Override
     public String toString()
     {

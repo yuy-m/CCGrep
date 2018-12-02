@@ -148,11 +148,16 @@ public enum Language
     }
 
     public boolean checkTokenEquality(
-        GrepToken needleToken, GrepToken haystackToken, BlindLevel blindLevel, Map<String, GrepToken> blindConstraint)
+        GrepToken needleToken, GrepToken haystackToken, BlindLevel blindLevel, Map<String, String> blindConstraint)
     {
         if(needleToken.getType() == specialId())
         {
             return needleToken.equalsAsSpecialTo(haystackToken);
+        }
+        final String t = blindConstraint.get(needleToken.getText());
+        if(t != null)
+        {
+            return haystackToken.equals(t);
         }
         return Arrays.stream(blindSets)
             .filter(set -> set.contains(needleToken.getType())

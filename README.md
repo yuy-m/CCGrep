@@ -41,6 +41,8 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
                         consistent(p-match)(by default) / full(Type 2).
  - `-f,--file <FILES>`      obtain needle from file. CANNOT give needle as
                         code string at once.
+ - `--fix <IDS>`         specify identifier(s) to match exactly the same
+                        ones (e.g. 'getValue|string').
  - `-h,--help`              show help.
  - `   --json`              print clones with JSON format (*experimental*).
  - `-l,--language <LANG>`   set target language. c / c++ / java(by default) /
@@ -74,6 +76,8 @@ These identifiers match exact same identifiers regardless of the [blind level](#
 
 Note: No spaces are allowed between `$` and identifier.  
 Note: assume that the languages uses no `$` in their grammar.
+
+You can also use `--fix` option to fix identifiers.
 
 #### AnyTokenSequence `$$`
 Special token `$$` in a query matches any token sequences (0 or more length) with balanced parentheses/braces/brackets

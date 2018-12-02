@@ -13,6 +13,7 @@ public class Frontend
     String blindLevelName = "";
     String languageName = null;
     String printOption = "";
+    String fixedIds = "";
     boolean isJsonEnabled = false;
 
     String needleFileName = null;
@@ -62,6 +63,10 @@ public class Frontend
             if(cl.hasOption("file"))
             {
                 fe.needleFileName = cl.getOptionValue("file");
+            }
+            if(cl.hasOption("fix"))
+            {
+                fe.fixedIds = cl.getOptionValue("fix");
             }
             List<String> restArgs = cl.getArgList();
             if(fe.needleFileName == null)
@@ -172,6 +177,14 @@ public class Frontend
             Option.builder()
             .longOpt("json")
             .desc("print clones with JSON format (experimental).")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("fix")
+            .desc("specify identifier(s) to match exactly the same ones (e.g. 'getValue|string').")
+            .hasArg()
+            .argName("IDS")
             .build()
         );
 }

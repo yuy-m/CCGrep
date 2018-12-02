@@ -5,19 +5,23 @@ import java.util.StringJoiner;
 import java.util.stream.IntStream;
 import java.io.PrintStream;
 
-public class GrepPrinter
+public class GrepPrinter implements IPrinter
 {
     final List<CloneList> clones;
     final PrintStream stream;
+
     GrepPrinter(List<CloneList> clones, PrintStream stream)
     {
         this.clones = clones;
         this.stream = stream;
     }
+
     GrepPrinter(List<CloneList> clones)
     {
         this(clones, System.out);
     }
+
+    @Override
     public void println(PrintOption option)
     {
         if(option.isCountOnlyEnabled)
@@ -31,18 +35,22 @@ public class GrepPrinter
         else if(option.isFileNameOnlyEnabled)
         {
             clones.stream()
+                .filter(clonesByFile -> !clonesByFile.isEmpty())
                 .map(clonesByFile -> clonesByFile.filename)
                 .forEach(stream::println);
         }
         else
         {
-            clones.forEach(
-                clonesByFile -> clonesByFile.forEach(
-                    clone -> printCloneln(clone, option)
-                )
-            );
+            clones.stream()
+                .filter(clonesByFile -> !clonesByFile.isEmpty())
+                .forEach(
+                    clonesByFile -> clonesByFile.forEach(
+                        clone -> printCloneln(clone, option)
+                    )
+                );
         }
     }
+
     private void printCloneln(Clone clone, PrintOption option)
     {
         final List<String> lines = clone.getCodeByLine();
@@ -86,8 +94,8 @@ public class GrepPrinter
 
     private static String getRangeString(Clone clone)
     {
-        return clone.start.getLine() + "." + clone.start.getCharPositionInLine()
+        return clone.getStartLine() + "." + clone.getStartColumn()
             + "-"
-            + clone.end.getLine() + "." + (clone.end.getCharPositionInLine() + clone.end.getText().length());
+            + clone.getEndLine() + "." + (clone.getEndColumn());
     }
 }

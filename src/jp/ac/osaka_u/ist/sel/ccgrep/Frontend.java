@@ -13,6 +13,7 @@ public class Frontend
     String blindLevelName = "";
     String languageName = null;
     String printOption = "";
+    boolean isJsonEnabled = false;
 
     String needleFileName = null;
     String needleCode = null;
@@ -37,6 +38,10 @@ public class Frontend
             if(cl.hasOption("log"))
             {
                 fe.isLogEnabled = true;
+            }
+            if(cl.hasOption("json"))
+            {
+                fe.isJsonEnabled = true;
             }
             if(cl.hasOption("recursive"))
             {
@@ -161,6 +166,12 @@ public class Frontend
             Option.builder()
             .longOpt("log")
             .desc("print debug log to standard error.")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("json")
+            .desc("print clones with JSON format (experimental).")
             .build()
         );
 }

@@ -33,8 +33,8 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
 *Not implemented yet*
 
 ## Usage
- - `$ ccgrep [options]... needleCode haystackFiles...`
- - `$ ccgrep [options]... -f needleFile haystackFiles...`
+ - `$ ccgrep [OPTIONS]... QUERY_CODE [TARGETS]...`
+ - `$ ccgrep [OPTIONS]... -f QUERY_FILE [TARGETS]...`
 
 #### Options
  - `-b,--blind <LEVEL>`     set blind level. none(Type 1) /
@@ -42,21 +42,22 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
  - `-f,--file <FILES>`      obtain needle from file. CANNOT give needle as
                         code string at once.
  - `-h,--help`              show help.
-
+ - `   --json`              print clones with JSON format (*experimental*).
  - `-l,--language <LANG>`   set target language. c / c++ / java(by default) /
                         python3. With `-f` option, the language can be
                         inferred from the file extension.
- - `-p,--print <OPTION>`    set printing option l/N/f/e/c like `-p fN`. When
-                        `l` set, print only file names. When `N` set, NOT
-                        print line numbers. When `f` set, print whole code
-                        of clones. When `e` set, comment out the file name
-                        and line numbers. When `c` set, print only the
-                        count of clones.
+ - `-p,--print <OPTION>`    set printing option c/l/n/f/e like `-p fn`. When
+                        `c` set, print ONLY the count of clones. When `l`
+                        set, print ONLY file name per matched files. When
+                        `h` set, NOT print file names. When `n` set, print
+                        line numbers. When `f` set, print whole code of
+                        clones. When `e` set, comment out the file name
+                        and line numbers.
  - `-r,--recursive`         traverse directories recursively.
 
 #### Example
- - `$ ./ccgrep -f needle.c src/`
- - `$ ./ccgrep 'int a = 0;' src/`
+ - `$ ccgrep -r -p n -f query.java target/`
+ - `$ ccgrep -r -p fn 'int a = 1;' target/`
 
 Note: to specify a query code, you should use SINGLE quotes `'` instead of DOUBLE quotes `"` because the variable expansion leads to unexpected results.
 

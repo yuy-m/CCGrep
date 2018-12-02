@@ -2,6 +2,7 @@ package jp.ac.osaka_u.ist.sel.ccgrep;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.function.Consumer;
 
 public class CloneList
@@ -22,6 +23,16 @@ public class CloneList
     public int size()
     {
         return clones.size();
+    }
+
+    public boolean isEmpty()
+    {
+        return clones.isEmpty();
+    }
+
+    public Stream<Clone> stream()
+    {
+        return clones.stream();
     }
 
     public void forEach(Consumer<Clone> action)

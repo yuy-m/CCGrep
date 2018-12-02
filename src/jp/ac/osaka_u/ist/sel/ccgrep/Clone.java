@@ -16,6 +16,11 @@ public class Clone
     }
     public List<String> getCodeByLine()
     {
+        return getCodeByLine(0, 0);
+    }
+
+    public List<String> getCodeByLine(int beforeContextCount, int afterContextCount)
+    {
         final String text = start.getInputStream()
             .getText(new Interval(
                 0,
@@ -25,9 +30,29 @@ public class Clone
             .subList(start.getLine() - 1, end.getLine());
     }
 
-    String getFileName()
+    public String getFileName()
     {
         return start.getFileName();
+    }
+
+    public int getStartLine()
+    {
+        return start.getLine();
+    }
+
+    public int getEndLine()
+    {
+        return end.getLine();
+    }
+
+    public int getStartColumn()
+    {
+        return start.getCharPositionInLine();
+    }
+
+    public int getEndColumn()
+    {
+        return end.getCharPositionInLine() + end.getText().length();
     }
 
     @Override

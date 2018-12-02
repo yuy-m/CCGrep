@@ -130,15 +130,10 @@ public class CCGrep
     private void printResult(List<CloneList> clones, Language language)
     {
         debugprintln("printing...");
-        if(frontend.printOption.contains("c"))
-        {
-            System.out.println(clones.size());
-        }
-        else
-        {
-            new GrepPrinter(clones)
-                .println(new PrintOption(language, frontend.printOption));
-        }
+        final IPrinter printer = frontend.isJsonEnabled
+            ? new JsonPrinter(clones, frontend)
+            : new GrepPrinter(clones);
+        printer.println(new PrintOption(language, frontend.printOption));
         debugprintln("finish.");
     }
 }

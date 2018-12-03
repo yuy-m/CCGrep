@@ -1,9 +1,11 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.model;
+
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.CharStream;
 
-class GrepToken
+
+public class GrepToken
 {
     private final Token token;
     public GrepToken(Token token)
@@ -82,7 +84,7 @@ class GrepToken
     {
         return token.getTokenIndex();
     }
-    int getType()
+    public int getType()
     {
         return token.getType();
     }

@@ -1,9 +1,14 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.logic;
+
 
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
+import static jp.ac.osaka_u.ist.sel.ccgrep.logger.Logger.debugLogger;
+
 
 public class TokenSequenceDetector implements IDetector
 {
@@ -20,7 +25,7 @@ public class TokenSequenceDetector implements IDetector
         this.needle = needle;
         Arrays.stream(fixedIds)
             .forEach(id -> defaultIdmap.put(id, id));
-        needle.forEach(CCGrep::debugprintln);
+        needle.forEach(t -> debugLogger.println(t));
     }
 
     public static TokenSequenceDetector withNeedleFromCode(ITokenizer tokenizer, String needleCode, BlindLevel blindLevel, String[] fixedIds)
@@ -36,9 +41,9 @@ public class TokenSequenceDetector implements IDetector
     private static TokenSequenceDetector withNeedleImpl(
         ITokenizer tokenizer, BlindLevel blindLevel, String[] fixedIds, Supplier<List<GrepToken>> needleSupplier)
     {
-        CCGrep.debugprint("tokenizing query...");
+        debugLogger.print("tokenizing query...");
         final List<GrepToken> needle = needleSupplier.get();
-        CCGrep.debugprintln("finish.");
+        debugLogger.println("finish.");
         if(needle.size() == 0)
         {
             System.err.println("Error: No token found in the query.");
@@ -50,19 +55,19 @@ public class TokenSequenceDetector implements IDetector
             System.err.println("Error: Query cannot start/end with special token `$$`.");
             return null;
         }
-        CCGrep.debugprintln("The query has " + needle.size() + " token(s).");
+        debugLogger.println("The query has " + needle.size() + " token(s).");
         return new TokenSequenceDetector(tokenizer, needle, blindLevel, fixedIds);
     }
 
     @Override
     public CloneList detect(final String haystackFileName)
     {
-        CCGrep.debugprint(" tokenizing " + haystackFileName + "...");
+        debugLogger.print(" tokenizing " + haystackFileName + "...");
         final List<GrepToken> haystack = tokenizer.extractAsListFromFile(haystackFileName);
-        CCGrep.debugprint("(" + haystack.size() + ").detecting ...");
+        debugLogger.print("(" + haystack.size() + ").detecting ...");
         if(needle.size() > haystack.size())
         {
-            CCGrep.debugprintln("(0) finish.");
+            debugLogger.println("(0) finish.");
             return new CloneList(haystackFileName);
         }
 
@@ -72,7 +77,7 @@ public class TokenSequenceDetector implements IDetector
                 .map(subHaystack -> submatch(subHaystack))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        CCGrep.debugprintln("(" + clones.size() + ") finish.");
+        debugLogger.println("(" + clones.size() + ") finish.");
         return new CloneList(haystackFileName, clones);
     }
 

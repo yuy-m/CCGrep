@@ -1,14 +1,14 @@
 package jp.ac.osaka_u.ist.sel.ccgrep;
 
-import java.nio.file.Paths;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import jp.ac.osaka_u.ist.sel.ccgrep.BlindLevel;
-import jp.ac.osaka_u.ist.sel.ccgrep.GrepPrinter;
-import jp.ac.osaka_u.ist.sel.ccgrep.Language;
-import jp.ac.osaka_u.ist.sel.ccgrep.TokenSequenceDetector;
+import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
+import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
+import jp.ac.osaka_u.ist.sel.ccgrep.printer.*;
+import static jp.ac.osaka_u.ist.sel.ccgrep.logger.Logger.debugLogger;
 
 public class CCGrep
 {
@@ -37,30 +37,6 @@ public class CCGrep
         System.exit(returnCode);
     }
 
-    static void debugprint(Object msg)
-    {
-        if(DEBUG)
-        {
-            System.err.print(msg.toString());
-        }
-    }
-
-    static void debugprintln(Object msg)
-    {
-        if(DEBUG)
-        {
-            System.err.println(msg.toString());
-        }
-    }
-
-    static void debugprintln()
-    {
-        if(DEBUG)
-        {
-            System.err.println();
-        }
-    }
-
     private final Frontend frontend;
 
     CCGrep(Frontend frontend)
@@ -68,14 +44,14 @@ public class CCGrep
         this.frontend = frontend;
     }
 
-    public int grep()
+    int grep()
     {
         final Language language = findLanguage();
         if(language == null)
         {
             return 2;
         }
-        debugprintln("language: " + language);
+        debugLogger.println("language: " + language);
 
         final ITokenizer tokenizer = new AntlrTokenizer(language);
 
@@ -85,7 +61,7 @@ public class CCGrep
             System.err.println("BlindLevel `" + frontend.blindLevelName + "` is not supported.");
             return 2;
         }
-        debugprintln("blind level: " + blindLevel);
+        debugLogger.println("blind level: " + blindLevel);
 
         final String[] fixedIds = frontend.fixedIds.split("\\|");
 
@@ -97,15 +73,11 @@ public class CCGrep
             return 2;
         }
 
-        debugprintln("traversing...");
+        debugLogger.println("traversing...");
         final Traverser traverser = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension);
-        final List<CloneList> clones = frontend.haystackNames.stream()
-            .map(Paths::get)
-            .map(traverser::traverse)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-        debugprintln("finish.");
-        debugprintln(clones.size() + " clone(s) found.");
+        final List<CloneList> clones = traverser.traverse(frontend.haystackNames);
+        debugLogger.println("finish.");
+        debugLogger.println(clones.size() + " clone(s) found.");
 
         printResult(clones, language);
         return clones.isEmpty()? 1: 0;
@@ -140,12 +112,12 @@ public class CCGrep
 
     private void printResult(List<CloneList> clones, Language language)
     {
-        debugprintln("printing...");
+        debugLogger.println("printing...");
         final IPrinter printer = frontend.isJsonEnabled
-            ? new JsonPrinter(clones, frontend)
+            ? new JsonPrinter(clones)
             : new GrepPrinter(clones);
         printer.println(new PrintOption(language, frontend.printOption));
-        debugprintln("finish.");
+        debugLogger.println("finish.");
     }
 }
 

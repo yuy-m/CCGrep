@@ -1,22 +1,26 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.printer;
+
 
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.IntStream;
 import java.io.PrintStream;
 
+import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
+
+
 public class GrepPrinter implements IPrinter
 {
     final List<CloneList> clones;
     final PrintStream stream;
 
-    GrepPrinter(List<CloneList> clones, PrintStream stream)
+    public GrepPrinter(List<CloneList> clones, PrintStream stream)
     {
         this.clones = clones;
         this.stream = stream;
     }
 
-    GrepPrinter(List<CloneList> clones)
+    public GrepPrinter(List<CloneList> clones)
     {
         this(clones, System.out);
     }
@@ -67,7 +71,7 @@ public class GrepPrinter implements IPrinter
                 .forEach(idx -> {
                     if(option.isLineEnabled)
                     {
-                        final String ln = (clone.start.getLine() + idx) + ":";
+                        final String ln = (clone.getStartLine() + idx) + ":";
                         stream.print(option.isEscapeEnabled? option.language.blockCommented(ln): ln);
                     }
                     stream.println(lines.get(idx));
@@ -82,7 +86,7 @@ public class GrepPrinter implements IPrinter
             }
             if(option.isLineEnabled)
             {
-                sj.add(String.valueOf(clone.start.getLine()));
+                sj.add(String.valueOf(clone.getStartLine()));
             }
             sj.add(option.isEscapeEnabled
                 ? option.language.blockCommentEnd() + lines.get(0)

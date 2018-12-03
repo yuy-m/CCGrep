@@ -1,9 +1,11 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.model;
+
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.function.Consumer;
+
 
 public class CloneList
 {

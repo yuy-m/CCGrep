@@ -1,4 +1,5 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.logic;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +12,9 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.*;
+
+import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
+
 
 public class AntlrTokenizer implements ITokenizer
 {

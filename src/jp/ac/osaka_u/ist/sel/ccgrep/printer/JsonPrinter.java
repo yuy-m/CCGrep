@@ -1,26 +1,28 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.printer;
+
 
 import java.util.StringJoiner;
 import java.util.List;
 import java.io.PrintStream;
 import java.util.stream.Collectors;
 
+import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
+
+
 public class JsonPrinter implements IPrinter
 {
     final List<CloneList> clones;
-    final Frontend frontend;
     final PrintStream stream;
 
-    JsonPrinter(List<CloneList> clones, Frontend frontend, PrintStream stream)
+    public JsonPrinter(List<CloneList> clones, PrintStream stream)
     {
         this.clones = clones;
-        this.frontend = frontend;
         this.stream = stream;
     }
 
-    JsonPrinter(List<CloneList> clones, Frontend frontend)
+    public JsonPrinter(List<CloneList> clones)
     {
-        this(clones, frontend, System.out);
+        this(clones, System.out);
     }
 
     @Override

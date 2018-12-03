@@ -1,10 +1,13 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.logic;
+
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
 
 public class Traverser
@@ -16,7 +19,7 @@ public class Traverser
 
     private int fileCount = 0;
 
-    Traverser(IDetector detector, boolean isRecursiveEnabled, Predicate<String> fileMatcher)
+    public Traverser(IDetector detector, boolean isRecursiveEnabled, Predicate<String> fileMatcher)
     {
         this.detector = detector;
         this.isRecursiveEnabled = isRecursiveEnabled;
@@ -28,12 +31,16 @@ public class Traverser
         return fileCount;
     }
 
-    public List<CloneList> traverse(Path haystackPath)
+    public List<CloneList> traverse(List<String> haystackNames)
     {
-        return traverseImpl(haystackPath, true);
+        return haystackNames.stream()
+            .map(Paths::get)
+            .map(path -> traverseImpl(path, true))
+            .flatMap(list -> list.stream())
+            .collect(Collectors.toList());
     }
 
-    public final List<CloneList> traverseImpl(Path haystackPath, boolean alwaysMatch)
+    private final List<CloneList> traverseImpl(Path haystackPath, boolean alwaysMatch)
     {
         if(Files.isDirectory(haystackPath))
         {

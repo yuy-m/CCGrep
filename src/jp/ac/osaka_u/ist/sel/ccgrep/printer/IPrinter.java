@@ -1,4 +1,4 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.printer;
 
 
 public interface IPrinter

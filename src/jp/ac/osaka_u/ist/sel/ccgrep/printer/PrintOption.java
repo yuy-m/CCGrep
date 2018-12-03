@@ -1,4 +1,7 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.printer;
+
+
+import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
 
 public class PrintOption

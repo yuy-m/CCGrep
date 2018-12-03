@@ -1,4 +1,5 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.model;
+
 
 import java.util.*;
 import java.util.function.*;

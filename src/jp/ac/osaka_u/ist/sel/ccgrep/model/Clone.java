@@ -1,9 +1,11 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.model;
+
 
 import java.util.List;
 import java.util.Arrays;
 
 import org.antlr.v4.runtime.misc.Interval;
+
 
 public class Clone
 {

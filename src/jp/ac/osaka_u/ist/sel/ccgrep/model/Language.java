@@ -1,4 +1,5 @@
-package jp.ac.osaka_u.ist.sel.ccgrep;
+package jp.ac.osaka_u.ist.sel.ccgrep.model;
+
 
 import java.util.*;
 import java.util.function.Function;
@@ -9,6 +10,7 @@ import jp.ac.osaka_u.ist.sel.ccgrep.antlr.c.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.cpp14.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.*;
+
 
 public enum Language
 {
@@ -197,21 +199,21 @@ public enum Language
     }
 
 
-    boolean isOpenBracket(int type)
+    public boolean isOpenBracket(int type)
     {
         return Arrays.stream(bracketPairs)
             .mapToInt(p -> p.open)
             .anyMatch(i -> i == type);
     }
 
-    boolean isCloseBracket(int type)
+    public boolean isCloseBracket(int type)
     {
         return Arrays.stream(bracketPairs)
             .mapToInt(p -> p.close)
             .anyMatch(i -> i == type);
     }
 
-    boolean isBracketPair(int open, int close)
+    public boolean isBracketPair(int open, int close)
     {
         return Arrays.stream(bracketPairs)
             .anyMatch(p -> p.open == open && p.close == close);

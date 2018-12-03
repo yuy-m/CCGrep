@@ -1,6 +1,5 @@
 CCGrep
 ====
-*Now writing.*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 

@@ -1,7 +1,8 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.antlr.v4.runtime.*;

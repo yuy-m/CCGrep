@@ -11,7 +11,11 @@ import java.util.List;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.Lexer;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
@@ -71,7 +75,7 @@ public class AntlrTokenizer implements ITokenizer
         }
     }
 
-    private List<GrepToken> toList(TokenStream tokens)
+    private List<GrepToken> toList(CommonTokenStream tokens)
     {
         final List<GrepToken> tokenList = new ArrayList<>();
         while (tokens.LA(1) != Token.EOF)

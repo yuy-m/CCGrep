@@ -12,30 +12,46 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 public class JsonPrinter implements IPrinter
 {
     final List<CloneList> clones;
+    final List<GrepToken> needle;
+    final Language language;
+    final BlindLevel blindLevel;
     final PrintStream stream;
 
-    public JsonPrinter(List<CloneList> clones, PrintStream stream)
+    public JsonPrinter(List<CloneList> clones, List<GrepToken> needle, Language language, BlindLevel blindLevel, PrintStream stream)
     {
         this.clones = clones;
+        this.needle = needle;
+        this.language = language;
+        this.blindLevel = blindLevel;
         this.stream = stream;
     }
 
-    public JsonPrinter(List<CloneList> clones)
+    public JsonPrinter(List<CloneList> clones, List<GrepToken> needle, Language language, BlindLevel blindLevel)
     {
-        this(clones, System.out);
+        this(clones, needle, language, blindLevel, System.out);
     }
 
     @Override
     public void println(PrintOption option)
     {
+        final int lcnt = needle.get(needle.size() - 1).getLine() - needle.get(0).getLine() + 1;
+        final String qtext = needle.get(0).getCodeByLine(lcnt).stream()
+            .map(s -> escaped(s))
+            .collect(Collectors.joining("\\n"));
+
         // ignore option
         final String s = clones.stream()
             .filter(clonesByFile -> !clonesByFile.isEmpty())
             .map(clonesByFile -> makeCloneByFileJson(clonesByFile))
             .collect(Collectors.joining(
                 ',' + System.lineSeparator(),
+
                 "{" + System.lineSeparator()
+              + " \"language\":\"" + language+ "\"," + System.lineSeparator()
+              + " \"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
+              + " \"query\":\"" + qtext + "\"," + System.lineSeparator()
               + " \"clonesPerFile\":[" + System.lineSeparator(),
+
                 System.lineSeparator()
               + " ]" + System.lineSeparator()
               + "}"

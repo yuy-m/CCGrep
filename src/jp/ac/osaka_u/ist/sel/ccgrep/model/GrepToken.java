@@ -1,8 +1,16 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.regex.Pattern;
+
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.misc.Interval;
 
 
 public class GrepToken
@@ -40,26 +48,44 @@ public class GrepToken
             : false;
     }
 
+    public List<String> getCodeByLine(int countLines)
+    {
+        try{
+            return Files.lines(Paths.get(getFileName()))
+                .skip(getLine() - 1)
+                .limit(countLines)
+                .collect(Collectors.toList());
+        }
+        catch(Exception e)
+        {
+            return getCodeByLine2(countLines);
+        }
+    }
+
+    private static final Pattern splitPattern = Pattern.compile("\r\n|[\n\r\u2028\u2029\u0085]");
+    // slowly but surely
+    private List<String> getCodeByLine2(int countLines)
+    {
+        // all source code of the file.
+        final String text = getInputStream()
+            .getText(new Interval(
+                0,
+                getInputStream().size()
+            ));
+        // extract clone lines
+        return splitPattern
+            .splitAsStream(text)
+            .skip(getLine() - 1)
+            .limit(countLines)
+            .collect(Collectors.toList());
+    }
+
     @Override
     public String toString()
     {
         return "[" + getLine() + ":" + getCharPositionInLine() + ":(" + getType() + ")`" + getText() + "`]";
     }
 
-    void printDetail()
-    {
-        // System.out.println("getChannel           : " + getChannel());
-        System.out.println("getCharPositionInLine: " + getCharPositionInLine());
-        // System.out.println("getInputStream       : " + getInputStream());
-        System.out.println("getLine              : " + getLine());
-        System.out.println("getStartIndex        : " + getStartIndex());
-        System.out.println("getStopIndex         : " + getStopIndex());
-        System.out.println("getText              : " + getText());
-        System.out.println("getTokenIndex        : " + getTokenIndex());
-        // System.out.println("getTokenSource       : " + getTokenSource());
-        System.out.println("getType              : " + getType());
-        System.out.println();
-    }
     public int getLine()
     {
         return token.getLine();

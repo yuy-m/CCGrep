@@ -1,7 +1,7 @@
 package jp.ac.osaka_u.ist.sel.ccgrep;
 
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -79,11 +79,9 @@ public class CCGrep
         }
         debugLogger.println("blind level: " + blindLevel);
 
-        final String[] fixedIds = frontend.fixedIds.split("\\|");
-
         final IDetector detector = frontend.needleFileName == null
-            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, frontend.needleCode, blindLevel, fixedIds)
-            : TokenSequenceDetector.withNeedleFromFile(tokenizer, frontend.needleFileName, blindLevel, fixedIds);
+            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, frontend.needleCode, blindLevel, frontend.fixedIds)
+            : TokenSequenceDetector.withNeedleFromFile(tokenizer, frontend.needleFileName, blindLevel, frontend.fixedIds);
         if(detector == null)
         {
             return 2;
@@ -101,7 +99,7 @@ public class CCGrep
         final long t2 = System.nanoTime();
         printTimeln("detecting: %5f", t1, t2);
 
-        printResult(clones, language);
+        printResult(clones, ((TokenSequenceDetector)detector).needle, language, blindLevel);
 
         final long t3 = System.nanoTime();
         printTimeln("printing : %5f", t2, t3);
@@ -149,11 +147,11 @@ public class CCGrep
         }
     }
 
-    private void printResult(List<CloneList> clones, Language language)
+    private void printResult(List<CloneList> clones, List<GrepToken> needle, Language language, BlindLevel blindLevel)
     {
         debugLogger.println("printing...");
         final IPrinter printer = frontend.isJsonEnabled
-            ? new JsonPrinter(clones)
+            ? new JsonPrinter(clones, needle, language, blindLevel)
             : new GrepPrinter(clones);
         printer.println(new PrintOption(language, frontend.printOption));
         debugLogger.println("finish.");

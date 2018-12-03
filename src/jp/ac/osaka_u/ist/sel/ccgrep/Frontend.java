@@ -2,6 +2,7 @@ package jp.ac.osaka_u.ist.sel.ccgrep;
 
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.commons.cli.*;
@@ -15,7 +16,7 @@ public class Frontend
     String blindLevelName = "";
     String languageName = null;
     String printOption = "";
-    String fixedIds = "";
+    List<String> fixedIds = Collections.emptyList();
     boolean isJsonEnabled = false;
     boolean isTimeEnabled = false;
 
@@ -73,7 +74,8 @@ public class Frontend
             }
             if(cl.hasOption("fix"))
             {
-                fe.fixedIds = cl.getOptionValue("fix");
+                fe.fixedIds = Arrays.asList(cl.getOptionValue("fix")
+                                .split("\\|"));
             }
             List<String> restArgs = cl.getArgList();
             if(fe.needleFileName == null)

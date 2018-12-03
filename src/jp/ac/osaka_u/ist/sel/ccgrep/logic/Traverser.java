@@ -2,10 +2,13 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
@@ -15,9 +18,6 @@ public class Traverser
     private final IDetector detector;
     private final boolean isRecursiveEnabled;
     private final Predicate<String> fileMatcher;
-    private final Predicate<String> directoryMatcher = (__) -> true;
-
-    private int fileCount = 0;
 
     public Traverser(IDetector detector, boolean isRecursiveEnabled, Predicate<String> fileMatcher)
     {
@@ -26,46 +26,36 @@ public class Traverser
         this.fileMatcher = fileMatcher;
     }
 
-    int getFileCount()
-    {
-        return fileCount;
-    }
-
     public List<CloneList> traverse(List<String> haystackNames)
     {
         return haystackNames.stream()
-            .map(Paths::get)
-            .map(path -> traverseImpl(path, true))
-            .flatMap(list -> list.stream())
+            .flatMap(this::traverseImpl)
+            .filter(cloneList -> !cloneList.isEmpty())
             .collect(Collectors.toList());
     }
 
-    private final List<CloneList> traverseImpl(Path haystackPath, boolean alwaysMatch)
+    private final Stream<CloneList> traverseImpl(String haystackName)
     {
-        if(Files.isDirectory(haystackPath))
+        Path haystackPath;
+        if("-".equals(haystackName)
+            || !Files.isDirectory(haystackPath = Paths.get(haystackName))
+        )
         {
-            if(alwaysMatch || (isRecursiveEnabled && directoryMatcher.test(haystackPath.toString())))
+            return Stream.of(detector.detect(haystackName));
+        }
+        else
+        {
+            try{
+                return Files.walk(haystackPath, isRecursiveEnabled? Integer.MAX_VALUE: 1)
+                    .map(path -> path.toString())
+                    .filter(fileMatcher::test)
+                    .map(detector::detect);
+            }
+            catch(IOException e)
             {
-                try{
-                    return Files.list(haystackPath)
-                        .parallel()
-                        .flatMap(dirPath -> traverseImpl(dirPath, false).stream())
-                        .collect(Collectors.toList());
-                }
-                catch(IOException e)
-                {
-                    System.err.println(e.getMessage());
-                }
+                System.err.println("Error: cannot read file " + e.getMessage());
+                return Stream.empty();
             }
         }
-        else if(alwaysMatch || "-".equals(haystackPath.toString()) || fileMatcher.test(haystackPath.toString()))
-        {
-            ++fileCount;
-            final CloneList cl = detector.detect(haystackPath.toString());
-            return cl.isEmpty()
-                ? Collections.emptyList()
-                : Collections.singletonList(cl);
-        }
-        return Collections.emptyList();
     }
 }

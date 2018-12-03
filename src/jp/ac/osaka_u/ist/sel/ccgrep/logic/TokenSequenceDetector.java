@@ -1,7 +1,11 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayDeque;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -13,33 +17,32 @@ import static jp.ac.osaka_u.ist.sel.ccgrep.logger.Logger.debugLogger;
 public class TokenSequenceDetector implements IDetector
 {
     final ITokenizer tokenizer;
-    final List<GrepToken> needle;
+    public final List<GrepToken> needle;
     final BlindLevel blindLevel;
 
-    private final Map<String, String> defaultIdmap = new HashMap<>();
+    private final HashMap<String, String> defaultIdmap = new HashMap<>();
 
-    public TokenSequenceDetector(ITokenizer tokenizer, List<GrepToken> needle, BlindLevel blindLevel, String[] fixedIds)
+    public TokenSequenceDetector(ITokenizer tokenizer, List<GrepToken> needle, BlindLevel blindLevel, List<String> fixedIds)
     {
         this.tokenizer = tokenizer;
         this.blindLevel = blindLevel;
         this.needle = needle;
-        Arrays.stream(fixedIds)
-            .forEach(id -> defaultIdmap.put(id, id));
-        needle.forEach(t -> debugLogger.println(t));
+        fixedIds.forEach(id -> defaultIdmap.put(id, id));
+        needle.forEach(debugLogger::println);
     }
 
-    public static TokenSequenceDetector withNeedleFromCode(ITokenizer tokenizer, String needleCode, BlindLevel blindLevel, String[] fixedIds)
+    public static TokenSequenceDetector withNeedleFromCode(ITokenizer tokenizer, String needleCode, BlindLevel blindLevel, List<String> fixedIds)
     {
         return withNeedleImpl(tokenizer, blindLevel, fixedIds, () -> tokenizer.extractAsListFromString(needleCode));
     }
 
-    public static TokenSequenceDetector withNeedleFromFile(ITokenizer tokenizer, String needleName, BlindLevel blindLevel, String[] fixedIds)
+    public static TokenSequenceDetector withNeedleFromFile(ITokenizer tokenizer, String needleName, BlindLevel blindLevel, List<String> fixedIds)
     {
         return withNeedleImpl(tokenizer, blindLevel, fixedIds, () -> tokenizer.extractAsListFromFile(needleName));
     }
 
     private static TokenSequenceDetector withNeedleImpl(
-        ITokenizer tokenizer, BlindLevel blindLevel, String[] fixedIds, Supplier<List<GrepToken>> needleSupplier)
+        ITokenizer tokenizer, BlindLevel blindLevel, List<String> fixedIds, Supplier<List<GrepToken>> needleSupplier)
     {
         debugLogger.print("tokenizing query...");
         final List<GrepToken> needle = needleSupplier.get();
@@ -74,14 +77,14 @@ public class TokenSequenceDetector implements IDetector
         final List<Clone> clones =
             IntStream.range(0, haystack.size() - needle.size() + 1)
                 .mapToObj(idx -> haystack.subList(idx, haystack.size()))
-                .map(subHaystack -> submatch(subHaystack))
+                .map(subHaystack -> matchClone(subHaystack))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         debugLogger.println("(" + clones.size() + ") finish.");
         return new CloneList(haystackFileName, clones);
     }
 
-    private Clone submatch(List<GrepToken> subHaystack)
+    private Clone matchClone(List<GrepToken> subHaystack)
     {
         final Map<String, String> idmap = blindLevel.createConstraint(defaultIdmap);
 

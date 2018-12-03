@@ -1,8 +1,11 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 
-import java.util.*;
-import java.util.function.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.function.Function;
 
 
 public enum BlindLevel

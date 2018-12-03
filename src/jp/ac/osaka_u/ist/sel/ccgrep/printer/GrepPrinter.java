@@ -57,10 +57,10 @@ public class GrepPrinter implements IPrinter
 
     private void printCloneln(Clone clone, PrintOption option)
     {
-        final List<String> lines = clone.getCodeByLine();
 
         if(option.isCodeEnabled)
         {
+            final List<String> lines =  clone.getCodeByLine();
             if(option.isFileNameEnabled)
             {
                 stream.println(option.isEscapeEnabled
@@ -79,6 +79,7 @@ public class GrepPrinter implements IPrinter
         }
         else
         {
+            final List<String> lines =  clone.getCodeByLine(1);
             final StringJoiner sj = new StringJoiner(":", option.isEscapeEnabled? option.language.blockCommentBegin(): "", "");
             if(option.isFileNameEnabled)
             {

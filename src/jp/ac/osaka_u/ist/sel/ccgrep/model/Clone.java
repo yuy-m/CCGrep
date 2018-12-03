@@ -1,10 +1,14 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 
-import java.util.List;
-import java.util.Arrays;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
-import org.antlr.v4.runtime.misc.Interval;
+// import org.antlr.v4.runtime.misc.Interval;
 
 
 public class Clone
@@ -16,20 +20,40 @@ public class Clone
         this.start = start;
         this.end = end;
     }
+
     public List<String> getCodeByLine()
     {
-        return getCodeByLine(0, 0);
+        return getCodeByLine(end.getLine() - start.getLine() + 1);
     }
 
-    public List<String> getCodeByLine(int beforeContextCount, int afterContextCount)
+    private static final Pattern splitPattern = Pattern.compile("\r\n|[\n\r\u2028\u2029\u0085]");
+    public List<String> getCodeByLine(int countLines)
     {
-        final String text = start.getInputStream()
+        try
+        {
+            return Files.lines(Paths.get(start.getFileName()))
+                .skip(start.getLine() - 1)
+                .limit(countLines)
+                .collect(Collectors.toList());
+        }
+        catch(IOException e)
+        {
+            System.err.println("Error: cannot read file '" + start.getFileName() + '\'');
+            return Collections.singletonList("<!error: cannot read file!>");
+        }
+        // all source code of the file.
+        /*final String text = start.getInputStream()
             .getText(new Interval(
                 0,
                 start.getInputStream().size()
             ));
-        return Arrays.asList(text.split("\r\n|[\n\r\u2028\u2029\u0085]"))
-            .subList(start.getLine() - 1, end.getLine());
+
+        // extract clone lines
+        return splitPattern
+            .splitAsStream(text)
+            .skip(start.getLine() - 1)
+            .limit(countLines)
+            .collect(Collectors.toList()); //*/
     }
 
     public String getFileName()

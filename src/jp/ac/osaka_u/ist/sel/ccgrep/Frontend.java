@@ -17,6 +17,7 @@ public class Frontend
     String printOption = "";
     String fixedIds = "";
     boolean isJsonEnabled = false;
+    boolean isTimeEnabled = false;
 
     String needleFileName = null;
     String needleCode = null;
@@ -45,6 +46,10 @@ public class Frontend
             if(cl.hasOption("json"))
             {
                 fe.isJsonEnabled = true;
+            }
+            if(cl.hasOption("time"))
+            {
+                fe.isTimeEnabled = true;
             }
             if(cl.hasOption("recursive"))
             {
@@ -187,6 +192,12 @@ public class Frontend
             .desc("specify identifier(s) to match exactly the same ones (e.g. 'getValue|string').")
             .hasArg()
             .argName("IDS")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("time")
+            .desc("print processing time to standard error.")
             .build()
         );
 }

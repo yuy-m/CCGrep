@@ -24,15 +24,11 @@ public class CCGrep
         {
             System.exit(0);
         }
-        DEBUG = fe.isLogEnabled;
+        debugLogger.enable(fe.isLogEnabled);
+
         final CCGrep ccgrep = new CCGrep(fe);
 
-        final long st = System.nanoTime();
         final int returnCode = ccgrep.grep();
-        final long et = System.nanoTime();
-
-        final long milli = (et - st) / 1000000;
-        // System.err.println((milli / 1000.0) + " sec");
 
         System.exit(returnCode);
     }
@@ -44,8 +40,28 @@ public class CCGrep
         this.frontend = frontend;
     }
 
+    private void printTimeln(String format, long s, long e)
+    {
+        if(frontend.isTimeEnabled)
+        {
+            printTime(format, s, e);
+            System.err.println();
+        }
+    }
+
+    private void printTime(String format, long s, long e)
+    {
+        if(frontend.isTimeEnabled)
+        {
+            final long milli = (e - s) / 1000000;
+            System.err.print(String.format(format, milli / 1000.0));
+        }
+    }
+
+
     int grep()
     {
+        final long t0 = System.nanoTime();
         final Language language = findLanguage();
         if(language == null)
         {
@@ -73,13 +89,36 @@ public class CCGrep
             return 2;
         }
 
+        final long t1 = System.nanoTime();
+        printTimeln("preparing: %5f", t0, t1);
+
         debugLogger.println("traversing...");
         final Traverser traverser = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension);
         final List<CloneList> clones = traverser.traverse(frontend.haystackNames);
         debugLogger.println("finish.");
         debugLogger.println(clones.size() + " clone(s) found.");
 
+        final long t2 = System.nanoTime();
+        printTimeln("detecting: %5f", t1, t2);
+
         printResult(clones, language);
+
+        final long t3 = System.nanoTime();
+        printTimeln("printting: %5f", t2, t3);
+
+        printTimeln("all      : %5f", t0, t3);
+
+        if(frontend.isTimeEnabled)
+        {
+            final long all = t3 - t0;
+            System.err.println(String.format(
+                "ratio: %2.1f:%2.1f:%2.1f",
+                100.0 * (t1 - t0) / all,
+                100.0 * (t2 - t1) / all,
+                100.0 * (t3 - t2) / all
+            ));
+        }
+
         return clones.isEmpty()? 1: 0;
     }
 

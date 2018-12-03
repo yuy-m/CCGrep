@@ -104,7 +104,7 @@ public class CCGrep
         printResult(clones, language);
 
         final long t3 = System.nanoTime();
-        printTimeln("printting: %5f", t2, t3);
+        printTimeln("printing : %5f", t2, t3);
 
         printTimeln("all      : %5f", t0, t3);
 

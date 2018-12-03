@@ -34,9 +34,11 @@ public class JsonPrinter implements IPrinter
             .map(clonesByFile -> makeCloneByFileJson(clonesByFile))
             .collect(Collectors.joining(
                 ',' + System.lineSeparator(),
-                '[' + System.lineSeparator(),
+                "{" + System.lineSeparator()
+              + " \"clonesPerFile\":[" + System.lineSeparator(),
                 System.lineSeparator()
-              + "]"
+              + " ]" + System.lineSeparator()
+              + "}"
             ));
         stream.println(s);
     }
@@ -50,11 +52,11 @@ public class JsonPrinter implements IPrinter
                 ',' + System.lineSeparator(),
 
                 "  {" + System.lineSeparator()
-              + "    \"file\":\"" + escaped(cloneByFile.filename) + "\"," + System.lineSeparator()
-              + "    \"clones\":[" + System.lineSeparator(),
+              + "   \"file\":\"" + escaped(cloneByFile.filename) + "\"," + System.lineSeparator()
+              + "   \"clones\":[" + System.lineSeparator(),
 
               System.lineSeparator()
-              + "    ]" + System.lineSeparator()
+              + "   ]" + System.lineSeparator()
               + "  }"
             ));
     }
@@ -63,17 +65,20 @@ public class JsonPrinter implements IPrinter
     {
         final StringJoiner sj = new StringJoiner(
             ',' + System.lineSeparator(),
-            "      {" + System.lineSeparator(),
+            "    {" + System.lineSeparator(),
             System.lineSeparator()
-          + "      }"
+          + "    }"
         );
-        sj.add("        \"startline\":" + clone.getStartLine());
-        sj.add("        \"startcolumn\":" + clone.getStartColumn());
-        sj.add("        \"endline\":" + clone.getEndLine());
-        sj.add("        \"endcolumn\":" + clone.getEndColumn());
+        sj.add("     \"startLine\":" + clone.getStartLine());
+        sj.add("     \"startColumn\":" + clone.getStartColumn());
+        sj.add("     \"endLine\":" + clone.getEndLine());
+        sj.add("     \"endColumn\":" + clone.getEndColumn());
         sj.add(clone.getCodeByLine().stream()
                 .map(s -> escaped(s))
-                .collect(Collectors.joining("\\n", "        \"code\":\"", "\""))
+                .collect(Collectors.joining(
+                    "\\n",
+                    "     \"code\":\"",
+                    "\""))
         );
         return sj;
     }

@@ -61,7 +61,10 @@ public class Traverser
         else if(alwaysMatch || "-".equals(haystackPath.toString()) || fileMatcher.test(haystackPath.toString()))
         {
             ++fileCount;
-            return Collections.singletonList(detector.detect(haystackPath.toString()));
+            final CloneList cl = detector.detect(haystackPath.toString());
+            return cl.isEmpty()
+                ? Collections.emptyList()
+                : Collections.singletonList(cl);
         }
         return Collections.emptyList();
     }

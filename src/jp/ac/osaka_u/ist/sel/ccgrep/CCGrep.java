@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.*;
-import static jp.ac.osaka_u.ist.sel.ccgrep.logger.Logger.debugLogger;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
 
 
 public class CCGrep
@@ -136,7 +136,7 @@ public class CCGrep
 
         debugLogger.println("traversing...");
         final List<CloneList> clones = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension)
-                                    .traverse(frontend.haystackNames);
+                                    .traverse(frontend.haystackNames, frontend.maxCount);
         debugLogger.println("finish.");
         debugLogger.println(clones.size() + " clone(s) found.");
 

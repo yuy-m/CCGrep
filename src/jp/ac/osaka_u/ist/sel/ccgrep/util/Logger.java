@@ -1,4 +1,4 @@
-package jp.ac.osaka_u.ist.sel.ccgrep.logger;
+package jp.ac.osaka_u.ist.sel.ccgrep.util;
 
 
 import java.io.PrintStream;

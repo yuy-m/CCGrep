@@ -6,11 +6,12 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayDeque;
 import java.util.Objects;
+import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
-import static jp.ac.osaka_u.ist.sel.ccgrep.logger.Logger.debugLogger;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
 
 
 public class TokenSequenceDetector implements IDetector
@@ -30,7 +31,7 @@ public class TokenSequenceDetector implements IDetector
     }
 
     @Override
-    public CloneList detect(final String haystackFileName)
+    public CloneList detect(final String haystackFileName, int maxCount)
     {
         debugLogger.print(" tokenizing " + haystackFileName + "...");
         final ITokenizer.TokenizerResult haystackResult = tokenizer.extractFromFile(haystackFileName);
@@ -39,12 +40,15 @@ public class TokenSequenceDetector implements IDetector
 
         debugLogger.print("(" + hTokens.size() + " tokens),detecting...");
 
-        final List<Clone> clones =
-            IntStream.range(0, hTokens.size())
+        final Stream<Clone> stream = IntStream.range(0, hTokens.size())
                 .mapToObj(idx -> hTokens.subList(idx, hTokens.size()))
                 .map(subHaystack -> matchClone(hCode, subHaystack))
-                .filter(Objects::nonNull)
+                .filter(Objects::nonNull);
+
+        final List<Clone> clones =
+            (maxCount < 0? stream: stream.limit(maxCount))
                 .collect(Collectors.toList());
+
         debugLogger.println("(" + clones.size() + " clones)finish.");
 
         return new CloneList(hCode, clones);

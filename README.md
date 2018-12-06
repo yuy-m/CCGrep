@@ -1,6 +1,6 @@
 CCGrep
 ====
-*written on 2018/12/04*
+*written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -80,6 +80,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
  - `-l,--language <LANG>`   set target language.
    - c / c++ / java(by default) / python3.
    - With `-f` option, the language can be inferred from the file extension.
+ - `-m,--max-count <NUM>`   stop after NUM clones.
  - `-p,--print <OPTION>`    set printing option c/l/n/f/e like `-p fn`.
    - When `c` set, print ONLY the count of clones.
    - When `l` set, print ONLY file name per matched files.

@@ -19,6 +19,7 @@ public class Frontend
     List<String> fixedIds = Collections.emptyList();
     boolean isJsonEnabled = false;
     boolean isTimeEnabled = false;
+    int maxCount = -1;
 
     String needleFileName = null;
     String needleCode = null;
@@ -59,6 +60,10 @@ public class Frontend
             if(cl.hasOption("blind"))
             {
                 fe.blindLevelName = cl.getOptionValue("blind");
+            }
+            if(cl.hasOption("max-count"))
+            {
+                fe.maxCount = Integer.parseUnsignedInt(cl.getOptionValue("max-count"));
             }
             if(cl.hasOption("language"))
             {
@@ -201,6 +206,14 @@ public class Frontend
             Option.builder()
             .longOpt("time")
             .desc("print processing time to standard error.")
+            .build()
+        )
+        .addOption(
+            Option.builder("m")
+            .longOpt("max-count")
+            .desc("stop after NUM clones.")
+            .hasArg()
+            .argName("NUM")
             .build()
         );
 }

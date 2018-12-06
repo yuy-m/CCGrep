@@ -3,6 +3,7 @@ package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.antlr.v4.runtime.*;
@@ -124,119 +125,111 @@ public enum Language
         this.blindSets = blindSets;
     }
 
-    public static Language findByName(String languageName)
+    public static final Language getDefaultLanguage()
+    {
+        return Language.JAVA9;
+    }
+
+    public static final Optional<Language> findByName(String languageName)
     {
         return Arrays.stream(Language.values())
             .filter(l -> Arrays.stream(l.names).anyMatch(languageName::equalsIgnoreCase))
-            .findFirst()
-            .orElse(null);
+            .findFirst();
     }
 
-    public static Language findByFileNameWithExtension(String fileName)
+    public static final Optional<Language> findByFileNameWithExtension(String fileName)
     {
         return Arrays.stream(Language.values())
             .filter(l -> Arrays.stream(l.extensions).anyMatch(fileName::endsWith))
-            .findFirst()
-            .orElse(null);
+            .findFirst();
     }
 
-    public Lexer createLexer(CharStream stream)
+    public final Lexer createLexer(CharStream stream)
     {
         return lexerCreater.apply(stream);
     }
 
-    public Parser createParser(TokenStream stream)
+    public final Parser createParser(TokenStream stream)
     {
         return parserCreater.apply(stream);
     }
 
-    public boolean checkTokenEquality(
-        GrepToken needleToken, GrepToken haystackToken, BlindLevel blindLevel, Map<String, String> blindConstraint)
+    public final BlindLevel findBlindLevel(GrepToken needleToken, GrepToken haystackToken, BlindLevel blindLevel)
     {
-        if(needleToken.getType() == specialId())
-        {
-            return needleToken.equalsAsSpecialTo(haystackToken);
-        }
-        final String t = blindConstraint.get(needleToken.getText());
-        if(t != null)
-        {
-            return haystackToken.equals(t);
-        }
         return Arrays.stream(blindSets)
             .filter(set -> set.contains(needleToken.getType())
                         && set.contains(haystackToken.getType()))
             .map(set -> set.minLevel)
-            .map(minLevel -> (blindLevel.value != 0 && blindLevel.value >= minLevel.value)
+            .map(minLevel -> blindLevel.value >= minLevel.value
                             ? blindLevel: minLevel)
             .findFirst()
-            .orElse(BlindLevel.NONE)
-            .checkTokenEquality(needleToken, haystackToken, blindConstraint);
+            .orElse(BlindLevel.NONE);
     }
 
-    public boolean matchesExtension(String filename)
+    public final boolean matchesExtension(String filename)
     {
         return Arrays.stream(extensions)
             .anyMatch(filename::endsWith);
     }
 
-    public String lineCommented(String str)
+    public final String lineCommented(String str)
     {
         return commentSet.line + str;
     }
 
-    public String blockCommented(String str)
+    public final String blockCommented(String str)
     {
         return commentSet.blockBegin + str + commentSet.blockEnd;
     }
 
-    public String blockCommentBegin()
+    public final String blockCommentBegin()
     {
         return commentSet.blockBegin;
     }
 
-    public String blockCommentEnd()
+    public final String blockCommentEnd()
     {
         return commentSet.blockEnd;
     }
 
 
-    public boolean isOpenBracket(int type)
+    public final boolean isOpenBracket(int type)
     {
         return Arrays.stream(bracketPairs)
             .mapToInt(p -> p.open)
             .anyMatch(i -> i == type);
     }
 
-    public boolean isCloseBracket(int type)
+    public final boolean isCloseBracket(int type)
     {
         return Arrays.stream(bracketPairs)
             .mapToInt(p -> p.close)
             .anyMatch(i -> i == type);
     }
 
-    public boolean isBracketPair(int open, int close)
+    public final boolean isBracketPair(int open, int close)
     {
         return Arrays.stream(bracketPairs)
             .anyMatch(p -> p.open == open && p.close == close);
     }
 
 
-    public int specialId()
+    public final int specialId()
     {
         return specialSet.id;
     }
 
-    public int specialSeq()
+    public final int specialSeq()
     {
         return specialSet.seq;
     }
 
-    public int specialExpr()
+    public final int specialExpr()
     {
         return specialSet.expr;
     }
 
-    public int specialBlock()
+    public final int specialBlock()
     {
         return specialSet.block;
     }

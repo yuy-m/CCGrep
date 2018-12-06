@@ -1,34 +1,34 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Collections;
-import java.util.stream.Collectors;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.misc.Interval;
 
 
 public class GrepToken
 {
-    private final Token token;
-    public GrepToken(Token token)
-    {
-        this.token = token;
-    }
+    private final Language language;
 
-    public String getText()
-    {
-        return token.getText();
-    }
+    private final String text;
+    private final int line;
+    private final int charPositionInLine;
+    private final int startIndex;
+    private final int stopIndex;
+    private final int tokenIndex;
+    private final int type;
 
-    public String getFileName()
+    public GrepToken(Token token, Language language)
     {
-        return token.getInputStream().getSourceName();
+        this.language = language;
+
+        this.text = token.getText();
+        this.line = token.getLine();
+        this.charPositionInLine = token.getCharPositionInLine();
+        this.startIndex = token.getStartIndex();
+        this.stopIndex = token.getStopIndex();
+        this.tokenIndex = token.getTokenIndex();
+        this.type = token.getType();
     }
 
     @Override
@@ -48,36 +48,17 @@ public class GrepToken
             : false;
     }
 
-    public List<String> getCodeByLine(int countLines)
+    public boolean matchesBlindly(GrepToken rhs, BlindLevel blindLevel, Map<String, String> constraint)
     {
-        try{
-            return Files.lines(Paths.get(getFileName()))
-                .skip(getLine() - 1)
-                .limit(countLines)
-                .collect(Collectors.toList());
-        }
-        catch(Exception e)
+        if(getType() == getLanguage().specialId())
         {
-            return getCodeByLine2(countLines);
+            return equalsAsSpecialTo(rhs);
         }
-    }
-
-    private static final Pattern splitPattern = Pattern.compile("\r\n|[\n\r\u2028\u2029\u0085]");
-    // slowly but surely
-    private List<String> getCodeByLine2(int countLines)
-    {
-        // all source code of the file.
-        final String text = getInputStream()
-            .getText(new Interval(
-                0,
-                getInputStream().size()
-            ));
-        // extract clone lines
-        return splitPattern
-            .splitAsStream(text)
-            .skip(getLine() - 1)
-            .limit(countLines)
-            .collect(Collectors.toList());
+        final String t = constraint.get(getText());
+        return t != null
+            ? rhs.equals(t)
+            : getLanguage().findBlindLevel(this, rhs, blindLevel)
+                    .matches(this, rhs, constraint);
     }
 
     @Override
@@ -86,33 +67,39 @@ public class GrepToken
         return "[" + getLine() + ":" + getCharPositionInLine() + ":(" + getType() + ")`" + getText() + "`]";
     }
 
+    public Language getLanguage()
+    {
+        return language;
+    }
+
+    public String getText()
+    {
+        return text;
+    }
+
     public int getLine()
     {
-        return token.getLine();
+        return line;
     }
     public int getCharPositionInLine()
     {
-        return token.getCharPositionInLine();
+        return charPositionInLine;
     }
     public int getStartIndex()
     {
-        return token.getStartIndex();
+        return startIndex;
     }
     public int getStopIndex()
     {
-        return token.getStopIndex();
+        return stopIndex;
     }
-    CharStream getInputStream()
+    public int getTokenIndex()
     {
-        return token.getInputStream();
-    }
-    int getTokenIndex()
-    {
-        return token.getTokenIndex();
+        return tokenIndex;
     }
     public int getType()
     {
-        return token.getType();
+        return type;
     }
 }
 

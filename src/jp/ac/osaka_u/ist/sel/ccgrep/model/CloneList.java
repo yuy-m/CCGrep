@@ -9,17 +9,27 @@ import java.util.function.Consumer;
 
 public class CloneList
 {
-    public final String filename;
+    public final GrepCode code;
     public final List<Clone> clones;
-    public CloneList(String filename, List<Clone> clones)
+    public CloneList(GrepCode code, List<Clone> clones)
     {
-        this.filename = filename;
+        this.code = code;
         this.clones = clones;
     }
 
-    public CloneList(String filename)
+    public CloneList(GrepCode code)
     {
-        this(filename, Collections.emptyList());
+        this(code, Collections.emptyList());
+    }
+
+    public GrepCode getCode()
+    {
+        return code;
+    }
+
+    public String getFileName()
+    {
+        return code.getFileName();
     }
 
     public int size()

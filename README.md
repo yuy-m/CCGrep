@@ -1,10 +1,11 @@
 CCGrep
 ====
+*written on 2018/12/04*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
 ## Description
-Many code clone detectors already exist, but their install, configuration and execution are difficult to use.
+Many code clone detectors already exist, but their installation, configuration and execution are difficult to use.
 CCGrep is a simple clone detector based on grep command interface and you can use it instantly.
 
 CCGrep can detect Type 1, 2(p-match or not) clones.
@@ -16,10 +17,42 @@ CCGrep can detect Type 1, 2(p-match or not) clones.
  - Python3 (*experimental*)
 
 ## Demo
+Output samples with target [**Apache HTTP Server**](http://httpd.apache.org/).
+
+ - `ccgrep -r -l c -p n 'T a = b();' httpd-2.4.33/ `
+
+```
+httpd-2.4.33/modules/arch/unix/mod_unixd.c:141:    int rv = set_group_privs();
+httpd-2.4.33/modules/arch/win32/mod_isapi.c:311:        apr_status_t rv = apr_get_os_error();
+httpd-2.4.33/modules/cache/cache_util.c:286:    apr_time_t now = apr_time_now();
+httpd-2.4.33/modules/cache/mod_socache_shmcb.c:583:    apr_time_t now = apr_time_now();
+httpd-2.4.33/modules/cache/mod_socache_shmcb.c:687:    apr_time_t now = apr_time_now();
+httpd-2.4.33/modules/cache/mod_socache_shmcb.c:865:    apr_time_t now = apr_time_now();
+httpd-2.4.33/modules/http2/h2_session.c:1738:                apr_time_t now = apr_time_now();
+```
+
+ -  `ccgrep -r -l c -p nf 'if($$==$$){$$}' httpd-2.4.33/ `
+```
+httpd-2.4.33/modules/aaa/mod_access_compat.c
+230:        if (wl == dl) {
+231:            return 1;                /* matched whole thing */
+232:        }
+httpd-2.4.33/modules/aaa/mod_access_compat.c
+322:    if (a->order[method] == ALLOW_THEN_DENY) {
+323:        ret = HTTP_FORBIDDEN;
+324:        if (find_allowdeny(r, a->allows, method)) {
+325:            ret = OK;
+326:        }
+327:        if (find_allowdeny(r, a->denys, method)) {
+328:            ret = HTTP_FORBIDDEN;
+329:        }
+330:    }
+```
+
 ## VS.
 ## Requirement
  - Java8
- - Apache Ant *(for build)*
+ - Apache Ant *(required only to build, not to use)*
 
 ## Install
 Optional.
@@ -29,36 +62,38 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
 `$ ./install`
 
 #### Windows
-*Not implemented yet*
+*Not implemented yet. use ccgrep directly*
 
 ## Usage
  - `$ ccgrep [OPTIONS]... QUERY_CODE [TARGETS]...`
  - `$ ccgrep [OPTIONS]... -f QUERY_FILE [TARGETS]...`
 
 #### Options
- - `-b,--blind <LEVEL>`     set blind level. none(Type 1) /
-                        consistent(p-match)(by default) / full(Type 2).
- - `-f,--file <FILES>`      obtain needle from file. CANNOT give needle as
-                        code string at once.
+ - `-b,--blind <LEVEL>`     set blind level.
+   - none(Type 1) / consistent(p-match)(by default) / full(Type 2).
+ - `-f,--file <FILES>`      obtain query from file.
+   - CANNOT give query as code string at once.
  - `--fix <IDS>`         specify identifier(s) to match exactly the same
                         ones (e.g. 'getValue|string').
  - `-h,--help`              show help.
- - `   --json`              print clones with JSON format (*experimental*).
- - `-l,--language <LANG>`   set target language. c / c++ / java(by default) /
-                        python3. With `-f` option, the language can be
-                        inferred from the file extension.
- - `-p,--print <OPTION>`    set printing option c/l/n/f/e like `-p fn`. When
-                        `c` set, print ONLY the count of clones. When `l`
-                        set, print ONLY file name per matched files. When
-                        `h` set, NOT print file names. When `n` set, print
-                        line numbers. When `f` set, print whole code of
-                        clones. When `e` set, comment out the file name
-                        and line numbers.
+ - `   --json`              print clones with JSON format.
+ - `-l,--language <LANG>`   set target language.
+   - c / c++ / java(by default) / python3.
+   - With `-f` option, the language can be inferred from the file extension.
+ - `-p,--print <OPTION>`    set printing option c/l/n/f/e like `-p fn`.
+   - When `c` set, print ONLY the count of clones.
+   - When `l` set, print ONLY file name per matched files.
+   - When `h` set, NOT print file names.
+   - When `n` set, print line numbers.
+   - When `f` set, print whole code of clones.
+   - When `e` set, comment out the file name and line numbers.
  - `-r,--recursive`         traverse directories recursively.
 
 #### Example
- - `$ ccgrep -r -p n -f query.java target/`
- - `$ ccgrep -r -p fn 'int a = 1;' target/`
+ - search recursively `target/` for `query.java`, and print head lines of clones with file name and line number.
+   - `$ ccgrep -r -p n -f query.java target/`
+ - search recursively `target/` for `'int a = 1;'`, and print whole lines of clones with file name and line number.
+   - `$ ccgrep -r -p fn 'int a = 1;' target/`
 
 Note: to specify a query code, you should use SINGLE quotes `'` instead of DOUBLE quotes `"` because the variable expansion leads to unexpected results.
 
@@ -74,7 +109,7 @@ In a query, identifiers can starts with `$` (e.g. `$value`).
 These identifiers match exact same identifiers regardless of the [blind level](#ClonesToDetect).
 
 Note: No spaces are allowed between `$` and identifier.  
-Note: assume that the languages uses no `$` in their grammar.
+Note: assume that the language uses no `$` in their grammar.
 
 You can also use `--fix` option to fix identifiers.
 

@@ -12,12 +12,12 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 public class JsonPrinter implements IPrinter
 {
     final List<CloneList> clones;
-    final List<GrepToken> needle;
+    final GrepCode needle;
     final Language language;
     final BlindLevel blindLevel;
     final PrintStream stream;
 
-    public JsonPrinter(List<CloneList> clones, List<GrepToken> needle, Language language, BlindLevel blindLevel, PrintStream stream)
+    public JsonPrinter(List<CloneList> clones, GrepCode needle, Language language, BlindLevel blindLevel, PrintStream stream)
     {
         this.clones = clones;
         this.needle = needle;
@@ -26,7 +26,7 @@ public class JsonPrinter implements IPrinter
         this.stream = stream;
     }
 
-    public JsonPrinter(List<CloneList> clones, List<GrepToken> needle, Language language, BlindLevel blindLevel)
+    public JsonPrinter(List<CloneList> clones, GrepCode needle, Language language, BlindLevel blindLevel)
     {
         this(clones, needle, language, blindLevel, System.out);
     }
@@ -34,14 +34,13 @@ public class JsonPrinter implements IPrinter
     @Override
     public void println(PrintOption option)
     {
-        final int lcnt = needle.get(needle.size() - 1).getLine() - needle.get(0).getLine() + 1;
-        final String qtext = needle.get(0).getCodeByLine(lcnt).stream()
+        final String qtext = needle.getCodeByLine().stream()
             .map(s -> escaped(s))
             .collect(Collectors.joining("\\n"));
 
         // ignore option
         final String s = clones.stream()
-            .filter(clonesByFile -> !clonesByFile.isEmpty())
+            //.filter(clonesByFile -> !clonesByFile.isEmpty())
             .map(clonesByFile -> makeCloneByFileJson(clonesByFile))
             .collect(Collectors.joining(
                 ',' + System.lineSeparator(),
@@ -49,7 +48,10 @@ public class JsonPrinter implements IPrinter
                 "{" + System.lineSeparator()
               + " \"language\":\"" + language+ "\"," + System.lineSeparator()
               + " \"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
-              + " \"query\":\"" + qtext + "\"," + System.lineSeparator()
+              + " \"queryCode\":\"" + qtext + "\"," + System.lineSeparator()
+              + " \"countAllFile\":" + clones.size() + "," + System.lineSeparator()
+              + " \"countCloneFile\":" + clones.stream().filter(l -> !l.isEmpty()).count() + "," + System.lineSeparator()
+              + " \"countAllClone\":" + clones.stream().mapToInt(l -> l.size()).sum() + "," + System.lineSeparator()
               + " \"clonesPerFile\":[" + System.lineSeparator(),
 
                 System.lineSeparator()
@@ -61,20 +63,22 @@ public class JsonPrinter implements IPrinter
 
     private String makeCloneByFileJson(CloneList cloneByFile)
     {
-        return cloneByFile.stream()
-            .map(clonesByFile -> makeCloneJson(clonesByFile))
-            .map(s -> s.toString())
+        final String s = cloneByFile.stream()
+            .map(clone -> makeCloneJson(clone).toString())
             .collect(Collectors.joining(
                 ',' + System.lineSeparator(),
 
                 "  {" + System.lineSeparator()
-              + "   \"file\":\"" + escaped(cloneByFile.filename) + "\"," + System.lineSeparator()
+              + "   \"fileName\":\"" + escaped(cloneByFile.getFileName()) + "\"," + System.lineSeparator()
+              + "   \"countClone\":" + cloneByFile.size() + "," + System.lineSeparator()
               + "   \"clones\":[" + System.lineSeparator(),
 
               System.lineSeparator()
               + "   ]" + System.lineSeparator()
               + "  }"
             ));
+        cloneByFile.getCode().clearCodeCache();
+        return s;
     }
 
     private StringJoiner makeCloneJson(Clone clone)

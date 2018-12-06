@@ -6,27 +6,29 @@ import java.util.List;
 
 public class Clone
 {
+    private final GrepCode code;
     public final GrepToken start;
     public final GrepToken end;
-    public Clone(GrepToken start, GrepToken end)
+    public Clone(GrepCode code, GrepToken start, GrepToken end)
     {
+        this.code = code;
         this.start = start;
         this.end = end;
     }
 
     public List<String> getCodeByLine()
     {
-        return getCodeByLine(end.getLine() - start.getLine() + 1);
+        return code.getCodeByLine(start.getLine(), end.getLine());
     }
 
     public List<String> getCodeByLine(int countLines)
     {
-        return start.getCodeByLine(countLines);
+        return code.getCodeByLine(start.getLine(), start.getLine() + countLines - 1);
     }
 
     public String getFileName()
     {
-        return start.getFileName();
+        return code.getFileName();
     }
 
     public int getStartLine()

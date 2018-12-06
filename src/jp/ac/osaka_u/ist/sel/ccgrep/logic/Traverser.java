@@ -28,10 +28,12 @@ public class Traverser
 
     public List<CloneList> traverse(List<String> haystackNames)
     {
-        return haystackNames.stream()
-            .flatMap(this::traverseImpl)
-            .filter(cloneList -> !cloneList.isEmpty())
-            .collect(Collectors.toList());
+        try(Stream<String> s = haystackNames.stream())
+        {
+            return s
+                .flatMap(this::traverseImpl)
+                .collect(Collectors.toList());
+        }
     }
 
     private final Stream<CloneList> traverseImpl(String haystackName)

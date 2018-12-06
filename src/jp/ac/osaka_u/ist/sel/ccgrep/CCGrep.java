@@ -10,6 +10,7 @@ import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.*;
 import static jp.ac.osaka_u.ist.sel.ccgrep.logger.Logger.debugLogger;
 
+
 public class CCGrep
 {
     static boolean DEBUG = false;
@@ -26,128 +27,143 @@ public class CCGrep
         }
         debugLogger.enable(fe.isLogEnabled);
 
-        final CCGrep ccgrep = new CCGrep(fe);
-
-        final int returnCode = ccgrep.grep();
-
+        int returnCode = 2;
+        try{
+            final CCGrep ccgrep = new CCGrep(fe);
+            returnCode = ccgrep.grep();
+        }
+        catch(PreparingException e)
+        {
+            System.err.println(e.getMessage());
+        }
         System.exit(returnCode);
     }
 
     private final Frontend frontend;
+    private final long[] times = new long[3];
 
-    CCGrep(Frontend frontend)
+    private final Language language;
+    private final BlindLevel blindLevel;
+    private GrepCode needle;
+    private final IDetector detector;
+
+    public CCGrep(Frontend frontend) throws PreparingException
     {
+        times[0] = System.nanoTime();
         this.frontend = frontend;
-    }
-
-    private void printTimeln(String format, long s, long e)
-    {
-        if(frontend.isTimeEnabled)
-        {
-            printTime(format, s, e);
-            System.err.println();
-        }
-    }
-
-    private void printTime(String format, long s, long e)
-    {
-        if(frontend.isTimeEnabled)
-        {
-            final long milli = (e - s) / 1000000;
-            System.err.print(String.format(format, milli / 1000.0));
-        }
-    }
-
-
-    int grep()
-    {
         final long t0 = System.nanoTime();
-        final Language language = findLanguage();
-        if(language == null)
-        {
-            return 2;
-        }
+        this.language = findLanguage();
         debugLogger.println("language: " + language);
 
-        final ITokenizer tokenizer = new AntlrTokenizer(language);
-
-        final BlindLevel blindLevel = BlindLevel.findByName(frontend.blindLevelName);
-        if(blindLevel == null)
-        {
-            System.err.println("BlindLevel `" + frontend.blindLevelName + "` is not supported.");
-            return 2;
-        }
+        this.blindLevel = BlindLevel.findByName(frontend.blindLevelName)
+            .orElseThrow(() ->
+                new PreparingException("BlindLevel `" + frontend.blindLevelName + "` is not supported.")
+            );
         debugLogger.println("blind level: " + blindLevel);
 
-        final IDetector detector = frontend.needleFileName == null
-            ? TokenSequenceDetector.withNeedleFromCode(tokenizer, frontend.needleCode, blindLevel, frontend.fixedIds)
-            : TokenSequenceDetector.withNeedleFromFile(tokenizer, frontend.needleFileName, blindLevel, frontend.fixedIds);
-        if(detector == null)
+        final ITokenizer tokenizer = new AntlrTokenizer(language);
+        this.detector = createDetector(tokenizer);
+
+        times[0] = System.nanoTime() - times[0];
+    }
+
+    private static double secondTime(long t)
+    {
+        return t / 1.0e+9;
+    }
+
+    private Language findLanguage() throws PreparingException
+    {
+        if(frontend.languageName != null)
         {
-            return 2;
+            return Language.findByName(frontend.languageName)
+                .orElseThrow(() -> new PreparingException("The language " + frontend.languageName + " is not supported."));
+        }
+        else if(frontend.needleFileName != null)
+        {
+            return Language.findByFileNameWithExtension(frontend.needleFileName)
+                .orElseThrow(() -> new PreparingException(
+                    "No language found from the extension of " + frontend.needleFileName
+                    + System.lineSeparator() + "specify languge by `-l LANG` or `-f FILE.EXT`"
+                ));
+        }
+        else
+        {
+            return Language.getDefaultLanguage();
+        }
+    }
+
+    private IDetector createDetector(ITokenizer tokenizer) throws PreparingException
+    {
+        debugLogger.print("tokenizing query...");
+        final ITokenizer.TokenizerResult needleResult = frontend.needleFileName == null
+            ? tokenizer.extractFromString(frontend.needleCode)
+            : tokenizer.extractFromFile(frontend.needleFileName);
+        this.needle = needleResult.code;
+        final List<GrepToken> nTokens = needleResult.tokens;
+
+        debugLogger.println("finish.");
+        if(nTokens.size() == 0)
+        {
+            throw new PreparingException("Error: No token found in the query.");
         }
 
-        final long t1 = System.nanoTime();
-        printTimeln("preparing: %5f", t0, t1);
+        final int specialSeq = tokenizer.getLanguage().specialSeq();
+        if(nTokens.get(0).getType() == specialSeq
+            || nTokens.get(nTokens.size() - 1).getType() == specialSeq)
+        {
+            throw new PreparingException("Error: Query cannot start/end with special token `$$`.");
+        }
+
+        nTokens.forEach(debugLogger::println);
+
+        debugLogger.println("The query has " + nTokens.size() + " token(s).");
+        return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, frontend.fixedIds);
+    }
+
+    private static double getUsingMemoryMB()
+    {
+        return(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024.0 * 1024.0);
+    }
+
+    private static final boolean MEMORY = false;
+    public int grep()
+    {
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
+
+        times[1] = System.nanoTime();
 
         debugLogger.println("traversing...");
-        final Traverser traverser = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension);
-        final List<CloneList> clones = traverser.traverse(frontend.haystackNames);
+        final List<CloneList> clones = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension)
+                                    .traverse(frontend.haystackNames);
         debugLogger.println("finish.");
         debugLogger.println(clones.size() + " clone(s) found.");
 
-        final long t2 = System.nanoTime();
-        printTimeln("detecting: %5f", t1, t2);
+        times[1] = System.nanoTime() - times[1];
 
-        printResult(clones, ((TokenSequenceDetector)detector).needle, language, blindLevel);
+        if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
 
-        final long t3 = System.nanoTime();
-        printTimeln("printing : %5f", t2, t3);
+        times[2] = System.nanoTime();
+        printResult(clones, needle);
+        times[2] = System.nanoTime() - times[2];
 
-        printTimeln("all      : %5f", t0, t3);
+        if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
 
         if(frontend.isTimeEnabled)
         {
-            final long all = t3 - t0;
-            System.err.println(String.format(
-                "ratio: %2.1f:%2.1f:%2.1f",
-                100.0 * (t1 - t0) / all,
-                100.0 * (t2 - t1) / all,
-                100.0 * (t3 - t2) / all
-            ));
+            final long all = times[0] + times[1] + times[2];
+            System.err.print( "          :  seconds :     %\n");
+            System.err.printf("preparing : %8.3f : %5.1f\n", secondTime(times[0]), 100.0 * times[0] / all);
+            System.err.printf("detecting : %8.3f : %5.1f\n", secondTime(times[1]), 100.0 * times[1] / all);
+            System.err.printf(" printing : %8.3f : %5.1f\n", secondTime(times[2]), 100.0 * times[2] / all);
+            System.err.printf("      all : %8.3f : %5.1f\n", secondTime(all), 100.0);
         }
 
         return clones.isEmpty()? 1: 0;
     }
 
-    private Language findLanguage()
-    {
-        if(frontend.languageName != null)
-        {
-            final Language l = Language.findByName(frontend.languageName);
-            if(l == null)
-            {
-                System.err.println("The language " + frontend.languageName + " is not supported.");
-            }
-            return l;
-        }
-        else if(frontend.needleFileName != null)
-        {
-            final Language l = Language.findByFileNameWithExtension(frontend.needleFileName);
-            if(l == null)
-            {
-                System.err.println("No language found from the extension of " + frontend.needleFileName);
-                System.err.println("specify languge by `-l LANG` or `-f FILE.EXT`");
-            }
-            return l;
-        }
-        else
-        {
-            return Language.findByName("java");
-        }
-    }
-
-    private void printResult(List<CloneList> clones, List<GrepToken> needle, Language language, BlindLevel blindLevel)
+    private void printResult(List<CloneList> clones, GrepCode needle)
     {
         debugLogger.println("printing...");
         final IPrinter printer = frontend.isJsonEnabled
@@ -155,6 +171,15 @@ public class CCGrep
             : new GrepPrinter(clones);
         printer.println(new PrintOption(language, frontend.printOption));
         debugLogger.println("finish.");
+    }
+
+    @SuppressWarnings("serial")
+    private static class PreparingException extends Exception
+    {
+        PreparingException(String msg)
+        {
+            super(msg);
+        }
     }
 }
 

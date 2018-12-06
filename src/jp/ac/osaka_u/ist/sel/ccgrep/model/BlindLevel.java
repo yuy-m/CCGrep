@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Function;
 
 
@@ -61,41 +62,40 @@ public enum BlindLevel
 
     private final String[] names;
     public final int value;
-    private final EqualityStrategy equalityStrategy;
+    private final Matcher matcher;
     private final Function<Map<String, String>, Map<String, String>> constraintCreater;
     BlindLevel(
         String[] names, int value,
         Function<Map<String, String>, Map<String, String>> constraintCreater,
-        EqualityStrategy equalityStrategy)
+        Matcher matcher)
     {
         this.names = names;
         this.value = value;
-        this.equalityStrategy = equalityStrategy;
         this.constraintCreater = constraintCreater;
+        this.matcher = matcher;
     }
 
-    public static BlindLevel findByName(String levelName)
+    public static Optional<BlindLevel> findByName(String levelName)
     {
         return Arrays.stream(BlindLevel.values())
             .filter(bl -> Arrays.stream(bl.names).anyMatch(levelName::equalsIgnoreCase))
-            .findFirst()
-            .orElse(null);
+            .findFirst();
     }
 
-    public boolean checkTokenEquality(GrepToken token1, GrepToken token2, Map<String, String> constraint)
+    public final boolean matches(GrepToken token1, GrepToken token2, Map<String, String> constraint)
     {
-        return equalityStrategy.test(token1, token2, constraint);
+        return matcher.matches(token1, token2, constraint);
     }
 
-    public Map<String, String> createConstraint(Map<String, String> from)
+    public final Map<String, String> createConstraint(Map<String, String> from)
     {
         return constraintCreater.apply(from);
     }
 
-    private interface EqualityStrategy
+    private interface Matcher
     {
         // assert token1.equals(token2);
         // equals -> test, !test -> !equals
-        boolean test(GrepToken token1, GrepToken token2, Map<String, String> constraint);
+        boolean matches(GrepToken token1, GrepToken token2, Map<String, String> constraint);
     }
 }

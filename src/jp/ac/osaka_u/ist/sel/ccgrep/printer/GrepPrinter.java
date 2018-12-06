@@ -40,24 +40,22 @@ public class GrepPrinter implements IPrinter
         {
             clones.stream()
                 .filter(clonesByFile -> !clonesByFile.isEmpty())
-                .map(clonesByFile -> clonesByFile.filename)
+                .map(clonesByFile -> clonesByFile.getFileName())
                 .forEach(stream::println);
         }
         else
         {
             clones.stream()
                 .filter(clonesByFile -> !clonesByFile.isEmpty())
-                .forEach(
-                    clonesByFile -> clonesByFile.forEach(
-                        clone -> printCloneln(clone, option)
-                    )
-                );
+                .forEach(clonesByFile -> {
+                    clonesByFile.forEach(clone -> printCloneln(clone, option));
+                    clonesByFile.code.clearCodeCache();
+                });
         }
     }
 
     private void printCloneln(Clone clone, PrintOption option)
     {
-
         if(option.isCodeEnabled)
         {
             final List<String> lines =  clone.getCodeByLine();
@@ -95,12 +93,5 @@ public class GrepPrinter implements IPrinter
             );
             stream.println(sj);
         }
-    }
-
-    private static String getRangeString(Clone clone)
-    {
-        return clone.getStartLine() + "." + clone.getStartColumn()
-            + "-"
-            + clone.getEndLine() + "." + (clone.getEndColumn());
     }
 }

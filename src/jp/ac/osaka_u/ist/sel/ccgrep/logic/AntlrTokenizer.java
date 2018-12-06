@@ -5,10 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -35,37 +32,27 @@ public class AntlrTokenizer implements ITokenizer
     }
 
     @Override
-    public List<GrepToken> extractAsListFromString(String code)
+    public TokenizerResult extractFromString(String code)
     {
-        return toList(extractAsStreamFromString(code));
-    }
-
-    public CommonTokenStream extractAsStreamFromString(String code)
-    {
-        return extractAsStream(CharStreams.fromString(code, "<string>"));
+        return extract(CharStreams.fromString(code, "<string>"), code);
     }
 
     @Override
-    public List<GrepToken> extractAsListFromFile(String filename)
-    {
-        final CommonTokenStream cts = extractAsStreamFromFile(filename);
-        return cts != null? toList(cts): Collections.emptyList();
-    }
-
-    public CommonTokenStream extractAsStreamFromFile(String filename)
+    public TokenizerResult extractFromFile(String filename)
     {
         try{
             if(filename.equals("-"))
             {
-                final String code =
-                    new BufferedReader(new InputStreamReader(System.in))
-                        .lines()
-                        .collect(Collectors.joining(System.lineSeparator()));
-                return extractAsStream(CharStreams.fromString(code, "<standard-input>"));
+                try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in)))
+                {
+                    final String code = br.lines()
+                            .collect(Collectors.joining(System.lineSeparator()));
+                    return extract(CharStreams.fromString(code, "<standard-input>"), code);
+                }
             }
             else
             {
-                return extractAsStream(CharStreams.fromFileName(filename));
+                return extract(CharStreams.fromFileName(filename), null);
             }
         }
         catch(IOException e)
@@ -75,22 +62,19 @@ public class AntlrTokenizer implements ITokenizer
         }
     }
 
-    private List<GrepToken> toList(CommonTokenStream tokens)
-    {
-        final List<GrepToken> tokenList = new ArrayList<>();
-        while (tokens.LA(1) != Token.EOF)
-        {
-            final Token token = tokens.LT(1);
-            tokenList.add(new GrepToken(token));
-            tokens.consume();
-        }
-        return tokenList;
-    }
-
-    public CommonTokenStream extractAsStream(CharStream stream)
+    private TokenizerResult extract(CharStream stream, String code)
     {
         final Lexer lexer = getLanguage().createLexer(stream);
         lexer.removeErrorListeners();
-        return new CommonTokenStream(lexer);
+        final CommonTokenStream cts = new CommonTokenStream(lexer);
+
+        final ArrayList<GrepToken> tokenList = new ArrayList<>();
+        while (cts.LA(1) != Token.EOF)
+        {
+            final Token token = cts.LT(1);
+            tokenList.add(new GrepToken(token, language));
+            cts.consume();
+        }
+        return new TokenizerResult(new GrepCode(cts.getSourceName(), code), tokenList);
     }
 }

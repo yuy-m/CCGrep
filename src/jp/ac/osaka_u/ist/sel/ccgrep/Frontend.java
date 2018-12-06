@@ -112,8 +112,9 @@ public class Frontend
                                 + "       " + appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
 
         final String header = "\nCode clone detector like grep command.\n\n"
-                            + "Example: ccgrep -r -p n -f query.java target/ \n"
-                            + "         ccgrep -r -p fn 'int a = 1;' target/\n\n";
+                            + "Example: ccgrep -r -p n -f query.java target/\n"
+                            + "         ccgrep -r -p fn 'int a = 1;' target/\n"
+                            + "         (use single quote to suppress variable expansion)\n\n";
 
                             final String footer = "\nWhen TARGETS is -, read standard input."
             + " With no TARGETS, read . if a command-line -r is given, - otherwise."
@@ -159,7 +160,7 @@ public class Frontend
         .addOption(
             Option.builder("f")
             .longOpt("file")
-            .desc("obtain needle from file. CANNOT give needle as code string at once.")
+            .desc("obtain query from file. CANNOT give query as code string at once.")
             .hasArg()
             .argName("FILES")
             .build()
@@ -185,7 +186,7 @@ public class Frontend
         .addOption(
             Option.builder()
             .longOpt("json")
-            .desc("print clones with JSON format (experimental).")
+            .desc("print clones with JSON format.")
             .build()
         )
         .addOption(

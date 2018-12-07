@@ -49,7 +49,7 @@ public class GrepPrinter implements IPrinter
                 .filter(clonesByFile -> !clonesByFile.isEmpty())
                 .forEach(clonesByFile -> {
                     clonesByFile.forEach(clone -> printCloneln(clone, option));
-                    clonesByFile.code.clearCodeCache();
+                    clonesByFile.getCode().clearCodeCache();
                 });
         }
     }

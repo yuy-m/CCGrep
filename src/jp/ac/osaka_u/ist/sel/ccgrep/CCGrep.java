@@ -160,7 +160,7 @@ public class CCGrep
             System.err.printf("      all : %8.3f : %5.1f\n", secondTime(all), 100.0);
         }
 
-        return clones.isEmpty()? 1: 0;
+        return clones.stream().filter(cl -> !cl.isEmpty()).count() == 0? 1: 0;
     }
 
     private void printResult(List<CloneList> clones, GrepCode needle)

@@ -984,7 +984,6 @@ Directive
 
 Directive
     :   '#' ~[\r\n]* BlockComment? ('\\' [\r\n] ~[\r\n]* BlockComment?)* [\r\n]?
-        -> skip
     ;
 
 /** ^ ccgrep ^ **/

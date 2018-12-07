@@ -14,25 +14,22 @@ import java.nio.file.Paths;
 public class GrepCode
 {
     private final String fileName;
+    private final int tokenCount;
     private List<String> cache;
     private final boolean isWithCode;
 
     private static final Pattern lineSplitPattern = Pattern.compile("\r\n|[\n\r\u2028\u2029\u0085]");
 
-    public GrepCode(String fileName, String withCode)
+    public GrepCode(String fileName, int tokenCount, String withCode)
     {
         this.fileName = fileName;
+        this.tokenCount = tokenCount;
         this.isWithCode = withCode != null;
         if(isWithCode)
         {
             this.cache = lineSplitPattern.splitAsStream(withCode)
                                 .collect(Collectors.toList());
         }
-    }
-
-    public List<String> getCodeByLine()
-    {
-        return getCodeByLine(1, -1);
     }
 
     public void clearCodeCache()
@@ -44,7 +41,17 @@ public class GrepCode
         }
     }
 
-    public List<String> getCodeByLine(int fromLine, int toLine)
+    public int countTokens()
+    {
+        return tokenCount;
+    }
+
+    public int countLines()
+    {
+        return getCodeByLine().size();
+    }
+
+    public List<String> getCodeByLine()
     {
         if(cache == null)
         {
@@ -58,9 +65,14 @@ public class GrepCode
                 cache = Collections.singletonList("<NO TEXT>");
             }
         }
-        return cache.subList(
+        return cache;
+    }
+
+    public List<String> getCodeByLine(int fromLine, int toLine)
+    {
+        return getCodeByLine().subList(
             Math.max(0, fromLine - 1),
-            toLine >= 1? Math.min(cache.size(), toLine): cache.size()
+            Math.min(cache.size(), toLine)
         );
         /*return memo.computeIfAbsent(
                 getFileName(),

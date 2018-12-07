@@ -70,6 +70,8 @@ public class JsonPrinter implements IPrinter
 
                 "  {" + System.lineSeparator()
               + "   \"fileName\":\"" + escaped(cloneByFile.getFileName()) + "\"," + System.lineSeparator()
+              + "   \"countLine\":" + cloneByFile.getCode().countLines() + "," + System.lineSeparator()
+              + "   \"countToken\":" + cloneByFile.getCode().countTokens() + "," + System.lineSeparator()
               + "   \"countClone\":" + cloneByFile.size() + "," + System.lineSeparator()
               + "   \"clones\":[" + System.lineSeparator(),
 

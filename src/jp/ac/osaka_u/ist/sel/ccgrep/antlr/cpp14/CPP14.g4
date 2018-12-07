@@ -1333,7 +1333,7 @@ noexceptspecification
 ;
 
 /*Preprocessing directives*/
-
+/*
 MultiLineMacro
 :
     '#' (~[\n]*? '\\' '\r'? '\n')+ ~[\n]+ -> channel(HIDDEN)
@@ -1343,7 +1343,7 @@ Directive
 :
     '#' ~[\n]* -> channel(HIDDEN)
 ;
-
+*/
 /*Lexer*/
 
 /*Keywords*/
@@ -2374,5 +2374,9 @@ CCG_SPECIAL_ID : '$' Identifier;
 CCG_SPECIAL_SEQ : '$$';
 CCG_SPECIAL_EXPR : '$()';
 CCG_SPECIAL_BLOCK : '${}';
+
+Directive
+    :   '#' ~[\r\n]* BlockComment? ('\\' [\r\n] ~[\r\n]* BlockComment?)* [\r\n]?
+    ;
 
 /** ^ ccgrep ^ **/

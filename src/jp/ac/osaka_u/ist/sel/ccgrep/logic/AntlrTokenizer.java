@@ -5,7 +5,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -68,6 +70,12 @@ public class AntlrTokenizer implements ITokenizer
         lexer.removeErrorListeners();
         final CommonTokenStream cts = new CommonTokenStream(lexer);
 
+        final List<GrepToken> tokenList = language.filter(toList(cts));
+        return new TokenizerResult(new GrepCode(cts.getSourceName(), tokenList.size(), code), tokenList);
+    }
+
+    private final ArrayList<GrepToken> toList(CommonTokenStream cts)
+    {
         final ArrayList<GrepToken> tokenList = new ArrayList<>();
         while (cts.LA(1) != Token.EOF)
         {
@@ -75,6 +83,6 @@ public class AntlrTokenizer implements ITokenizer
             tokenList.add(new GrepToken(token, language));
             cts.consume();
         }
-        return new TokenizerResult(new GrepCode(cts.getSourceName(), code), tokenList);
+        return tokenList;
     }
 }

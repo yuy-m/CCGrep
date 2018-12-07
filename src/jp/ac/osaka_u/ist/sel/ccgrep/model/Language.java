@@ -3,15 +3,19 @@ package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
 import java.util.Optional;
+import java.util.Iterator;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.*;
 
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.c.*;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.cpp14.*;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.*;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.*;
+import jp.ac.osaka_u.ist.sel.ccgrep.antlr.c.CLexer;
+import jp.ac.osaka_u.ist.sel.ccgrep.antlr.cpp14.CPP14Lexer;
+import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.Java9Lexer;
+import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.Python3Lexer;
 
 
 public enum Language
@@ -20,7 +24,6 @@ public enum Language
         new String[]{"c"},
         new String[]{".c", ".h"},
         CLexer::new,
-        CParser::new,
         new SpecialSet(CLexer.CCG_SPECIAL_ID, CLexer.CCG_SPECIAL_SEQ, CLexer.CCG_SPECIAL_EXPR, CLexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
         new BracketPair[]{
@@ -33,13 +36,13 @@ public enum Language
             new BlindSet(BlindLevel.FULL, CLexer.Constant, CLexer.DigitSequence, CLexer.StringLiteral)/*,
             new BlindSet(BlindLevel.FULL, CLexer.Less, CLexer.LessEqual, CLexer.Greater, CLexer.GreaterEqual, CLexer.LeftShift, CLexer.RightShift, CLexer.Plus, CLexer.PlusPlus, CLexer.Minus, CLexer.MinusMinus, CLexer.Star, CLexer.Div, CLexer.Mod, CLexer.And, CLexer.AndAnd, CLexer.OrOr, CLexer.Caret, CLexer.Not, CLexer.Tilde),
             new BlindSet(BlindLevel.FULL, CLexer.Assign, CLexer.StarAssign, CLexer.DivAssign, CLexer.ModAssign, CLexer.PlusAssign, CLexer.MinusAssign, CLexer.LeftShiftAssign, CLexer.RightShiftAssign, CLexer.AndAssign, CLexer.XorAssign, CLexer.OrAssign, CLexer.Equal, CLexer.NotEqual)*/
-        }
+        },
+        t -> preprocessorFilter(t, CLexer.Directive)
     ),
     CPP14(
         new String[]{"cpp", "cpp14", "c++", "c++14"},
         new String[]{".cpp", ".cc", ".c++", ".cxx", ".c", ".h", ".hpp"},
         CPP14Lexer::new,
-        CPP14Parser::new,
         new SpecialSet(CPP14Lexer.CCG_SPECIAL_ID, CPP14Lexer.CCG_SPECIAL_SEQ, CPP14Lexer.CCG_SPECIAL_EXPR, CPP14Lexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
         new BracketPair[]{
@@ -52,13 +55,13 @@ public enum Language
             new BlindSet(BlindLevel.FULL, CPP14Lexer.False, CPP14Lexer.Nullptr, CPP14Lexer.True, CPP14Lexer.Integerliteral, CPP14Lexer.Decimalliteral, CPP14Lexer.Octalliteral, CPP14Lexer.Hexadecimalliteral, CPP14Lexer.Binaryliteral, CPP14Lexer.Characterliteral, CPP14Lexer.Floatingliteral, CPP14Lexer.Stringliteral, CPP14Lexer.Userdefinedintegerliteral, CPP14Lexer.Userdefinedfloatingliteral, CPP14Lexer.Userdefinedstringliteral, CPP14Lexer.Userdefinedcharacterliteral)/*,
             new BlindSet(BlindLevel.FULL, CPP14Lexer.Plus, CPP14Lexer.Minus, CPP14Lexer.Star, CPP14Lexer.Div, CPP14Lexer.Mod, CPP14Lexer.Caret, CPP14Lexer.And, CPP14Lexer.Or, CPP14Lexer.Tilde, CPP14Lexer.Not, CPP14Lexer.Less, CPP14Lexer.Greater, CPP14Lexer.LeftShift, CPP14Lexer.Equal, CPP14Lexer.NotEqual, CPP14Lexer.LessEqual, CPP14Lexer.GreaterEqual, CPP14Lexer.AndAnd, CPP14Lexer.OrOr, CPP14Lexer.PlusPlus, CPP14Lexer.MinusMinus),
             new BlindSet(BlindLevel.FULL, CPP14Lexer.Assign, CPP14Lexer.PlusAssign, CPP14Lexer.MinusAssign, CPP14Lexer.StarAssign, CPP14Lexer.DivAssign, CPP14Lexer.ModAssign, CPP14Lexer.XorAssign, CPP14Lexer.AndAssign, CPP14Lexer.OrAssign, CPP14Lexer.LeftShiftAssign)*/
-        }
+        },
+        t -> preprocessorFilter(t, CPP14Lexer.Directive)
     ),
     JAVA9(
         new String[]{"java", "java9"},
         new String[]{".java"},
         Java9Lexer::new,
-        Java9Parser::new,
         new SpecialSet(Java9Lexer.CCG_SPECIAL_ID, Java9Lexer.CCG_SPECIAL_SEQ, Java9Lexer.CCG_SPECIAL_EXPR, Java9Lexer.CCG_SPECIAL_BLOCK),
         new CommentSet("//", "/*", "*/"),
         new BracketPair[]{
@@ -71,13 +74,13 @@ public enum Language
             new BlindSet(BlindLevel.FULL, Java9Lexer.IntegerLiteral, Java9Lexer.FloatingPointLiteral, Java9Lexer.BooleanLiteral, Java9Lexer.CharacterLiteral, Java9Lexer.StringLiteral, Java9Lexer.NullLiteral)/*,
             new BlindSet(BlindLevel.FULL, Java9Lexer.GT, Java9Lexer.LT, Java9Lexer.TILDE, Java9Lexer.EQUAL, Java9Lexer.LE, Java9Lexer.GE, Java9Lexer.NOTEQUAL, Java9Lexer.AND, Java9Lexer.OR, Java9Lexer.INC, Java9Lexer.DEC, Java9Lexer.ADD, Java9Lexer.SUB, Java9Lexer.MUL, Java9Lexer.DIV, Java9Lexer.BITAND, Java9Lexer.BITOR, Java9Lexer.CARET, Java9Lexer.MOD),
             new BlindSet(BlindLevel.FULL, Java9Lexer.ASSIGN, Java9Lexer.ADD_ASSIGN, Java9Lexer.SUB_ASSIGN, Java9Lexer.MUL_ASSIGN, Java9Lexer.DIV_ASSIGN, Java9Lexer.AND_ASSIGN, Java9Lexer.OR_ASSIGN, Java9Lexer.XOR_ASSIGN, Java9Lexer.MOD_ASSIGN, Java9Lexer.LSHIFT_ASSIGN, Java9Lexer.RSHIFT_ASSIGN, Java9Lexer.URSHIFT_ASSIGN)*/
-        }
+        },
+        UnaryOperator.identity()
     ),
     PYTHON3(
         new String[]{"python", "python3"},
         new String[]{".py"},
         Python3Lexer::new,
-        Python3Parser::new,
         new SpecialSet(Python3Lexer.CCG_SPECIAL_ID, Python3Lexer.CCG_SPECIAL_SEQ, Python3Lexer.CCG_SPECIAL_EXPR, Python3Lexer.CCG_SPECIAL_BLOCK),
         new CommentSet("#", "\"\"\"", "\"\"\""),
         new BracketPair[]{
@@ -90,39 +93,42 @@ public enum Language
             new BlindSet(BlindLevel.FULL, Python3Lexer.STRING, Python3Lexer.NUMBER, Python3Lexer.INTEGER, Python3Lexer.NONE, Python3Lexer.TRUE, Python3Lexer.FALSE, Python3Lexer.STRING_LITERAL, Python3Lexer.BYTES_LITERAL, Python3Lexer.DECIMAL_INTEGER, Python3Lexer.OCT_INTEGER, Python3Lexer.HEX_INTEGER, Python3Lexer.BIN_INTEGER, Python3Lexer.FLOAT_NUMBER, Python3Lexer.IMAG_NUMBER)/*,
             new BlindSet(BlindLevel.FULL, Python3Lexer.IN, Python3Lexer.OR, Python3Lexer.AND, Python3Lexer.NOT, Python3Lexer.IS, Python3Lexer.STAR, Python3Lexer.POWER, Python3Lexer.OR_OP, Python3Lexer.XOR, Python3Lexer.AND_OP, Python3Lexer.LEFT_SHIFT, Python3Lexer.RIGHT_SHIFT, Python3Lexer.ADD, Python3Lexer.MINUS, Python3Lexer.DIV, Python3Lexer.MOD, Python3Lexer.IDIV, Python3Lexer.NOT_OP, Python3Lexer.LESS_THAN, Python3Lexer.GREATER_THAN, Python3Lexer.EQUALS, Python3Lexer.GT_EQ, Python3Lexer.LT_EQ, Python3Lexer.NOT_EQ_1, Python3Lexer.NOT_EQ_2, Python3Lexer.AT),
             new BlindSet(BlindLevel.FULL, Python3Lexer.ASSIGN, Python3Lexer.ADD_ASSIGN, Python3Lexer.SUB_ASSIGN, Python3Lexer.MULT_ASSIGN, Python3Lexer.AT_ASSIGN, Python3Lexer.DIV_ASSIGN, Python3Lexer.MOD_ASSIGN, Python3Lexer.AND_ASSIGN, Python3Lexer.OR_ASSIGN, Python3Lexer.XOR_ASSIGN, Python3Lexer.LEFT_SHIFT_ASSIGN, Python3Lexer.RIGHT_SHIFT_ASSIGN, Python3Lexer.POWER_ASSIGN, Python3Lexer.IDIV_ASSIGN)*/
-        }
+        },
+        UnaryOperator.identity()
     );
 
     private final String[] names;
     private final String[] extensions;
     private final Function<CharStream, Lexer> lexerCreater;
-    private final Function<TokenStream, Parser> parserCreater;
-
+ 
     private final SpecialSet specialSet;
     private final CommentSet commentSet;
     private final BracketPair[] bracketPairs;
     private final BlindSet[] blindSets;
 
+    private final UnaryOperator<List<GrepToken>> tokenListFilter;
+
     Language(
         String[] names, String[] extensions,
         Function<CharStream, Lexer> lexerCreater,
-        Function<TokenStream, Parser> parserCreater,
         SpecialSet specialSet,
         CommentSet commentSet,
         BracketPair[] bracketPairs,
-        BlindSet[] blindSets)
+        BlindSet[] blindSets,
+        UnaryOperator<List<GrepToken>> tokenListFilter)
     {
         Arrays.sort(names);
         Arrays.sort(extensions);
         this.names = names;
         this.extensions = extensions;
         this.lexerCreater = lexerCreater;
-        this.parserCreater = parserCreater;
 
         this.specialSet = specialSet;
         this.commentSet = commentSet;
         this.bracketPairs = bracketPairs;
         this.blindSets = blindSets;
+
+        this.tokenListFilter = tokenListFilter;
     }
 
     public static final Language getDefaultLanguage()
@@ -147,11 +153,6 @@ public enum Language
     public final Lexer createLexer(CharStream stream)
     {
         return lexerCreater.apply(stream);
-    }
-
-    public final Parser createParser(TokenStream stream)
-    {
-        return parserCreater.apply(stream);
     }
 
     public final BlindLevel findBlindLevel(GrepToken needleToken, GrepToken haystackToken, BlindLevel blindLevel)
@@ -288,5 +289,39 @@ public enum Language
         {
             return Arrays.binarySearch(blindTypes, type) >= 0;
         }
+    }
+
+    public final List<GrepToken> filter(List<GrepToken> tokens)
+    {
+        return tokenListFilter.apply(tokens);
+    }
+
+    // From: jp.ac.osaka_u.ist.sel.clonedetector.analyze.CAnalyzer4.preProcessor
+    // プリプロセッサ
+    // マクロの除去
+    private static final Pattern pElse = Pattern.compile("#[ \\t]*el(se|if)(.|[\\n\\r])*");
+    private static final Pattern pEndif = Pattern.compile("#[ \\t]*endif(.|[\\n\\r])*");
+    private static final List<GrepToken> preprocessorFilter(List<GrepToken> tokens, int directiveType)
+    {
+        final Iterator<GrepToken> it = tokens.iterator();
+        while(it.hasNext())
+        {
+            GrepToken token = it.next();
+            if(token.getType() == directiveType)
+            {
+                if (pElse.matcher(token.getText()).matches())
+                {
+                    it.remove();
+                    token = it.next();
+                    while (token.getType() != directiveType || !pEndif.matcher(token.getText()).matches())
+                    {
+                        it.remove();
+                        token = it.next();
+                    }
+                }
+                it.remove();
+            }
+        }
+        return tokens;
     }
 }

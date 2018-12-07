@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 
 public class CloneList
 {
-    public final GrepCode code;
-    public final List<Clone> clones;
+    private final GrepCode code;
+    private  final List<Clone> clones;
     public CloneList(GrepCode code, List<Clone> clones)
     {
         this.code = code;

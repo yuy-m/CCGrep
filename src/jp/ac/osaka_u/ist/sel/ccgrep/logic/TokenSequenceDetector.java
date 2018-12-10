@@ -1,23 +1,25 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
-
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
-
 
 public class TokenSequenceDetector implements IDetector
 {
     final ITokenizer tokenizer;
-    private final List<GrepToken> needle;
+    private final IParser<GrepToken> matcher;
     final BlindLevel blindLevel;
 
     private final HashMap<String, String> defaultIdmap = new HashMap<>();
@@ -26,7 +28,7 @@ public class TokenSequenceDetector implements IDetector
     {
         this.tokenizer = tokenizer;
         this.blindLevel = blindLevel;
-        this.needle = needle;
+        this.matcher = compile(needle, tokenizer.getLanguage());
         fixedIds.forEach(id -> defaultIdmap.put(id, id));
     }
 
@@ -57,88 +59,62 @@ public class TokenSequenceDetector implements IDetector
     private Clone matchClone(GrepCode code, List<GrepToken> subHaystack)
     {
         final Map<String, String> idmap = blindLevel.createConstraint(defaultIdmap);
-
-        // Chaotic Implementation!
-        int needleIdx = 0;
-        int haystackIdx = 0;
-        for(;
-            needleIdx < needle.size() && haystackIdx < subHaystack.size();
-            ++needleIdx, ++haystackIdx
-        )
-        {
-            if(needle.get(needleIdx).getType() == getLanguage().specialSeq())
-            {
-                do
-                {
-                    ++needleIdx;
-                } while(needle.get(needleIdx).getType() == getLanguage().specialSeq());
-
-                haystackIdx = matchSpecialSequence(needle.get(needleIdx), subHaystack, haystackIdx, idmap);
-                if(haystackIdx == -1)
-                {
-                    return null;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-            if(!needle.get(needleIdx).matchesBlindly(subHaystack.get(haystackIdx), blindLevel, idmap))
-            {
-                return null;
-            }
-        }
-        return needleIdx < needle.size()
-            ? null
-            : new Clone(
-                code,
-                subHaystack.get(0),
-                subHaystack.get(haystackIdx - 1)
-            );
-        /*return IntStream.range(0, needle.size())
-                .allMatch(idx -> needle.get(idx).matchesBlindly(subHaystack.get(idx), blindLevel, idmap)); //*/
-    }
-
-    private int matchSpecialSequence(GrepToken nt, List<GrepToken> subHaystack, int haystackIdx, Map<String, String> idmap)
-    {
-        for(final ArrayDeque<Integer> brackets = new ArrayDeque<>();
-            haystackIdx < subHaystack.size();
-            ++haystackIdx)
-        {
-            final GrepToken ht = subHaystack.get(haystackIdx);
-            if(brackets.isEmpty())
-            {
-                if(nt.matchesBlindly(ht, blindLevel, idmap))
-                {
-                    return haystackIdx;
-                }
-                else if(getLanguage().isCloseBracket(ht.getType()))
-                {
-                    return -1;
-                }
-                else if(getLanguage().isOpenBracket(ht.getType()))
-                {
-                    brackets.addLast(ht.getType());
-                }
-            }
-            else if(getLanguage().isCloseBracket(ht.getType()))
-            {
-                final int lastBracket = brackets.removeLast();
-                if(!getLanguage().isBracketPair(lastBracket, ht.getType()))
-                {
-                    return -1;
-                }
-            }
-            else if(getLanguage().isOpenBracket(ht.getType()))
-            {
-                brackets.addLast(ht.getType());
-            }
-        }
-        return -1;
+        final List<GrepToken> l = matcher.matches(new GrepRange(subHaystack, blindLevel, idmap));
+        return l == null ? null : new Clone(code, l.get(0), l.get(l.size() - 1));
     }
 
     private Language getLanguage()
     {
         return tokenizer.getLanguage();
+    }
+
+    private static IParser<GrepToken> compile(List<GrepToken> needle, Language language)
+    {
+        final One<GrepToken> isSpSeq = new One<>(r -> r.front().getType() == language.specialSeq());
+
+        final Mapper<GrepToken, IParser<GrepToken>> spSeqCompiler =
+            new Mapper<>(
+                new Sequence<GrepToken>(Arrays.asList(
+                    isSpSeq,
+                    new Discard<>(new Repeat<>(isSpSeq)),
+                    new Lookahead<>(One.any())
+                )),
+                n -> new AnyTokenSequence(
+                        language,
+                        new One<>(n.asSeq().<GrepToken>getAsOne(2).get())
+                    )
+            );
+
+        final Mapper<GrepToken, IParser<GrepToken>> normalCompiler =
+            new Mapper<>(
+                new One<GrepToken>(a -> true),
+                n -> new One<>(n.<GrepToken>asOne().get())
+            );
+
+        final Mapper<GrepToken, IParser<GrepToken>> compiler =
+            new Mapper<>(
+                new Repeat<GrepToken>(new Select<>(Arrays.asList(spSeqCompiler, normalCompiler))),
+                n -> new Sequence<>(n.<IParser<GrepToken>>asSeq().getList())
+            );
+        return compiler.parse(new Range<GrepToken>(needle)); //*/
+
+        /*final Iterator<GrepToken> it = needle.iterator();
+        final List<IParser<GrepToken>> list = new ArrayList<>();
+        while (it.hasNext())
+        {
+            final GrepToken t = it.next();
+            if (t.getType() == language.specialSeq())
+            {
+                final GrepToken t1 = it.next();
+                final IParser<GrepToken> am = new One<>(t1);
+                list.add(new AnyTokenSequence(language, am));
+                list.add(am);
+            }
+            else
+            {
+                list.add(new One<GrepToken>(t));
+            }
+        }
+        return new Sequence<>(list);//*/
     }
 }

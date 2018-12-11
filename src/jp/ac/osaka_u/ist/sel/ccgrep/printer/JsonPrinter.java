@@ -9,100 +9,100 @@ import java.util.stream.Collectors;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
 
-public class JsonPrinter implements IPrinter
+public class JsonPrinter extends AbstractPrinter
 {
-    final List<CloneList> clones;
     final GrepCode needle;
     final Language language;
     final BlindLevel blindLevel;
-    final PrintStream stream;
 
-    public JsonPrinter(List<CloneList> clones, GrepCode needle, Language language, BlindLevel blindLevel, PrintStream stream)
+    public JsonPrinter(PrintOption option, GrepCode needle, Language language, BlindLevel blindLevel)
     {
-        this.clones = clones;
+        super(option);
         this.needle = needle;
         this.language = language;
         this.blindLevel = blindLevel;
-        this.stream = stream;
-    }
-
-    public JsonPrinter(List<CloneList> clones, GrepCode needle, Language language, BlindLevel blindLevel)
-    {
-        this(clones, needle, language, blindLevel, System.out);
     }
 
     @Override
-    public void println(PrintOption option)
+    public void printHeader()
     {
         final String qtext = needle.getCodeByLine().stream()
             .map(s -> escaped(s))
             .collect(Collectors.joining("\\n"));
+        stream.println(
+            "{" + System.lineSeparator()
+            + " \"language\":\"" + language+ "\"," + System.lineSeparator()
+            + " \"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
+            + " \"queryCode\":\"" + qtext + "\"," + System.lineSeparator()
+            + " \"clonesPerFile\":["
+        );
+    }
 
-        // ignore option
-        final String s = clones.stream()
-            //.filter(clonesByFile -> !clonesByFile.isEmpty())
-            .map(clonesByFile -> makeCloneByFileJson(clonesByFile))
-            .collect(Collectors.joining(
-                ',' + System.lineSeparator(),
+    @Override
+    public void printFooter(CloneList.Statistic statistic)
+    {
+        stream.print(
+            System.lineSeparator()
+            + " ]," + System.lineSeparator()
+            + " \"countAllFile\":" + statistic.countAllFile() + "," + System.lineSeparator()
+            + " \"countAllLine\":" + statistic.countAllLine() + "," + System.lineSeparator()
+            + " \"countAllToken\":" + statistic.countAllToken() + "," + System.lineSeparator()
+            + " \"countCloneFile\":" + statistic.countCloneFile() + "," + System.lineSeparator()
+            + " \"countAllClone\":" + statistic.countAllClone() + System.lineSeparator()
+            + "}"
+        );
+    }
 
-                "{" + System.lineSeparator()
-              + " \"language\":\"" + language+ "\"," + System.lineSeparator()
-              + " \"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
-              + " \"queryCode\":\"" + qtext + "\"," + System.lineSeparator()
-              + " \"countAllFile\":" + clones.size() + "," + System.lineSeparator()
-              + " \"countCloneFile\":" + clones.stream().filter(l -> !l.isEmpty()).count() + "," + System.lineSeparator()
-              + " \"countAllClone\":" + clones.stream().mapToInt(l -> l.size()).sum() + "," + System.lineSeparator()
-              + " \"clonesPerFile\":[" + System.lineSeparator(),
+    @Override
+    public void printFileDelimiter()
+    {
+        stream.println(",");
+    }
 
-                System.lineSeparator()
-              + " ]" + System.lineSeparator()
-              + "}"
-            ));
+    @Override
+    public void printFileHeader(CloneList clonePerFile)
+    {
+        final String s = "  {" + System.lineSeparator()
+            + "   \"fileName\":\"" + escaped(clonePerFile.getFileName())  + "\"," + System.lineSeparator()
+            + "   \"countLine\":"  + clonePerFile.getCode().countLines()  + "," + System.lineSeparator()
+            + "   \"countToken\":" + clonePerFile.getCode().countTokens() + "," + System.lineSeparator()
+            + "   \"countClone\":" + clonePerFile.size()                  + "," + System.lineSeparator()
+            + "   \"clones\":[";
         stream.println(s);
     }
-
-    private String makeCloneByFileJson(CloneList cloneByFile)
+    @Override
+    public void printFileFooter(CloneList clonePerFile)
     {
-        final String s = cloneByFile.stream()
-            .map(clone -> makeCloneJson(clone).toString())
-            .collect(Collectors.joining(
-                ',' + System.lineSeparator(),
-
-                "  {" + System.lineSeparator()
-              + "   \"fileName\":\"" + escaped(cloneByFile.getFileName()) + "\"," + System.lineSeparator()
-              + "   \"countLine\":" + cloneByFile.getCode().countLines() + "," + System.lineSeparator()
-              + "   \"countToken\":" + cloneByFile.getCode().countTokens() + "," + System.lineSeparator()
-              + "   \"countClone\":" + cloneByFile.size() + "," + System.lineSeparator()
-              + "   \"clones\":[" + System.lineSeparator(),
-
-              System.lineSeparator()
-              + "   ]" + System.lineSeparator()
-              + "  }"
-            ));
-        cloneByFile.getCode().clearCodeCache();
-        return s;
+        stream.print(
+            System.lineSeparator()
+            + "   ]" + System.lineSeparator()
+            + "  }"
+        );
     }
 
-    private StringJoiner makeCloneJson(Clone clone)
+    @Override
+    public void printCloneDelimiter()
     {
-        final StringJoiner sj = new StringJoiner(
-            ',' + System.lineSeparator(),
-            "    {" + System.lineSeparator(),
-            System.lineSeparator()
-          + "    }"
-        );
-        sj.add("     \"startLine\":" + clone.getStartLine());
-        sj.add("     \"startColumn\":" + clone.getStartColumn());
-        sj.add("     \"endLine\":" + clone.getEndLine());
-        sj.add("     \"endColumn\":" + clone.getEndColumn());
-        sj.add(clone.getCodeByLine().stream()
-                .map(s -> escaped(s))
-                .collect(Collectors.joining(
-                    "\\n",
-                    "     \"code\":\"",
-                    "\""))
-        );
-        return sj;
+        stream.println(",");
+    }
+
+    @Override
+    public void printClone(Clone clone)
+    {
+        final String header =
+              "    {" + System.lineSeparator()
+            + "     \"startLine\":"   + clone.getStartLine()   + "," + System.lineSeparator()
+            + "     \"startColumn\":" + clone.getStartColumn() + "," + System.lineSeparator()
+            + "     \"endLine\":"     + clone.getEndLine()     + "," + System.lineSeparator()
+            + "     \"endColumn\":"   + clone.getEndColumn()   + "," + System.lineSeparator()
+            + "     \"code\":\"";
+        final String footer =
+              "\"" + System.lineSeparator()
+            + "    }";
+        final String str = clone.getCodeByLine().stream()
+            .map(s -> escaped(s))
+            .collect(Collectors.joining("\\n", header, footer));
+        stream.print(str);
     }
 
     private static String escaped(String s)

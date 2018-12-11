@@ -181,6 +181,11 @@ public enum Language
         return commentSet.blockBegin + str + commentSet.blockEnd;
     }
 
+    public final String lineComment()
+    {
+        return commentSet.line;
+    }
+
     public final String blockCommentBegin()
     {
         return commentSet.blockBegin;

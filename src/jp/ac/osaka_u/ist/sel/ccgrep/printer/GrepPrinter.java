@@ -4,76 +4,132 @@ package jp.ac.osaka_u.ist.sel.ccgrep.printer;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 import java.io.PrintStream;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
 
-public class GrepPrinter implements IPrinter
+public class GrepPrinter extends AbstractPrinter
 {
-    final List<CloneList> clones;
-    final PrintStream stream;
-
-    public GrepPrinter(List<CloneList> clones, PrintStream stream)
+    public GrepPrinter(PrintOption option)
     {
-        this.clones = clones;
-        this.stream = stream;
-    }
-
-    public GrepPrinter(List<CloneList> clones)
-    {
-        this(clones, System.out);
+        super(option);
     }
 
     @Override
-    public void println(PrintOption option)
+    public void print(List<CloneList> clones)
+    {
+        final List<CloneList> cll = clones.stream()
+                .filter(cl -> !cl.isEmpty())
+                .collect(Collectors.toList());
+        printHeader();
+        if(!option.isCountOnlyEnabled)
+        {
+            final boolean[] needDelim = {false};
+            cll.forEach(clonePerFile -> {
+                printFile(clonePerFile, needDelim[0]);
+                needDelim[0] = true;
+            });
+        }
+        printFooter(new CloneList.Statistic(clones));
+    }
+
+    @Override
+    public void printHeader()
+    {}
+
+    @Override
+    public void printFooter(CloneList.Statistic statistic)
     {
         if(option.isCountOnlyEnabled)
         {
-            stream.println(
-                clones.stream()
-                    .mapToInt(clonesByFile -> clonesByFile.size())
-                    .sum()
-            );
-        }
-        else if(option.isFileNameOnlyEnabled)
-        {
-            clones.stream()
-                .filter(clonesByFile -> !clonesByFile.isEmpty())
-                .map(clonesByFile -> clonesByFile.getFileName())
-                .forEach(stream::println);
-        }
-        else
-        {
-            clones.stream()
-                .filter(clonesByFile -> !clonesByFile.isEmpty())
-                .forEach(clonesByFile -> {
-                    clonesByFile.forEach(clone -> printCloneln(clone, option));
-                    clonesByFile.getCode().clearCodeCache();
-                });
+            stream.print(statistic.countAllClone());
         }
     }
 
-    private void printCloneln(Clone clone, PrintOption option)
+    @Override
+    public boolean printFile(CloneList clonePerFile, boolean withDelimiter)
+    {
+        if(option.isCountOnlyEnabled || clonePerFile.isEmpty())
+        {
+            return false;
+        }
+        if(withDelimiter)
+        {
+            printFileDelimiter();
+        }
+        printFile(clonePerFile);
+        return true;
+    }
+
+    @Override
+    public void printFile(CloneList clonePerFile)
+    {
+        if(option.isFileNameOnlyEnabled)
+        {
+            stream.print(clonePerFile.getFileName());
+        }
+        else
+        {
+            super.printFile(clonePerFile);
+        }
+    }
+    @Override
+    protected void printFileHeader(CloneList clonePerFile)
+    {}
+    @Override
+    protected void printFileFooter(CloneList clonePerFile)
+    {}
+
+    @Override
+    public void printFileDelimiter()
+    {
+        stream.println();
+    }
+
+    @Override
+    public void printCloneDelimiter()
+    {
+        stream.println();
+    }
+
+    @Override
+    public void printClone(Clone clone)
     {
         if(option.isCodeEnabled)
         {
             final List<String> lines =  clone.getCodeByLine();
+            final StringBuilder sb = new StringBuilder();
             if(option.isFileNameEnabled)
             {
-                stream.println(option.isEscapeEnabled
-                    ? option.language.lineCommented(clone.getFileName())
-                    : clone.getFileName());
+                if(option.isEscapeEnabled)
+                {
+                    sb.append(option.language.lineComment());
+                }
+                sb.append(clone.getFileName()).append(System.lineSeparator());
             }
-            IntStream.range(0, lines.size())
-                .forEach(idx -> {
+            final String code = IntStream.range(0, lines.size())
+                .mapToObj(idx -> {
+                    final StringBuilder sb1 = new StringBuilder();
                     if(option.isLineEnabled)
                     {
-                        final String ln = (clone.getStartLine() + idx) + ":";
-                        stream.print(option.isEscapeEnabled? option.language.blockCommented(ln): ln);
+                        if(option.isEscapeEnabled)
+                        {
+                            sb1.append(option.language.blockCommentBegin());
+                        }
+                        sb1.append(clone.getStartLine() + idx).append(":");
+                        if(option.isEscapeEnabled)
+                        {
+                            sb1.append(option.language.blockCommentEnd());
+                        }
                     }
-                    stream.println(lines.get(idx));
-                });
+                    sb1.append(lines.get(idx));
+                    return sb1;
+                })
+                .collect(Collectors.joining(System.lineSeparator()));
+            sb.append(code);
+            stream.print(sb);
         }
         else
         {
@@ -91,7 +147,7 @@ public class GrepPrinter implements IPrinter
                 ? option.language.blockCommentEnd() + lines.get(0)
                 : lines.get(0)
             );
-            stream.println(sj);
+            stream.print(sj);
         }
     }
 }

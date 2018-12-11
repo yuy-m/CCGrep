@@ -135,8 +135,12 @@ public class CCGrep
         times[1] = System.nanoTime();
 
         debugLogger.println("traversing...");
-        final List<CloneList> clones = new Traverser(detector, frontend.isRecursiveEnabled, language::matchesExtension)
-                                    .traverse(frontend.haystackNames, frontend.maxCount);
+        final List<CloneList> clones =
+            new Traverser(
+                detector, frontend.isRecursiveEnabled,
+                language::matchesExtension, createPrinter()
+            )
+            .traverse(frontend.haystackNames, frontend.maxCount);
         debugLogger.println("finish.");
         debugLogger.println(clones.size() + " clone(s) found.");
 
@@ -144,32 +148,38 @@ public class CCGrep
 
         if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
 
-        times[2] = System.nanoTime();
-        printResult(clones, needle);
-        times[2] = System.nanoTime() - times[2];
+        //times[2] = System.nanoTime();
+        // printResult(clones, needle);
+        //times[2] = System.nanoTime() - times[2];
 
         if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
 
         if(frontend.isTimeEnabled)
         {
-            final long all = times[0] + times[1] + times[2];
-            System.err.print( "          :  seconds :     %\n");
-            System.err.printf("preparing : %8.3f : %5.1f\n", secondTime(times[0]), 100.0 * times[0] / all);
-            System.err.printf("detecting : %8.3f : %5.1f\n", secondTime(times[1]), 100.0 * times[1] / all);
-            System.err.printf(" printing : %8.3f : %5.1f\n", secondTime(times[2]), 100.0 * times[2] / all);
-            System.err.printf("      all : %8.3f : %5.1f\n", secondTime(all), 100.0);
+            final long all = times[0] + times[1] /*+ times[2]*/;
+            System.err.print( "             :  seconds :     %\n");
+            System.err.printf("     prepare : %8.3f : %5.1f\n", secondTime(times[0]), 100.0 * times[0] / all);
+            System.err.printf("detect&print : %8.3f : %5.1f\n", secondTime(times[1]), 100.0 * times[1] / all);
+            //System.err.printf("  print : %8.3f : %5.1f\n", secondTime(times[2]), 100.0 * times[2] / all);
+            System.err.printf("         all : %8.3f : %5.1f\n", secondTime(all), 100.0);
         }
 
         return clones.stream().filter(cl -> !cl.isEmpty()).count() == 0? 1: 0;
     }
 
-    private void printResult(List<CloneList> clones, GrepCode needle)
+    private IPrinter createPrinter()
+    {
+        final PrintOption po = new PrintOption(language, frontend.printOption);
+        return frontend.isJsonEnabled
+            ? new JsonPrinter(po, needle, language, blindLevel)
+            : new GrepPrinter(po);
+    }
+
+    private void printResult(List<CloneList> clones)
     {
         debugLogger.println("printing...");
-        final IPrinter printer = frontend.isJsonEnabled
-            ? new JsonPrinter(clones, needle, language, blindLevel)
-            : new GrepPrinter(clones);
-        printer.println(new PrintOption(language, frontend.printOption));
+        final IPrinter printer = createPrinter();
+        printer.println(clones);
         debugLogger.println("finish.");
     }
 

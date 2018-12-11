@@ -51,4 +51,50 @@ public class CloneList
     {
         clones.forEach(action);
     }
+
+    public static class Statistic
+    {
+        private int countAllFile = 0;
+        private int countAllLine = 0;
+        private int countAllToken = 0;
+        private int countCloneFile = 0;
+        private int countAllClone = 0;
+        public Statistic()
+        {}
+        public Statistic(List<CloneList> clones)
+        {
+            clones.forEach(this::add);
+        }
+        public void add(CloneList cloneList)
+        {
+            ++countAllFile;
+            countAllLine += cloneList.getCode().countLines();
+            countAllToken += cloneList.getCode().countTokens();
+            if(!cloneList.isEmpty())
+            {
+                ++countCloneFile;
+                countAllClone += cloneList.size();
+            }
+        }
+        public int countAllFile()
+        {
+            return countAllFile;
+        }
+        public int countAllLine()
+        {
+            return countAllLine;
+        }
+        public int countAllToken()
+        {
+            return countAllToken;
+        }
+        public int countCloneFile()
+        {
+            return countCloneFile;
+        }
+        public int countAllClone()
+        {
+            return countAllClone;
+        }
+    }
 }

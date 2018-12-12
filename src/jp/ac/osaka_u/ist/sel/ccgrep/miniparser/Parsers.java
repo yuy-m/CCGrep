@@ -36,17 +36,19 @@ public final class Parsers
     {
         return new Select<T>(parsers);
     }
+    @SafeVarargs
     public static <T> Select<T> select(IParser<T>... parsers)
     {
-        return select(Arrays.asList(parsers));
+        return select(Arrays.<IParser<T>>asList(parsers));
     }
     public static <T> Sequence<T> sequence(List<IParser<T>> parsers)
     {
         return new Sequence<T>(parsers);
     }
+    @SafeVarargs
     public static <T> Sequence<T> sequence(IParser<T>... parsers)
     {
-        return sequence(Arrays.asList(parsers));
+        return sequence(Arrays.<IParser<T>>asList(parsers));
     }
     public static <T> Value<T> value(Predicate<? super Range<T>> pred)
     {

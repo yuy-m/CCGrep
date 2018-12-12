@@ -23,15 +23,18 @@ public interface INode<T>
     {
         return getChild(index).casted();
     }
+    @SuppressWarnings("unchecked")
     default <C extends INode<T>> List<C> getCastedChildren()
     {
         return (List<C>)(List)getChildren();
     }
+    @SuppressWarnings("unchecked")
     default <C extends INode<T>> C casted()
     {
         return (C)(INode)this;
     }
 
+    @SuppressWarnings("unchecked")
     public static <U> LeafNode<U> leaf()
     {
         return (LeafNode<U>)LeafNode.INSTANCE;

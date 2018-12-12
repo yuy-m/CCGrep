@@ -101,5 +101,11 @@ public class GrepToken
     {
         return type;
     }
+
+    @Override
+    public int hashCode()
+    {
+        return text.hashCode();
+    }
 }
 

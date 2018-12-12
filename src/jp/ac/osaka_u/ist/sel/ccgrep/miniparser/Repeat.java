@@ -33,7 +33,7 @@ public class Repeat<T> extends AbstractParser<T>
     @Override
     public List<T> matches(Range<T> range)
     {
-        final List<T> list = new ArrayList();
+        final List<T> list = new ArrayList<>();
         int count = 0;
         while(true)
         {
@@ -63,7 +63,7 @@ public class Repeat<T> extends AbstractParser<T>
     @Override
     public INode<T> parse(Range<T> range)
     {
-        final List<INode<T>> list = new ArrayList();
+        final List<INode<T>> list = new ArrayList<>();
         int count = 0;
         while(true)
         {

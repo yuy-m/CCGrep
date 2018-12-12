@@ -21,6 +21,8 @@ public class Value<T> extends AbstractParser<T>
 
     @SuppressWarnings("rawtypes")
     private static final Value ANY = new Value<>(r -> true);
+
+    @SuppressWarnings("unchecked")
     public static <U> Value<U> any()
     {
         return (Value<U>)ANY;

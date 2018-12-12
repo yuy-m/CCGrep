@@ -19,11 +19,16 @@ public class Select<T> implements IParser<T>
         for(final IParser<T> am: parsers)
         {
             final List<T> l = am.matches(range);
+            final int newPos = range.getPosition();
             if(l != null)
             {
                 return l;
             }
             range.setPosition(pos);
+            if(pos < newPos)
+            {
+                return null;
+            }
         }
         return null;
     }
@@ -35,11 +40,16 @@ public class Select<T> implements IParser<T>
         for(final IParser<T> am: parsers)
         {
             final INode n = am.parse(range);
+            final int newPos = range.getPosition();
             if(n != null)
             {
                 return n;
             }
             range.setPosition(pos);
+            if(pos < newPos)
+            {
+                return null;
+            }
         }
         return null;
     }

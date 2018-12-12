@@ -1,91 +1,97 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 
 import java.util.NoSuchElementException;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public interface INode
+public interface INode<T>
 {
-    public static EmptyNode empty()
+    default T getValue()
     {
-        return EmptyNode.instance;
+        throw new NoSuchElementException();
+    }
+    default INode<T> getChild(int index)
+    {
+        throw new NoSuchElementException();
+    }
+    default List<INode<T>> getChildren()
+    {
+        throw new NoSuchElementException();
+    }
+    default <C extends INode<T>> C getCastedChild(int index)
+    {
+        return getChild(index).casted();
+    }
+    default <C extends INode<T>> List<C> getCastedChildren()
+    {
+        return (List<C>)(List)getChildren();
+    }
+    default <C extends INode<T>> C casted()
+    {
+        return (C)(INode)this;
     }
 
-    public static <T> OneNode<T> of(T one)
+    public static <U> LeafNode<U> leaf()
     {
-        return new OneNode(one);
+        return (LeafNode<U>)LeafNode.INSTANCE;
     }
 
-    public static <T extends INode> SequenceNode<T> of(List<T> nodes)
+    public static <U> ValueNode<U> leafWith(U one)
     {
-        return new SequenceNode(nodes);
+        return new ValueNode<>(one);
     }
 
-    public class EmptyNode implements INode
+    public static <U> INode<U> nodeOf(List<INode<U>> children)
     {
-        private static final EmptyNode instance = new EmptyNode();
+        return children.isEmpty()? INode.leaf()
+            : new InnerNode<>(children);
+    }
 
-        private EmptyNode()
+    public class LeafNode<U> implements INode<U>
+    {
+        @SuppressWarnings("rawtypes")
+        private static final LeafNode INSTANCE = new LeafNode<>();
+
+        protected LeafNode()
         {}
     }
 
-    default <T extends INode> SequenceNode<T> asSeq()
+    public class ValueNode<U> extends LeafNode<U>
     {
-        return (SequenceNode<T>)this;
-    }
+        private final U value;
 
-    default <T> OneNode<T> asOne()
-    {
-        return (OneNode<T>)this;
-    }
-
-    public class OneNode<T> implements INode
-    {
-        private final T value;
-
-        OneNode(T value)
+        protected ValueNode(U value)
         {
             this.value = value;
         }
 
-        public T get()
+        @Override
+        public U getValue()
         {
             return value;
         }
     }
 
-    public class SequenceNode<T extends INode> implements INode
+    public class InnerNode<U> implements INode<U>
     {
-        private final List<T> list;
+        private final List<INode<U>> children;
 
-        SequenceNode(List<T> list)
+        protected InnerNode(List<INode<U>> children)
         {
-            this.list = list;
+            this.children = children;
         }
 
-        public List<T> getList()
+        @Override
+        public INode<U> getChild(int index)
         {
-            return list;
+            return getChildren().get(index);
         }
 
-        public T get(int index)
+        @Override
+        public List<INode<U>> getChildren()
         {
-            return list.get(index);
-        }
-
-        public <U extends INode> SequenceNode<U> getAsSeq(int index)
-        {
-            return get(index).<U>asSeq();
-        }
-
-        public <U> OneNode<U> getAsOne(int index)
-        {
-            return get(index).<U>asOne();
-        }
-
-        public int size()
-        {
-            return list.size();
+            return children;
         }
     }
 }

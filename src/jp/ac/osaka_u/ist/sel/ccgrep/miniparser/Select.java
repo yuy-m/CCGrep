@@ -3,28 +3,26 @@ package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 import java.util.List;
 
 
-public class Select<T> implements IParser<T>
+public class Select<T> extends AbstractParser<T>
 {
-    final List<IParser<T>> parsers;
-
     public Select(List<IParser<T>> parsers)
     {
-        this.parsers = parsers;
+        super(parsers);
     }
 
     @Override
     public List<T> matches(Range<T> range)
     {
         final int pos = range.getPosition();
-        for(final IParser<T> am: parsers)
+        for(final IParser<T> am: getParsers())
         {
+            range.setPosition(pos);
             final List<T> l = am.matches(range);
             final int newPos = range.getPosition();
             if(l != null)
             {
                 return l;
             }
-            range.setPosition(pos);
             if(pos < newPos)
             {
                 return null;
@@ -34,18 +32,18 @@ public class Select<T> implements IParser<T>
     }
 
     @Override
-    public INode parse(Range<T> range)
+    public INode<T> parse(Range<T> range)
     {
         final int pos = range.getPosition();
-        for(final IParser<T> am: parsers)
+        for(final IParser<T> am: getParsers())
         {
-            final INode n = am.parse(range);
+            range.setPosition(pos);
+            final INode<T> n = am.parse(range);
             final int newPos = range.getPosition();
             if(n != null)
             {
                 return n;
             }
-            range.setPosition(pos);
             if(pos < newPos)
             {
                 return null;

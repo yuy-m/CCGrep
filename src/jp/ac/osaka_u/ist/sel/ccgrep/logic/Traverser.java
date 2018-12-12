@@ -15,7 +15,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
-import jp.ac.osaka_u.ist.sel.ccgrep.util.StreamUtil;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.IPrinter;
 
 

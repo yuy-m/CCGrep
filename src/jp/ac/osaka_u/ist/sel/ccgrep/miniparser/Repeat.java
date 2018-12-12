@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Repeat<T> implements IParser<T>
+public class Repeat<T> extends AbstractParser<T>
 {
-    private final IParser<T> parser;
     private final int min;
     private final int max;
 
     public Repeat(int min, int max, IParser<T> parser)
     {
+        super(parser);
         if(min < 0 || max == 0 || (max >= 0 && min > max))
         {
             throw new IllegalArgumentException();
         }
-        this.parser = parser;
         this.min = min;
         this.max = max;
     }
@@ -39,7 +38,7 @@ public class Repeat<T> implements IParser<T>
         while(true)
         {
             final int pos = range.getPosition();
-            final List<T> l = parser.matches(range);
+            final List<T> l = getParser(0).matches(range);
             if(l == null)
             {
                 if(count < min)
@@ -62,14 +61,14 @@ public class Repeat<T> implements IParser<T>
     }
 
     @Override
-    public INode parse(Range<T> range)
+    public INode<T> parse(Range<T> range)
     {
-        final List<INode> list = new ArrayList();
+        final List<INode<T>> list = new ArrayList();
         int count = 0;
         while(true)
         {
             final int pos = range.getPosition();
-            final INode n = parser.parse(range);
+            final INode<T> n = getParser(0).parse(range);
             if(n == null)
             {
                 if(count < min)
@@ -79,14 +78,14 @@ public class Repeat<T> implements IParser<T>
                 else
                 {
                     range.setPosition(pos);
-                    return INode.of(list);
+                    return INode.nodeOf(list);
                 }
             }
             list.add(n);
             ++count;
             if(count >= min && (max > 0 && count == max))
             {
-                return INode.of(list);
+                return INode.nodeOf(list);
             }
         }
     }

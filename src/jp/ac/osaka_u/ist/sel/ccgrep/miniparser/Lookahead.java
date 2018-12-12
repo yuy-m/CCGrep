@@ -3,29 +3,27 @@ package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 import java.util.List;
 
 
-public class Lookahead<T> implements IParser<T>
+public class Lookahead<T> extends AbstractParser<T>
 {
-    final IParser<T> parser;
-
     public Lookahead(IParser<T> parser)
     {
-        this.parser = parser;
+        super(parser);
     }
 
     @Override
     public List<T> matches(Range<T> range)
     {
         final int pos = range.getPosition();
-        final List<T> l = parser.matches(range);
+        final List<T> l = getParser(0).matches(range);
         range.setPosition(pos);
         return l == null? null: l;
     }
 
     @Override
-    public INode parse(Range<T> range)
+    public INode<T> parse(Range<T> range)
     {
         final int pos = range.getPosition();
-        final INode n = parser.parse(range);
+        final INode<T> n = getParser(0).parse(range);
         range.setPosition(pos);
         return n == null? null: n;
     }

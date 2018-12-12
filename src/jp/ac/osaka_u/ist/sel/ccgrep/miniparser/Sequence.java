@@ -4,26 +4,22 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class Sequence<T> implements IParser<T>
+public class Sequence<T> extends AbstractParser<T>
 {
-    final List<IParser<T>> parsers;
-
     public Sequence(List<IParser<T>> parsers)
     {
-        this.parsers = parsers;
+        super(parsers);
     }
 
     @Override
     public List<T> matches(Range<T> range)
     {
-        final int pos = range.getPosition();
         final List<T> list = new ArrayList<>();
-        for(final IParser<T> p: parsers)
+        for(final IParser<T> p: getParsers())
         {
             final List<T> l = p.matches(range);
             if(l == null)
             {
-                range.setPosition(pos);
                 return null;
             }
             list.addAll(l);
@@ -32,13 +28,13 @@ public class Sequence<T> implements IParser<T>
     }
 
     @Override
-    public INode parse(Range<T> range)
+    public INode<T> parse(Range<T> range)
     {
         final int pos = range.getPosition();
-        final List<INode> list = new ArrayList<>();
-        for(final IParser<T> p: parsers)
+        final List<INode<T>> list = new ArrayList<>();
+        for(final IParser<T> p: getParsers())
         {
-            final INode n = p.parse(range);
+            final INode<T> n = p.parse(range);
             if(n == null)
             {
                 range.setPosition(pos);
@@ -46,6 +42,6 @@ public class Sequence<T> implements IParser<T>
             }
             list.add(n);
         }
-        return new INode.SequenceNode(list);
+        return INode.nodeOf(list);
     }
 }

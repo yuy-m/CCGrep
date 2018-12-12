@@ -6,15 +6,15 @@ import java.util.NoSuchElementException;
 
 public class Range<T>
 {
-    private final List<? extends T> list; // assume immutable
+    private final List<T> list; // assume immutable
     private int position;
 
-    public Range(List<? extends T> list)
+    public Range(List<T> list)
     {
         this(list, 0);
     }
 
-    public Range(List<? extends T> list, int position)
+    public Range(List<T> list, int position)
     {
         this.list = list;
         this.position = position;

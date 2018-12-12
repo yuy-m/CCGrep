@@ -5,22 +5,25 @@ import java.util.List;
 import java.util.function.Predicate;
 
 
-public class One<T> implements IParser<T>
+public class Value<T> extends AbstractParser<T>
 {
-    private final Predicate<Range<T>> pred;
-    public One(Predicate<Range<T>> pred)
+    private final Predicate<? super Range<T>> pred;
+    public Value(Predicate<? super Range<T>> pred)
     {
+        super();
         this.pred = pred;
     }
 
-    public One(T t)
+    public Value(T t)
     {
         this(r -> r.matches(t));
     }
 
-    public static <U> One<U> any()
+    @SuppressWarnings("rawtypes")
+    private static final Value ANY = new Value<>(r -> true);
+    public static <U> Value<U> any()
     {
-        return new One<U>(r -> true);
+        return (Value<U>)ANY;
     }
 
     @Override
@@ -43,9 +46,9 @@ public class One<T> implements IParser<T>
     }
 
     @Override
-    public INode parse(Range<T> range)
+    public INode<T> parse(Range<T> range)
     {
         final List<T> l = matches(range);
-        return l == null? null: INode.of(l.get(0));
+        return l == null? null: INode.leafWith(l.get(0));
     }
 }

@@ -4,29 +4,41 @@ import java.util.List;
 import java.util.function.Function;
 
 
-public class Mapper<T, To extends INode> implements IParser<T>
+public class Mapper<T> extends AbstractParser<T>
 {
-    final IParser<T> parser;
-    final Function<? super INode, ? extends To> mapper;
+    //final Function<? super INode<T>, ? extends R> mapper;
 
-    public Mapper(IParser<T> parser, Function<? super INode, ? extends To> mapper)
+    public Mapper(IParser<T> parser, Function<? super INode<T>, ? extends INode<T>> mapper)
     {
-        this.parser = parser;
-        this.mapper = mapper;
+        super(new IParser<T>(){
+            @Override
+            public INode<T> parse(Range<T> range)
+            {
+                final INode<T> n = parser.parse(range);
+                return n == null
+                    ? null
+                    : mapper.apply(n);
+            }
+            @Override
+            public List<T> matches(Range<T> range)
+            {
+                throw new UnsupportedOperationException();
+            }
+        });
     }
 
     @Override
     public List<T> matches(Range<T> range)
     {
-        return parser.matches(range);
+        return getParser(0).matches(range);
     }
 
     @Override
-    public To parse(Range<T> range)
+    public INode<T> parse(Range<T> range)
     {
-        final INode n = parser.parse(range);
-        return n == null
+        return getParser(0).parse(range);
+        /*return n == null
             ? null
-            : mapper.apply(n);
+            : mapper.apply(n);*/
     }
 }

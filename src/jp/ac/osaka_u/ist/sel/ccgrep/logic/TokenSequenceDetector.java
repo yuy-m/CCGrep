@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.*;
+import static jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Parsers.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
 
@@ -70,51 +71,32 @@ public class TokenSequenceDetector implements IDetector
 
     private static IParser<GrepToken> compile(List<GrepToken> needle, Language language)
     {
-        final One<GrepToken> isSpSeq = new One<>(r -> r.front().getType() == language.specialSeq());
+        final Value<GrepToken> isSpSeq = value(r -> r.front().getType() == language.specialSeq());
 
-        final Mapper<GrepToken, IParser<GrepToken>> spSeqCompiler =
-            new Mapper<>(
-                new Sequence<GrepToken>(Arrays.asList(
+        final Mapper<GrepToken> spSeqCompiler =
+            mapper(
+                sequence(
                     isSpSeq,
-                    new Discard<>(new Repeat<>(isSpSeq)),
-                    new Lookahead<>(One.any())
-                )),
+                    discard(repeat(isSpSeq)),
+                    lookahead(Value.any())
+                ),
                 n -> new AnyTokenSequence(
                         language,
-                        new One<>(n.asSeq().<GrepToken>getAsOne(2).get())
+                        value(n.getChild(2).getValue())
                     )
             );
 
-        final Mapper<GrepToken, IParser<GrepToken>> normalCompiler =
-            new Mapper<>(
-                new One<GrepToken>(a -> true),
-                n -> new One<>(n.<GrepToken>asOne().get())
+        final Mapper<GrepToken> normalCompiler =
+            mapper(
+                value(a -> true),
+                n -> value(n.getValue())
             );
 
-        final Mapper<GrepToken, IParser<GrepToken>> compiler =
-            new Mapper<>(
-                new Repeat<GrepToken>(new Select<>(Arrays.asList(spSeqCompiler, normalCompiler))),
-                n -> new Sequence<>(n.<IParser<GrepToken>>asSeq().getList())
+        final Mapper<GrepToken> compiler =
+            mapper(
+                repeat(select(spSeqCompiler, normalCompiler)),
+                n -> sequence(n.getCastedChildren())
             );
-        return compiler.parse(new Range<GrepToken>(needle)); //*/
-
-        /*final Iterator<GrepToken> it = needle.iterator();
-        final List<IParser<GrepToken>> list = new ArrayList<>();
-        while (it.hasNext())
-        {
-            final GrepToken t = it.next();
-            if (t.getType() == language.specialSeq())
-            {
-                final GrepToken t1 = it.next();
-                final IParser<GrepToken> am = new One<>(t1);
-                list.add(new AnyTokenSequence(language, am));
-                list.add(am);
-            }
-            else
-            {
-                list.add(new One<GrepToken>(t));
-            }
-        }
-        return new Sequence<>(list);//*/
+        return compiler.parse(new Range<GrepToken>(needle)).casted();
     }
 }

@@ -4,26 +4,24 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class Discard<T> implements IParser<T>
+public class Discard<T> extends AbstractParser<T>
 {
-    final IParser<T> parser;
-
     public Discard(IParser<T> parser)
     {
-        this.parser = parser;
+        super(parser);
     }
 
     @Override
     public List<T> matches(Range<T> range)
     {
-        final List<T> l = parser.matches(range);
+        final List<T> l = getParser(0).matches(range);
         return l == null? null: Collections.emptyList();
     }
 
     @Override
-    public INode parse(Range<T> range)
+    public INode<T> parse(Range<T> range)
     {
-        final INode n = parser.parse(range);
-        return n == null? null: INode.empty();
+        final INode<T> n = getParser(0).parse(range);
+        return n == null? null: INode.leaf();
     }
 }

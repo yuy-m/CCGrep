@@ -1,7 +1,5 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 
-import java.util.List;
-
 
 public class Lookahead<T> extends AbstractParser<T>
 {
@@ -11,12 +9,12 @@ public class Lookahead<T> extends AbstractParser<T>
     }
 
     @Override
-    public List<T> matches(Range<T> range)
+    public boolean matches(Range<T> range)
     {
         final int pos = range.getPosition();
-        final List<T> l = getParser(0).matches(range);
+        final boolean r = getParser(0).matches(range);
         range.setPosition(pos);
-        return l == null? null: l;
+        return r;
     }
 
     @Override

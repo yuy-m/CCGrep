@@ -1,12 +1,8 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
@@ -44,8 +40,7 @@ public class TokenSequenceDetector implements IDetector
         debugLogger.print("(" + hTokens.size() + " tokens),detecting...");
 
         final Stream<Clone> stream = IntStream.range(0, hTokens.size())
-                .mapToObj(idx -> hTokens.subList(idx, hTokens.size()))
-                .map(subHaystack -> matchClone(hCode, subHaystack))
+                .mapToObj(idx -> matchClone(hCode, hTokens, idx))
                 .filter(Objects::nonNull);
 
         final List<Clone> clones =
@@ -57,11 +52,13 @@ public class TokenSequenceDetector implements IDetector
         return new CloneList(hCode, clones);
     }
 
-    private Clone matchClone(GrepCode code, List<GrepToken> subHaystack)
+    private Clone matchClone(GrepCode code, List<GrepToken> haystack, int index)
     {
         final Map<String, String> idmap = blindLevel.createConstraint(defaultIdmap);
-        final List<GrepToken> l = matcher.matches(new GrepRange(subHaystack, blindLevel, idmap));
-        return l == null ? null : new Clone(code, l.get(0), l.get(l.size() - 1));
+        final GrepRange range = new GrepRange(haystack, index, blindLevel, idmap);
+        return matcher.matches(range)
+            ? new Clone(code, range.getMatchedFirst(), range.getMatchedLast())
+            : null;
     }
 
     private Language getLanguage()
@@ -80,15 +77,12 @@ public class TokenSequenceDetector implements IDetector
                     discard(repeat(isSpSeq)),
                     lookahead(Value.any())
                 ),
-                n -> new AnyTokenSequence(
-                        language,
-                        value(n.getChild(2).getValue())
-                    )
+                n -> new AnyTokenSequence(language, n.getChild(2).getValue())
             );
 
         final Mapper<GrepToken> normalCompiler =
             mapper(
-                value(a -> true),
+                Value.any(),
                 n -> value(n.getValue())
             );
 

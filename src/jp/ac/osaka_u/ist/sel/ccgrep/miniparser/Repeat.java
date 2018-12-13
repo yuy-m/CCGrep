@@ -1,7 +1,6 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class Repeat<T> extends AbstractParser<T>
@@ -31,31 +30,28 @@ public class Repeat<T> extends AbstractParser<T>
     }
 
     @Override
-    public List<T> matches(Range<T> range)
+    public boolean matches(Range<T> range)
     {
-        final List<T> list = new ArrayList<>();
         int count = 0;
         while(true)
         {
             final int pos = range.getPosition();
-            final List<T> l = getParser(0).matches(range);
-            if(l == null)
+            if(!getParser(0).matches(range))
             {
                 if(count < min)
                 {
-                    return null;
+                    return false;
                 }
                 else
                 {
                     range.setPosition(pos);
-                    return list;
+                    return true;
                 }
             }
-            list.addAll(l);
             ++count;
             if(count >= min && (max > 0 && count == max))
             {
-                return list;
+                return true;
             }
         }
     }
@@ -63,7 +59,7 @@ public class Repeat<T> extends AbstractParser<T>
     @Override
     public INode<T> parse(Range<T> range)
     {
-        final List<INode<T>> list = new ArrayList<>();
+        final ArrayList<INode<T>> list = new ArrayList<>();
         int count = 0;
         while(true)
         {

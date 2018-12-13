@@ -8,16 +8,18 @@ public class Range<T>
 {
     private final List<T> list; // assume immutable
     private int position;
+    private int startPosition;
 
     public Range(List<T> list)
     {
         this(list, 0);
     }
 
-    public Range(List<T> list, int position)
+    public Range(List<T> list, int startPosition)
     {
         this.list = list;
-        this.position = position;
+        this.position = startPosition;
+        this.startPosition = startPosition;
     }
 
     public boolean empty()
@@ -42,7 +44,7 @@ public class Range<T>
         }
     }
 
-    int getPosition()
+    public int getPosition()
     {
         return position;
     }
@@ -55,5 +57,20 @@ public class Range<T>
     public boolean matches(T t)
     {
         return t.equals(front());
+    }
+
+    public List<T> getMatchedList()
+    {
+        return list.subList(startPosition, getPosition());
+    }
+
+    public T getMatchedFirst()
+    {
+        return list.get(startPosition);
+    }
+
+    public T getMatchedLast()
+    {
+        return list.get(getPosition() - 1);
     }
 }

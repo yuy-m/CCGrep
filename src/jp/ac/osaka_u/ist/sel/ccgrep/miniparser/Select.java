@@ -5,30 +5,36 @@ import java.util.List;
 
 public class Select<T> extends AbstractParser<T>
 {
-    public Select(List<IParser<T>> parsers)
+    private final boolean isEarlyStopEnabled;
+    public Select(List<IParser<T>> parsers, boolean isEarlyStopEnabled)
     {
         super(parsers);
+        this.isEarlyStopEnabled = isEarlyStopEnabled;
     }
 
+    public Select(List<IParser<T>> parsers)
+    {
+        this(parsers, false);
+    }
+
+
     @Override
-    public List<T> matches(Range<T> range)
+    public boolean matches(Range<T> range)
     {
         final int pos = range.getPosition();
         for(final IParser<T> am: getParsers())
         {
             range.setPosition(pos);
-            final List<T> l = am.matches(range);
-            final int newPos = range.getPosition();
-            if(l != null)
+            if(am.matches(range))
             {
-                return l;
+                return true;
             }
-            if(pos < newPos)
+            if(isEarlyStopEnabled && pos < range.getPosition())
             {
-                return null;
+                return false;
             }
         }
-        return null;
+        return false;
     }
 
     @Override
@@ -39,12 +45,11 @@ public class Select<T> extends AbstractParser<T>
         {
             range.setPosition(pos);
             final INode<T> n = am.parse(range);
-            final int newPos = range.getPosition();
             if(n != null)
             {
                 return n;
             }
-            if(pos < newPos)
+            if(isEarlyStopEnabled && pos < range.getPosition())
             {
                 return null;
             }

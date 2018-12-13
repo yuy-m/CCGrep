@@ -32,9 +32,18 @@ public final class Parsers
     {
         return new Repeat<T>(parser);
     }
+    public static <T> Select<T> selectEarly(List<IParser<T>> parsers)
+    {
+        return new Select<T>(parsers, true);
+    }
     public static <T> Select<T> select(List<IParser<T>> parsers)
     {
-        return new Select<T>(parsers);
+        return new Select<T>(parsers, false);
+    }
+    @SafeVarargs
+    public static <T> Select<T> selectEarly(IParser<T>... parsers)
+    {
+        return selectEarly(Arrays.<IParser<T>>asList(parsers));
     }
     @SafeVarargs
     public static <T> Select<T> select(IParser<T>... parsers)
@@ -50,12 +59,20 @@ public final class Parsers
     {
         return sequence(Arrays.<IParser<T>>asList(parsers));
     }
+    public static <T> Value<T> testValue(Predicate<? super Range<T>> pred)
+    {
+        return new Value<T>(pred, false);
+    }
     public static <T> Value<T> value(Predicate<? super Range<T>> pred)
     {
-        return new Value<T>(pred);
+        return new Value<T>(pred, true);
+    }
+    public static <T> Value<T> testValue(T value)
+    {
+        return new Value<T>(value, false);
     }
     public static <T> Value<T> value(T value)
     {
-        return new Value<T>(value);
+        return new Value<T>(value, true);
     }
 }

@@ -28,34 +28,58 @@ public final class Parsers
     {
         return new Not<T>(parser);
     }
+    public static <T> Repeat<T> repeat(int min, int max, IParser<T> parser)
+    {
+        return new Repeat<T>(min, max, parser);
+    }
+    public static <T> Repeat<T> repeat(int min, IParser<T> parser)
+    {
+        return new Repeat<T>(min, parser);
+    }
     public static <T> Repeat<T> repeat(IParser<T> parser)
     {
-        return new Repeat<T>(parser);
+        return repeat(0, parser);
     }
-    public static <T> Select<T> selectEarly(List<IParser<T>> parsers)
+    private static <T> IParser<T> selectImpl(List<IParser<T>> parsers, boolean early)
     {
-        return new Select<T>(parsers, true);
+        if(parsers.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        return parsers.size() == 1
+            ? parsers.get(0)
+            : new Select<T>(parsers, early);
     }
-    public static <T> Select<T> select(List<IParser<T>> parsers)
+    public static <T> IParser<T> selectEarly(List<IParser<T>> parsers)
     {
-        return new Select<T>(parsers, false);
+        return selectImpl(parsers, true);
+    }
+    public static <T> IParser<T> select(List<IParser<T>> parsers)
+    {
+        return selectImpl(parsers, false);
     }
     @SafeVarargs
-    public static <T> Select<T> selectEarly(IParser<T>... parsers)
+    public static <T> IParser<T> selectEarly(IParser<T>... parsers)
     {
         return selectEarly(Arrays.<IParser<T>>asList(parsers));
     }
     @SafeVarargs
-    public static <T> Select<T> select(IParser<T>... parsers)
+    public static <T> IParser<T> select(IParser<T>... parsers)
     {
         return select(Arrays.<IParser<T>>asList(parsers));
     }
-    public static <T> Sequence<T> sequence(List<IParser<T>> parsers)
+    public static <T> IParser<T> sequence(List<IParser<T>> parsers)
     {
-        return new Sequence<T>(parsers);
+        if(parsers.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        return parsers.size() == 1
+            ? parsers.get(0)
+            : new Sequence<T>(parsers);
     }
     @SafeVarargs
-    public static <T> Sequence<T> sequence(IParser<T>... parsers)
+    public static <T> IParser<T> sequence(IParser<T>... parsers)
     {
         return sequence(Arrays.<IParser<T>>asList(parsers));
     }

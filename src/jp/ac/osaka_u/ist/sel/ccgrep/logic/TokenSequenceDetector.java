@@ -8,8 +8,8 @@ import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.*;
-import static jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Parsers.*;
+import jp.ac.osaka_u.ist.sel.ccgrep.CCGrepException;
+import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.IParser;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
 
@@ -21,11 +21,19 @@ public class TokenSequenceDetector implements IDetector
 
     private final HashMap<String, String> defaultIdmap = new HashMap<>();
 
-    public TokenSequenceDetector(ITokenizer tokenizer, List<GrepToken> needle, BlindLevel blindLevel, List<String> fixedIds)
+    public TokenSequenceDetector(
+        ITokenizer tokenizer, List<GrepToken> needle,
+        BlindLevel blindLevel, List<String> fixedIds
+    ) throws CCGrepException
     {
         this.tokenizer = tokenizer;
         this.blindLevel = blindLevel;
-        this.matcher = compile(needle, tokenizer.getLanguage());
+        RegexDetectCompiler.setLanguage(tokenizer.getLanguage());
+        this.matcher = RegexDetectCompiler.compile(needle);
+        if(matcher == null)
+        {
+            throw new CCGrepException("Query syntax is invalid.");
+        }
         fixedIds.forEach(id -> defaultIdmap.put(id, id));
     }
 
@@ -64,33 +72,5 @@ public class TokenSequenceDetector implements IDetector
     private Language getLanguage()
     {
         return tokenizer.getLanguage();
-    }
-
-    private static IParser<GrepToken> compile(List<GrepToken> needle, Language language)
-    {
-        final Value<GrepToken> isSpSeq = value(r -> r.front().getType() == language.specialSeq());
-
-        final Mapper<GrepToken> spSeqCompiler =
-            mapper(
-                sequence(
-                    isSpSeq,
-                    discard(repeat(isSpSeq)),
-                    lookahead(Value.any())
-                ),
-                n -> new AnyTokenSequence(language, n.getChild(2).getValue())
-            );
-
-        final Mapper<GrepToken> normalCompiler =
-            mapper(
-                Value.any(),
-                n -> value(n.getValue())
-            );
-
-        final Mapper<GrepToken> compiler =
-            mapper(
-                repeat(select(spSeqCompiler, normalCompiler)),
-                n -> sequence(n.getCastedChildren())
-            );
-        return compiler.parse(new Range<GrepToken>(needle)).casted();
     }
 }

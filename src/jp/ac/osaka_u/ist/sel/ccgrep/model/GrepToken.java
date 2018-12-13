@@ -50,7 +50,7 @@ public class GrepToken
 
     public boolean matchesBlindly(GrepToken rhs, BlindLevel blindLevel, Map<String, String> constraint)
     {
-        if(getType() == getLanguage().specialId())
+        if(getLanguage().isSpecialId(this))
         {
             return equalsAsSpecialTo(rhs);
         }

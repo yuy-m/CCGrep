@@ -32,7 +32,7 @@ public class CCGrep
             final CCGrep ccgrep = new CCGrep(fe);
             returnCode = ccgrep.grep();
         }
-        catch(PreparingException e)
+        catch(CCGrepException e)
         {
             System.err.println(e.getMessage());
         }
@@ -47,7 +47,7 @@ public class CCGrep
     private GrepCode needle;
     private final IDetector detector;
 
-    public CCGrep(Frontend frontend) throws PreparingException
+    public CCGrep(Frontend frontend) throws CCGrepException
     {
         times[0] = System.nanoTime();
         this.frontend = frontend;
@@ -57,7 +57,7 @@ public class CCGrep
 
         this.blindLevel = BlindLevel.findByName(frontend.blindLevelName)
             .orElseThrow(() ->
-                new PreparingException("BlindLevel `" + frontend.blindLevelName + "` is not supported.")
+                new CCGrepException("BlindLevel `" + frontend.blindLevelName + "` is not supported.")
             );
         debugLogger.println("blind level: " + blindLevel);
 
@@ -72,17 +72,17 @@ public class CCGrep
         return t / 1.0e+9;
     }
 
-    private Language findLanguage() throws PreparingException
+    private Language findLanguage() throws CCGrepException
     {
         if(frontend.languageName != null)
         {
             return Language.findByName(frontend.languageName)
-                .orElseThrow(() -> new PreparingException("The language " + frontend.languageName + " is not supported."));
+                .orElseThrow(() -> new CCGrepException("The language " + frontend.languageName + " is not supported."));
         }
         else if(frontend.needleFileName != null)
         {
             return Language.findByFileNameWithExtension(frontend.needleFileName)
-                .orElseThrow(() -> new PreparingException(
+                .orElseThrow(() -> new CCGrepException(
                     "No language found from the extension of " + frontend.needleFileName
                     + System.lineSeparator() + "specify languge by `-l LANG` or `-f FILE.EXT`"
                 ));
@@ -93,7 +93,7 @@ public class CCGrep
         }
     }
 
-    private IDetector createDetector(ITokenizer tokenizer) throws PreparingException
+    private IDetector createDetector(ITokenizer tokenizer) throws CCGrepException
     {
         debugLogger.print("tokenizing query...");
         final ITokenizer.TokenizerResult needleResult = frontend.needleFileName == null
@@ -103,18 +103,6 @@ public class CCGrep
         final List<GrepToken> nTokens = needleResult.tokens;
 
         debugLogger.println("finish.");
-        if(nTokens.size() == 0)
-        {
-            throw new PreparingException("Error: No token found in the query.");
-        }
-
-        final int specialSeq = tokenizer.getLanguage().specialSeq();
-        if(nTokens.get(0).getType() == specialSeq
-            || nTokens.get(nTokens.size() - 1).getType() == specialSeq)
-        {
-            throw new PreparingException("Error: Query cannot start/end with special token `$$`.");
-        }
-
         nTokens.forEach(debugLogger::println);
 
         debugLogger.println("The query has " + nTokens.size() + " token(s).");
@@ -135,22 +123,16 @@ public class CCGrep
         times[1] = System.nanoTime();
 
         debugLogger.println("traversing...");
-        final List<CloneList> clones =
+        final CloneList.Statistic stat =
             new Traverser(
                 detector, frontend.isRecursiveEnabled,
                 language::matchesExtension, createPrinter()
             )
             .traverse(frontend.haystackNames, frontend.maxCount);
         debugLogger.println("finish.");
-        debugLogger.println(clones.size() + " clone(s) found.");
+        debugLogger.println(stat.countAllClone() + " clone(s) found.");
 
         times[1] = System.nanoTime() - times[1];
-
-        if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
-
-        //times[2] = System.nanoTime();
-        // printResult(clones, needle);
-        //times[2] = System.nanoTime() - times[2];
 
         if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
 
@@ -160,11 +142,10 @@ public class CCGrep
             System.err.print( "             :  seconds :     %\n");
             System.err.printf("     prepare : %8.3f : %5.1f\n", secondTime(times[0]), 100.0 * times[0] / all);
             System.err.printf("detect&print : %8.3f : %5.1f\n", secondTime(times[1]), 100.0 * times[1] / all);
-            //System.err.printf("  print : %8.3f : %5.1f\n", secondTime(times[2]), 100.0 * times[2] / all);
             System.err.printf("         all : %8.3f : %5.1f\n", secondTime(all), 100.0);
         }
 
-        return clones.stream().filter(cl -> !cl.isEmpty()).count() == 0? 1: 0;
+        return stat.countAllClone() == 0? 1: 0;
     }
 
     private IPrinter createPrinter()
@@ -173,23 +154,6 @@ public class CCGrep
         return frontend.isJsonEnabled
             ? new JsonPrinter(po, needle, language, blindLevel)
             : new GrepPrinter(po);
-    }
-
-    private void printResult(List<CloneList> clones)
-    {
-        debugLogger.println("printing...");
-        final IPrinter printer = createPrinter();
-        printer.println(clones);
-        debugLogger.println("finish.");
-    }
-
-    @SuppressWarnings("serial")
-    private static class PreparingException extends Exception
-    {
-        PreparingException(String msg)
-        {
-            super(msg);
-        }
     }
 }
 

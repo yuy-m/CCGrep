@@ -7,17 +7,15 @@ import java.util.function.Function;
 
 public interface INode<T>
 {
-    default T getValue()
+    T getValue();
+    List<INode<T>> getChildren();
+    default int countChildren()
     {
-        throw new NoSuchElementException();
+        return getChildren().size();
     }
     default INode<T> getChild(int index)
     {
-        throw new NoSuchElementException();
-    }
-    default List<INode<T>> getChildren()
-    {
-        throw new NoSuchElementException();
+        return getChildren().get(0);
     }
     default <C extends INode<T>> C getCastedChild(int index)
     {
@@ -58,6 +56,30 @@ public interface INode<T>
 
         protected LeafNode()
         {}
+
+        @Override
+        public int countChildren()
+        {
+            return 0;
+        }
+
+        @Override
+        public U getValue()
+        {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public INode<U> getChild(int index)
+        {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public List<INode<U>> getChildren()
+        {
+            return Collections.emptyList();
+        }
     }
 
     public class ValueNode<U> extends LeafNode<U>
@@ -83,6 +105,18 @@ public interface INode<T>
         protected InnerNode(List<INode<U>> children)
         {
             this.children = children;
+        }
+
+        @Override
+        public U getValue()
+        {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public int countChildren()
+        {
+            return children.size();
         }
 
         @Override

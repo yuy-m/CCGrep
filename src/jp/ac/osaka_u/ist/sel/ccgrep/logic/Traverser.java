@@ -36,39 +36,25 @@ public class Traverser
         this.verbosePrinter = verbosePrinter;
     }
 
-    public List<CloneList> traverse(List<String> haystackNames, int maxCount)
+    public CloneList.Statistic traverse(List<String> haystackNames, int maxCount)
     {
         try(Stream<String> s1 = haystackNames.stream().flatMap(this::fileStream))
         {
-            if(verbosePrinter != null)
-            {
-                verbosePrinter.printHeader();
-            }
+            verbosePrinter.printHeader();
             int count = 0;
             final Iterator<String> it = s1.iterator();
-            final ArrayList<CloneList> ls = new ArrayList<>();
             final CloneList.Statistic stat = new CloneList.Statistic();
             boolean needDelim = false;
             while(it.hasNext() && (maxCount < 0 || count < maxCount))
             {
                 final CloneList cl = detector.detect(it.next(), maxCount < 0? -1: maxCount - count);
-                if(verbosePrinter == null)
-                {
-                    ls.add(cl);
-                }
-                else
-                {
-                    stat.add(cl);
-                    needDelim = verbosePrinter.printFile(cl, needDelim);
-                }
+                stat.add(cl);
+                needDelim = verbosePrinter.printFile(cl, needDelim);
                 count += cl.size();
             }
-            if(verbosePrinter != null)
-            {
-                verbosePrinter.printFooter(stat);
-                verbosePrinter.printNewLine();
-            }
-            return ls;//*/
+            verbosePrinter.printFooter(stat);
+            verbosePrinter.printNewLine();
+            return stat;//*/
 
             /*
             final int[] count = {0};

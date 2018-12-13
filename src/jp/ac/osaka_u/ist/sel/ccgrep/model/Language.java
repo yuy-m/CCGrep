@@ -210,34 +210,34 @@ public enum Language
     }
 
 
-    public final int specialId()
+    public final boolean isSpecialId(GrepToken token)
     {
-        return specialSet.id;
+        return token.getType() == specialSet.id;
     }
 
-    public final int specialSeq()
+    public final boolean isSpecialSeq(GrepToken token)
     {
-        return specialSet.seq;
+        return token.getType() == specialSet.seq;
     }
 
-    public final int specialLpar()
+    public final boolean isSpecialLpar(GrepToken token)
     {
-        return specialSet.lpar;
+        return token.getType() == specialSet.lpar;
     }
 
-    public final int specialRpar()
+    public final boolean isSpecialRpar(GrepToken token)
     {
-        return specialSet.rpar;
+        return token.getType() == specialSet.rpar;
     }
 
-    public final int specialOr()
+    public final boolean isSpecialOr(GrepToken token)
     {
-        return specialSet.or;
+        return token.getType() == specialSet.or;
     }
 
-    public final int specialMore0()
+    public final boolean isSpecialMore0(GrepToken token)
     {
-        return specialSet.more0;
+        return token.getType() == specialSet.more0;
     }
 
     private static final class SpecialSet

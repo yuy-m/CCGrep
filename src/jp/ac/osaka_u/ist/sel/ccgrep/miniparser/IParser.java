@@ -1,5 +1,7 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 
+import java.util.List;
+
 
 public interface IParser<T> extends INode<T>
 {
@@ -9,4 +11,13 @@ public interface IParser<T> extends INode<T>
         return parse(range) != null;
     }
     INode<T> parse(Range<T> range);
+
+    default T getValue()
+    {
+        throw new UnsupportedOperationException();
+    }
+    default List<INode<T>> getChildren()
+    {
+        throw new UnsupportedOperationException();
+    }
 }

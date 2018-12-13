@@ -955,8 +955,21 @@ LineComment
 
 CCG_SPECIAL_ID : '$' Identifier;
 CCG_SPECIAL_SEQ : '$$';
+CCG_SPECIAL_LPAR  : '$(';
+CCG_SPECIAL_RPAR  : '$)';
+CCG_SPECIAL_OR    : '$|';
+CCG_SPECIAL_MORE0 : '$*';
+/*
+CCG_SPECIAL_MORE1 : '$+';
+CCG_SPECIAL_EITH  : '$?';
+CCG_SPECIAL_ANY   : '$.';
+CCG_SPECIAL_REP
+    : '${' DigitSequence ',' DigitSequence '}'
+    | '${' DigitSequence ','}'
+    ;
 CCG_SPECIAL_EXPR : '$()';
 CCG_SPECIAL_BLOCK : '${}';
+*/
 
 /*LineAfterPreprocessing
     :   '#line' Whitespace* ~[\r\n]*

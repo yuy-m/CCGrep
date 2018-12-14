@@ -31,12 +31,19 @@ public class Value<T> extends AbstractParser<T>
     }
 
     @SuppressWarnings("rawtypes")
-    private static final Value ANY = new Value<>(r -> true);
+    private static final Value ANY = new Value<>(r -> true, true);
+    @SuppressWarnings("rawtypes")
+    private static final Value TEST_ANY = new Value<>(r -> true, false);
 
     @SuppressWarnings("unchecked")
     public static <U> Value<U> any()
     {
         return (Value<U>)ANY;
+    }
+    @SuppressWarnings("unchecked")
+    public static <U> Value<U> testAny()
+    {
+        return (Value<U>)TEST_ANY;
     }
 
     @Override

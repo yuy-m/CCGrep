@@ -40,6 +40,10 @@ public final class Parsers
     {
         return repeat(0, parser);
     }
+    public static <T> Repeat<T> either(IParser<T> parser)
+    {
+        return repeat(0, 1, parser);
+    }
     private static <T> IParser<T> selectImpl(List<IParser<T>> parsers, boolean early)
     {
         if(parsers.isEmpty())
@@ -92,5 +96,13 @@ public final class Parsers
     public static <T> Value<T> value(T value)
     {
         return new Value<T>(value, true);
+    }
+    public static <T> Value<T> testAny()
+    {
+        return Value.any();
+    }
+    public static <T> Value<T> any()
+    {
+        return Value.testAny();
     }
 }

@@ -10,7 +10,9 @@ import java.util.function.Function;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.BlindLevel;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.GrepToken;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.Language;
-import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.*;
+import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.IParser;
+import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.INode;
+import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Range;
 import static jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Parsers.*;
 
 
@@ -32,7 +34,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return sequence(
                 OR,
-                not(Value.any())
+                not(any())
             );
         }
         @Override
@@ -85,7 +87,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return sequence(
                 SINGLE,
-                repeat(0, 1, value(r -> language.isSpecialMore0(r.front())))
+                either(value(r -> language.isSpecialMore0(r.front())))
             );
         }
         @Override
@@ -225,12 +227,21 @@ enum RegexDetectCompiler implements IParser<GrepToken>
 
     protected static IParser<GrepToken> rmConstr(IParser<GrepToken> p)
     {
-        return r -> {
-            final GrepRange gr = ((GrepRange)r);
-            final HashMap<String, String> saved = new HashMap<>(gr.getConstraint());
-            final INode<GrepToken> rs = p.parse(r);
-            gr.replaceConstraint(saved);
-            return rs;
+        return new IParser<GrepToken>() {
+            @Override
+            public boolean matches(Range<GrepToken> range)
+            {
+                final GrepRange gr = ((GrepRange)range);
+                final HashMap<String, String> saved = new HashMap<>(gr.getConstraint());
+                final boolean b = p.matches(range);
+                gr.replaceConstraint(saved);
+                return b;
+            }
+            @Override
+            public INode<GrepToken> parse(Range<GrepToken> range)
+            {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 }

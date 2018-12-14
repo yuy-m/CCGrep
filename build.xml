@@ -73,6 +73,6 @@
 
     <target name="cleanall" description="clean">
         <delete dir="${dir.target}" />
-        <delete dir="${jar.name}" />
+        <delete file="${jar.name}" />
     </target>
 </project>

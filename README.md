@@ -1,6 +1,6 @@
 CCGrep
 ====
-*written on 2018/12/06*
+*written on 2018/12/06, update on 2018/12/14*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -121,6 +121,20 @@ Special token `$$` in a query matches any token sequences (0 or more length) wit
 Example: `if($$){$$ return v;}` detects if-statements returning value at the end.
 
 Note: `$$` cannot use as first/final token in a query (e.g. `$$ { aaa }`, `{ aaa } $$`).
+
+#### RegularExpression
+Special tokens can be used for detection by regular expression.
+They are regular expression characters with `$` at the head.
+ - Grouping `$(`, `$)`
+ - Selection `$|`
+   - matches first match. `$(a$|aa$)` matches only first `a` .f `aa`;
+ - 0-or-more `$*`
+   - longest match.
+
+Empty pattern is partially allowed (e.g. `$(a $| $)`).  
+Note: `$( $| a $) ;` always matches `;`, not `a;`.
+To match `a;`, use `$(a $| $) ;` instead.
+
 
 ## Build
 

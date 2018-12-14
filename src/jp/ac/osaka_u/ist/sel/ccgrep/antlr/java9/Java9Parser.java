@@ -38,7 +38,8 @@ public class Java9Parser extends Parser {
 		MOD_ASSIGN=111, LSHIFT_ASSIGN=112, RSHIFT_ASSIGN=113, URSHIFT_ASSIGN=114, 
 		Identifier=115, WS=116, COMMENT=117, LINE_COMMENT=118, CCG_SPECIAL_ID=119, 
 		CCG_SPECIAL_SEQ=120, CCG_SPECIAL_LPAR=121, CCG_SPECIAL_RPAR=122, CCG_SPECIAL_ORLNG=123, 
-		CCG_SPECIAL_ORFST=124, CCG_SPECIAL_MORE0=125;
+		CCG_SPECIAL_ORFST=124, CCG_SPECIAL_MORE0=125, CCG_SPECIAL_MORE1=126, CCG_SPECIAL_EITH=127, 
+		CCG_SPECIAL_ANY=128;
 	public static final int
 		RULE_literal = 0, RULE_primitiveType = 1, RULE_numericType = 2, RULE_integralType = 3, 
 		RULE_floatingPointType = 4, RULE_referenceType = 5, RULE_classOrInterfaceType = 6, 
@@ -219,7 +220,7 @@ public class Java9Parser extends Parser {
 		"'+'", "'-'", "'*'", "'/'", "'&'", "'|'", "'^'", "'%'", "'+='", "'-='", 
 		"'*='", "'/='", "'&='", "'|='", "'^='", "'%='", "'<<='", "'>>='", "'>>>='", 
 		null, null, null, null, null, "'$$'", "'$('", "'$)'", "'$|'", "'$/'", 
-		"'$*'"
+		"'$*'", "'$+'", "'$?'", "'$.'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, "ABSTRACT", 
@@ -239,7 +240,8 @@ public class Java9Parser extends Parser {
 		"OR_ASSIGN", "XOR_ASSIGN", "MOD_ASSIGN", "LSHIFT_ASSIGN", "RSHIFT_ASSIGN", 
 		"URSHIFT_ASSIGN", "Identifier", "WS", "COMMENT", "LINE_COMMENT", "CCG_SPECIAL_ID", 
 		"CCG_SPECIAL_SEQ", "CCG_SPECIAL_LPAR", "CCG_SPECIAL_RPAR", "CCG_SPECIAL_ORLNG", 
-		"CCG_SPECIAL_ORFST", "CCG_SPECIAL_MORE0"
+		"CCG_SPECIAL_ORFST", "CCG_SPECIAL_MORE0", "CCG_SPECIAL_MORE1", "CCG_SPECIAL_EITH", 
+		"CCG_SPECIAL_ANY"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -18372,8 +18374,8 @@ public class Java9Parser extends Parser {
 
 	private static final int _serializedATNSegments = 2;
 	private static final String _serializedATNSegment0 =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\177\u0ba7\4\2\t\2"+
-		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u0082\u0ba7\4\2\t"+
+		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+

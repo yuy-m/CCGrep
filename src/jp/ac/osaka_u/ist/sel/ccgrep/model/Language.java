@@ -24,7 +24,7 @@ public enum Language
         Arrays.asList("c"),
         Arrays.asList(".c", ".h"),
         CLexer::new,
-        new SpecialSet(CLexer.CCG_SPECIAL_ID, CLexer.CCG_SPECIAL_SEQ, CLexer.CCG_SPECIAL_LPAR, CLexer.CCG_SPECIAL_RPAR, CLexer.CCG_SPECIAL_ORFST, CLexer.CCG_SPECIAL_ORLNG, CLexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(CLexer.class),
         new CommentSet("//", "/*", "*/"),
         Arrays.<BracketPair>asList(
             new BracketPair(CLexer.LeftParen, CLexer.RightParen),
@@ -41,7 +41,7 @@ public enum Language
         Arrays.asList("cpp", "cpp14", "c++", "c++14"),
         Arrays.asList(".cpp", ".cc", ".c++", ".cxx", ".c", ".h", ".hpp"),
         CPP14Lexer::new,
-        new SpecialSet(CPP14Lexer.CCG_SPECIAL_ID, CPP14Lexer.CCG_SPECIAL_SEQ, CPP14Lexer.CCG_SPECIAL_LPAR, CPP14Lexer.CCG_SPECIAL_RPAR, CPP14Lexer.CCG_SPECIAL_ORFST, CPP14Lexer.CCG_SPECIAL_ORLNG, CPP14Lexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(CPP14Lexer.class),
         new CommentSet("//", "/*", "*/"),
         Arrays.<BracketPair>asList(
             new BracketPair(CPP14Lexer.LeftParen, CPP14Lexer.RightParen),
@@ -58,7 +58,7 @@ public enum Language
         Arrays.asList("java", "java9"),
         Arrays.asList(".java"),
         Java9Lexer::new,
-        new SpecialSet(Java9Lexer.CCG_SPECIAL_ID, Java9Lexer.CCG_SPECIAL_SEQ, Java9Lexer.CCG_SPECIAL_LPAR, Java9Lexer.CCG_SPECIAL_RPAR, Java9Lexer.CCG_SPECIAL_ORFST, Java9Lexer.CCG_SPECIAL_ORLNG, Java9Lexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(Java9Lexer.class),
         new CommentSet("//", "/*", "*/"),
         Arrays.<BracketPair>asList(
             new BracketPair(Java9Lexer.LPAREN, Java9Lexer.RPAREN),
@@ -75,7 +75,7 @@ public enum Language
         Arrays.asList("python", "python3"),
         Arrays.asList(".py"),
         Python3Lexer::new,
-        new SpecialSet(Python3Lexer.CCG_SPECIAL_ID, Python3Lexer.CCG_SPECIAL_SEQ, Python3Lexer.CCG_SPECIAL_LPAR, Python3Lexer.CCG_SPECIAL_RPAR, Python3Lexer.CCG_SPECIAL_ORFST, Python3Lexer.CCG_SPECIAL_ORLNG, Python3Lexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(Python3Lexer.class),
         new CommentSet("#", "\"\"\"", "\"\"\""),
         Arrays.<BracketPair>asList(
             new BracketPair(Python3Lexer.OPEN_PAREN, Python3Lexer.CLOSE_PAREN),
@@ -245,6 +245,21 @@ public enum Language
         return token.getType() == specialSet.more0;
     }
 
+    public final boolean isSpecialMore1(GrepToken token)
+    {
+        return token.getType() == specialSet.more1;
+    }
+
+    public final boolean isSpecialEith(GrepToken token)
+    {
+        return token.getType() == specialSet.eith;
+    }
+
+    public final boolean isSpecialAny(GrepToken token)
+    {
+        return token.getType() == specialSet.any;
+    }
+
     private static final class SpecialSet
     {
         final int id;
@@ -254,15 +269,28 @@ public enum Language
         final int orfst;
         final int orlng;
         final int more0;
-        SpecialSet(int id, int seq, int lpar, int rpar, int orfst, int orlng, int more0)
+        final int more1;
+        final int eith;
+        final int any;
+        SpecialSet(Class<? extends Lexer> cls)
         {
-            this.id = id;
-            this.seq = seq;
-            this.lpar = lpar;
-            this.rpar = rpar;
-            this.orfst = orfst;
-            this.orlng = orlng;
-            this.more0 = more0;
+	        try{
+                this.id    = cls.getField("CCG_SPECIAL_ID").getInt(null);
+                this.seq   = cls.getField("CCG_SPECIAL_SEQ").getInt(null);
+                this.lpar  = cls.getField("CCG_SPECIAL_LPAR").getInt(null);
+                this.rpar  = cls.getField("CCG_SPECIAL_RPAR").getInt(null);
+                this.orfst = cls.getField("CCG_SPECIAL_ORFST").getInt(null);
+                this.orlng = cls.getField("CCG_SPECIAL_ORLNG").getInt(null);
+                this.more0 = cls.getField("CCG_SPECIAL_MORE0").getInt(null);
+                this.more1 = cls.getField("CCG_SPECIAL_MORE1").getInt(null);
+                this.eith  = cls.getField("CCG_SPECIAL_EITH").getInt(null);
+                this.any   = cls.getField("CCG_SPECIAL_ANY").getInt(null);
+            }
+            catch(ReflectiveOperationException e)
+            {
+                assert false;
+                throw new AssertionError(e);
+            }
         }
     }
 

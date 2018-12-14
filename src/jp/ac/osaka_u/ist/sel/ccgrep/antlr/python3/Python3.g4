@@ -1163,10 +1163,10 @@ CCG_SPECIAL_RPAR  : '$)';
 CCG_SPECIAL_ORLNG : '$|';
 CCG_SPECIAL_ORFST : '$/';
 CCG_SPECIAL_MORE0 : '$*';
-/*
 CCG_SPECIAL_MORE1 : '$+';
 CCG_SPECIAL_EITH  : '$?';
 CCG_SPECIAL_ANY   : '$.';
+/*
 CCG_SPECIAL_REP
     : '${' DigitSequence ',' DigitSequence '}'
     | '${' DigitSequence ','}'

@@ -1,6 +1,6 @@
 CCGrep
 ====
-*written on 2018/12/06, update on 2018/12/14*
+*updated on 2018/12/14, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -8,7 +8,7 @@ CCGrep is a easy-to-use code clone detector like *grep* command.
 Many code clone detectors already exist, but their installation, configuration and execution are difficult to use.
 CCGrep is a simple clone detector based on grep command interface and you can use it instantly.
 
-CCGrep can detect Type 1, 2(p-match or not) clones.
+CCGrep can detect Type 1, 2(p-match or not), 3 clones.
 
 #### Language
  - C
@@ -126,14 +126,19 @@ Note: `$$` cannot use as first/final token in a query (e.g. `$$ { aaa }`, `{ aaa
 Special tokens can be used for detection by regular expression.
 They are regular expression characters with `$` at the head.
  - Grouping `$(`, `$)`
- - Selection `$|`
-   - matches first match. `$(a$|aa$)` matches only first `a` .f `aa`;
+ - Longest Selection `$|`
+   - matches longest. `$(a$|aa$)` matches whole `aa` .f `aa`;
+ - First Selection `$/`
+   - matches first. `$(a$/aa$)` matches only first `a` .f `aa`;
  - 0-or-more `$*`
-   - longest match.
+   - matches longest.
+ - 1-or-more `$+`
+   - matches longest.
+ - 0-or-1 `$?`
+ - Any token `$.`
 
-Empty pattern is partially allowed (e.g. `$(a $| $)`).  
-Note: `$( $| a $) ;` always matches `;`, not `a;`.
-To match `a;`, use `$(a $| $) ;` instead.
+Note: Identifiers whose first appearance is in selections or repetitions are NOT used for p-match.
+e.g. `a$*a` matches both `abc` and `aaa`. And `aa$*` matches `aaa` but not `abc`.
 
 
 ## Build

@@ -103,7 +103,9 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
         {
-            return n -> sequence(n.getCastedChildren());
+            return n -> n.countChildren() == 1
+                ? n.getCastedChild(0)
+                : sequence(n.getCastedChildren());
         }
     },
     SUFFIX{
@@ -175,7 +177,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
         {
-            return n -> new AnyTokenSequence(language, n.getChild(1).getValue());
+            return n -> new BalancedParenSeqMatcher(language, n.getChild(1).getValue());
         }
     },
     PAREN{

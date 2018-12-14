@@ -10,11 +10,11 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.GrepToken;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.Language;
 
 
-public class AnyTokenSequence extends AbstractParser<GrepToken>
+public class BalancedParenSeqMatcher extends AbstractParser<GrepToken>
 {
     private static final Map<Language, Inner> innerMemo = new HashMap<>();
 
-    public AnyTokenSequence(Language language, GrepToken terminator)
+    public BalancedParenSeqMatcher(Language language, GrepToken terminator)
     {
         super(
             repeat(sequence(

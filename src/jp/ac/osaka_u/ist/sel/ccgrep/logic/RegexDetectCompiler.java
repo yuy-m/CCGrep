@@ -19,7 +19,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
     /**
      * ROOT   -> OR !.
      * OR     -> SEQ ('$|' SEQ)*
-     * SEQ    -> MORE0+
+     * SEQ    -> MORE0*
      * MORE0  -> SINGLE '$*'?
      * SINGLE -> SP_SEQ / PAREN / NORMAL
      * SP_SEQ -> '$$' !( '$$' / '$*' / '$(' / '$)' / '$|') &.
@@ -71,7 +71,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected IParser<GrepToken> from()
         {
-            return repeat(1, MORE0);
+            return repeat(MORE0);
         }
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()

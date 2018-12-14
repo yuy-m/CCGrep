@@ -70,13 +70,7 @@ public final class Parsers
     }
     public static <T> IParser<T> sequence(List<IParser<T>> parsers)
     {
-        if(parsers.isEmpty())
-        {
-            throw new IllegalArgumentException();
-        }
-        return parsers.size() == 1
-            ? parsers.get(0)
-            : new Sequence<T>(parsers);
+        return new Sequence<T>(parsers);
     }
     @SafeVarargs
     public static <T> IParser<T> sequence(IParser<T>... parsers)

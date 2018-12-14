@@ -3,16 +3,16 @@ package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 import java.util.List;
 
 
-public class Select<T> extends AbstractParser<T>
+public class SelectFirst<T> extends AbstractParser<T>
 {
     private final boolean isEarlyStopEnabled;
-    public Select(List<IParser<T>> parsers, boolean isEarlyStopEnabled)
+    public SelectFirst(List<IParser<T>> parsers, boolean isEarlyStopEnabled)
     {
         super(parsers);
         this.isEarlyStopEnabled = isEarlyStopEnabled;
     }
 
-    public Select(List<IParser<T>> parsers)
+    public SelectFirst(List<IParser<T>> parsers)
     {
         this(parsers, false);
     }

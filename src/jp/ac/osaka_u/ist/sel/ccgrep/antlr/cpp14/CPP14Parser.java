@@ -43,8 +43,8 @@ public class CPP14Parser extends Parser {
 		Stringliteral=132, Userdefinedintegerliteral=133, Userdefinedfloatingliteral=134, 
 		Userdefinedstringliteral=135, Userdefinedcharacterliteral=136, Whitespace=137, 
 		Newline=138, BlockComment=139, LineComment=140, CCG_SPECIAL_ID=141, CCG_SPECIAL_SEQ=142, 
-		CCG_SPECIAL_LPAR=143, CCG_SPECIAL_RPAR=144, CCG_SPECIAL_OR=145, CCG_SPECIAL_MORE0=146, 
-		Directive=147;
+		CCG_SPECIAL_LPAR=143, CCG_SPECIAL_RPAR=144, CCG_SPECIAL_ORLNG=145, CCG_SPECIAL_ORFST=146, 
+		CCG_SPECIAL_MORE0=147, Directive=148;
 	public static final int
 		RULE_translationunit = 0, RULE_primaryexpression = 1, RULE_idexpression = 2, 
 		RULE_unqualifiedid = 3, RULE_qualifiedid = 4, RULE_nestednamespecifier = 5, 
@@ -187,7 +187,7 @@ public class CPP14Parser extends Parser {
 		"'&&'", "'||'", "'++'", "'--'", "','", "'->*'", "'->'", "'?'", "':'", 
 		"'::'", "';'", "'.'", "'.*'", "'...'", null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, "'$$'", "'$('", "'$)'", "'$|'", "'$*'"
+		null, "'$$'", "'$('", "'$)'", "'$|'", "'$/'", "'$*'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "Alignas", "Alignof", "Asm", "Auto", "Bool", "Break", "Case", "Catch", 
@@ -212,8 +212,8 @@ public class CPP14Parser extends Parser {
 		"Characterliteral", "Floatingliteral", "Stringliteral", "Userdefinedintegerliteral", 
 		"Userdefinedfloatingliteral", "Userdefinedstringliteral", "Userdefinedcharacterliteral", 
 		"Whitespace", "Newline", "BlockComment", "LineComment", "CCG_SPECIAL_ID", 
-		"CCG_SPECIAL_SEQ", "CCG_SPECIAL_LPAR", "CCG_SPECIAL_RPAR", "CCG_SPECIAL_OR", 
-		"CCG_SPECIAL_MORE0", "Directive"
+		"CCG_SPECIAL_SEQ", "CCG_SPECIAL_LPAR", "CCG_SPECIAL_RPAR", "CCG_SPECIAL_ORLNG", 
+		"CCG_SPECIAL_ORFST", "CCG_SPECIAL_MORE0", "Directive"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -16218,7 +16218,7 @@ public class CPP14Parser extends Parser {
 
 	private static final int _serializedATNSegments = 2;
 	private static final String _serializedATNSegment0 =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u0095\u09ae\4\2\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u0096\u09ae\4\2\t"+
 		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+

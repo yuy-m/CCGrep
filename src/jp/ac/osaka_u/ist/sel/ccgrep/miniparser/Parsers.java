@@ -44,33 +44,39 @@ public final class Parsers
     {
         return repeat(0, 1, parser);
     }
-    private static <T> IParser<T> selectImpl(List<IParser<T>> parsers, boolean early)
+    public static <T> IParser<T> selectLongest(List<IParser<T>> parsers)
     {
-        if(parsers.isEmpty())
-        {
-            throw new IllegalArgumentException();
-        }
         return parsers.size() == 1
             ? parsers.get(0)
-            : new Select<T>(parsers, early);
+            : new SelectLongest<T>(parsers);
     }
-    public static <T> IParser<T> selectEarly(List<IParser<T>> parsers)
+    public static <T> IParser<T> selectLongest(IParser<T>... parsers)
     {
-        return selectImpl(parsers, true);
+        return selectLongest(Arrays.<IParser<T>>asList(parsers));
     }
-    public static <T> IParser<T> select(List<IParser<T>> parsers)
+    private static <T> IParser<T> selectFirstImpl(List<IParser<T>> parsers, boolean early)
     {
-        return selectImpl(parsers, false);
+        return parsers.size() == 1
+            ? parsers.get(0)
+            : new SelectFirst<T>(parsers, early);
+    }
+    public static <T> IParser<T> selectFirstEarly(List<IParser<T>> parsers)
+    {
+        return selectFirstImpl(parsers, true);
+    }
+    public static <T> IParser<T> selectFirst(List<IParser<T>> parsers)
+    {
+        return selectFirstImpl(parsers, false);
     }
     @SafeVarargs
-    public static <T> IParser<T> selectEarly(IParser<T>... parsers)
+    public static <T> IParser<T> selectFirstEarly(IParser<T>... parsers)
     {
-        return selectEarly(Arrays.<IParser<T>>asList(parsers));
+        return selectFirstEarly(Arrays.<IParser<T>>asList(parsers));
     }
     @SafeVarargs
-    public static <T> IParser<T> select(IParser<T>... parsers)
+    public static <T> IParser<T> selectFirst(IParser<T>... parsers)
     {
-        return select(Arrays.<IParser<T>>asList(parsers));
+        return selectFirst(Arrays.<IParser<T>>asList(parsers));
     }
     public static <T> IParser<T> sequence(List<IParser<T>> parsers)
     {

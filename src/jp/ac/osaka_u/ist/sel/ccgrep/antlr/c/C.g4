@@ -957,7 +957,8 @@ CCG_SPECIAL_ID : '$' Identifier;
 CCG_SPECIAL_SEQ : '$$';
 CCG_SPECIAL_LPAR  : '$(';
 CCG_SPECIAL_RPAR  : '$)';
-CCG_SPECIAL_OR    : '$|';
+CCG_SPECIAL_ORLNG : '$|';
+CCG_SPECIAL_ORFST : '$/';
 CCG_SPECIAL_MORE0 : '$*';
 /*
 CCG_SPECIAL_MORE1 : '$+';

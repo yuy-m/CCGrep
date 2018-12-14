@@ -24,7 +24,7 @@ public enum Language
         Arrays.asList("c"),
         Arrays.asList(".c", ".h"),
         CLexer::new,
-        new SpecialSet(CLexer.CCG_SPECIAL_ID, CLexer.CCG_SPECIAL_SEQ, CLexer.CCG_SPECIAL_LPAR, CLexer.CCG_SPECIAL_RPAR, CLexer.CCG_SPECIAL_OR, CLexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(CLexer.CCG_SPECIAL_ID, CLexer.CCG_SPECIAL_SEQ, CLexer.CCG_SPECIAL_LPAR, CLexer.CCG_SPECIAL_RPAR, CLexer.CCG_SPECIAL_ORFST, CLexer.CCG_SPECIAL_ORLNG, CLexer.CCG_SPECIAL_MORE0),
         new CommentSet("//", "/*", "*/"),
         Arrays.<BracketPair>asList(
             new BracketPair(CLexer.LeftParen, CLexer.RightParen),
@@ -41,7 +41,7 @@ public enum Language
         Arrays.asList("cpp", "cpp14", "c++", "c++14"),
         Arrays.asList(".cpp", ".cc", ".c++", ".cxx", ".c", ".h", ".hpp"),
         CPP14Lexer::new,
-        new SpecialSet(CPP14Lexer.CCG_SPECIAL_ID, CPP14Lexer.CCG_SPECIAL_SEQ, CPP14Lexer.CCG_SPECIAL_LPAR, CPP14Lexer.CCG_SPECIAL_RPAR, CPP14Lexer.CCG_SPECIAL_OR, CPP14Lexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(CPP14Lexer.CCG_SPECIAL_ID, CPP14Lexer.CCG_SPECIAL_SEQ, CPP14Lexer.CCG_SPECIAL_LPAR, CPP14Lexer.CCG_SPECIAL_RPAR, CPP14Lexer.CCG_SPECIAL_ORFST, CPP14Lexer.CCG_SPECIAL_ORLNG, CPP14Lexer.CCG_SPECIAL_MORE0),
         new CommentSet("//", "/*", "*/"),
         Arrays.<BracketPair>asList(
             new BracketPair(CPP14Lexer.LeftParen, CPP14Lexer.RightParen),
@@ -58,7 +58,7 @@ public enum Language
         Arrays.asList("java", "java9"),
         Arrays.asList(".java"),
         Java9Lexer::new,
-        new SpecialSet(Java9Lexer.CCG_SPECIAL_ID, Java9Lexer.CCG_SPECIAL_SEQ, Java9Lexer.CCG_SPECIAL_LPAR, Java9Lexer.CCG_SPECIAL_RPAR, Java9Lexer.CCG_SPECIAL_OR, Java9Lexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(Java9Lexer.CCG_SPECIAL_ID, Java9Lexer.CCG_SPECIAL_SEQ, Java9Lexer.CCG_SPECIAL_LPAR, Java9Lexer.CCG_SPECIAL_RPAR, Java9Lexer.CCG_SPECIAL_ORFST, Java9Lexer.CCG_SPECIAL_ORLNG, Java9Lexer.CCG_SPECIAL_MORE0),
         new CommentSet("//", "/*", "*/"),
         Arrays.<BracketPair>asList(
             new BracketPair(Java9Lexer.LPAREN, Java9Lexer.RPAREN),
@@ -75,7 +75,7 @@ public enum Language
         Arrays.asList("python", "python3"),
         Arrays.asList(".py"),
         Python3Lexer::new,
-        new SpecialSet(Python3Lexer.CCG_SPECIAL_ID, Python3Lexer.CCG_SPECIAL_SEQ, Python3Lexer.CCG_SPECIAL_LPAR, Python3Lexer.CCG_SPECIAL_RPAR, Python3Lexer.CCG_SPECIAL_OR, Python3Lexer.CCG_SPECIAL_MORE0),
+        new SpecialSet(Python3Lexer.CCG_SPECIAL_ID, Python3Lexer.CCG_SPECIAL_SEQ, Python3Lexer.CCG_SPECIAL_LPAR, Python3Lexer.CCG_SPECIAL_RPAR, Python3Lexer.CCG_SPECIAL_ORFST, Python3Lexer.CCG_SPECIAL_ORLNG, Python3Lexer.CCG_SPECIAL_MORE0),
         new CommentSet("#", "\"\"\"", "\"\"\""),
         Arrays.<BracketPair>asList(
             new BracketPair(Python3Lexer.OPEN_PAREN, Python3Lexer.CLOSE_PAREN),
@@ -230,9 +230,14 @@ public enum Language
         return token.getType() == specialSet.rpar;
     }
 
-    public final boolean isSpecialOr(GrepToken token)
+    public final boolean isSpecialOrFst(GrepToken token)
     {
-        return token.getType() == specialSet.or;
+        return token.getType() == specialSet.orfst;
+    }
+
+    public final boolean isSpecialOrLng(GrepToken token)
+    {
+        return token.getType() == specialSet.orlng;
     }
 
     public final boolean isSpecialMore0(GrepToken token)
@@ -246,15 +251,17 @@ public enum Language
         final int seq;
         final int lpar;
         final int rpar;
-        final int or;
+        final int orfst;
+        final int orlng;
         final int more0;
-        SpecialSet(int id, int seq, int lpar, int rpar, int or, int more0)
+        SpecialSet(int id, int seq, int lpar, int rpar, int orfst, int orlng, int more0)
         {
             this.id = id;
             this.seq = seq;
             this.lpar = lpar;
             this.rpar = rpar;
-            this.or = or;
+            this.orfst = orfst;
+            this.orlng = orlng;
             this.more0 = more0;
         }
     }

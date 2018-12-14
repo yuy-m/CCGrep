@@ -54,7 +54,7 @@ public class AnyTokenSequence extends AbstractParser<GrepToken>
                 );
             });
             ps.add(value(r -> !language.isCloseBracket(r.front().getType())));
-            this.innerMatcher = selectEarly(ps);
+            this.innerMatcher = selectFirstEarly(ps);
         }
 
         @Override

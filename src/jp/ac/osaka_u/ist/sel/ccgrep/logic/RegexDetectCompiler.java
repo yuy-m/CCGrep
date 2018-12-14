@@ -3,9 +3,11 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Function;
 
+import jp.ac.osaka_u.ist.sel.ccgrep.model.BlindLevel;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.GrepToken;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.Language;
 import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.*;
@@ -55,10 +57,12 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
         {
             return n -> {
+                int[] a = {0};
                 final ArrayList<IParser<GrepToken>> l = new ArrayList<>();
-                l.add(n.getCastedChild(0));
+                l.add(rmConstr(n.getCastedChild(0)));
                 n.getChild(1).getChildren().stream()
-                    .forEach(n1 -> l.add(n1.getCastedChild(1)));
+                    .map(n1 -> rmConstr(n1.getCastedChild(1)))
+                    .forEach(l::add);
                 return select(l);
             };
         }
@@ -91,7 +95,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 final IParser<GrepToken> p = n.getCastedChild(0);
                 return n.getChild(1).countChildren() == 0
                     ? p
-                    : repeat(p);
+                    : repeat(rmConstr(p));
             };
         }
     },
@@ -208,10 +212,25 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         }
 
         final IParser<GrepToken> p = ROOT.parse(new Range<GrepToken>(needle)).casted();
-        if(p.matches(new Range<>(Collections.emptyList())))
+        if(p.matches(new GrepRange(
+            Collections.emptyList(),
+            BlindLevel.NONE,
+            Collections.emptyMap()
+        )))
         {
             return null;
         }
         return p;
+    }
+
+    protected static IParser<GrepToken> rmConstr(IParser<GrepToken> p)
+    {
+        return r -> {
+            final GrepRange gr = ((GrepRange)r);
+            final HashMap<String, String> saved = new HashMap<>(gr.getConstraint());
+            final INode<GrepToken> rs = p.parse(r);
+            gr.replaceConstraint(saved);
+            return rs;
+        };
     }
 }

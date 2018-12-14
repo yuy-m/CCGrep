@@ -11,9 +11,9 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.BlindLevel;
 
 public class GrepRange extends Range<GrepToken>
 {
-    public final BlindLevel blindLevel;
-    public final Map<String, String> constraint;
-    public GrepRange(
+    final BlindLevel blindLevel;
+    private Map<String, String> constraint;
+    GrepRange(
         List<GrepToken> list, int position,
         BlindLevel blindLevel, Map<String, String> constraint)
     {
@@ -21,7 +21,7 @@ public class GrepRange extends Range<GrepToken>
         this.blindLevel = blindLevel;
         this.constraint = constraint;
     }
-    public GrepRange(
+    GrepRange(
         List<GrepToken> list, BlindLevel blindLevel, Map<String, String> constraint)
     {
         this(list, 0, blindLevel, constraint);
@@ -31,5 +31,15 @@ public class GrepRange extends Range<GrepToken>
     public boolean matches(GrepToken t)
     {
         return t.matchesBlindly(front(), blindLevel, constraint);
+    }
+
+    Map<String, String> getConstraint()
+    {
+        return constraint;
+    }
+
+    void replaceConstraint(Map<String, String> c)
+    {
+        constraint = c;
     }
 }

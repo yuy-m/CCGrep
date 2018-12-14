@@ -49,7 +49,7 @@ public class Traverser
             {
                 final CloneList cl = detector.detect(it.next(), maxCount < 0? -1: maxCount - count);
                 stat.add(cl);
-                needDelim = verbosePrinter.printFile(cl, needDelim);
+                needDelim |= verbosePrinter.printFile(cl, needDelim);
                 count += cl.size();
             }
             verbosePrinter.printFooter(stat);

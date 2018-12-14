@@ -44,8 +44,7 @@ abstract class AbstractPrinter implements IPrinter
         printHeader();
         final boolean[] needDelim = {false};
         clones.forEach(clonePerFile -> {
-            printFile(clonePerFile, needDelim[0]);
-            needDelim[0] = true;
+            needDelim[0] |= printFile(clonePerFile, needDelim[0]);
         });
         printFooter(new CloneList.Statistic(clones));
     }
@@ -56,8 +55,7 @@ abstract class AbstractPrinter implements IPrinter
         printFileHeader(clonePerFile);
         final boolean[] needDelim = {false};
         clonePerFile.forEach(clone -> {
-            printClone(clone, needDelim[0]);
-            needDelim[0] = true;
+            needDelim[0] |= printClone(clone, needDelim[0]);
         });
         printFileFooter(clonePerFile);
         clonePerFile.getCode().clearCodeCache();
@@ -75,13 +73,14 @@ abstract class AbstractPrinter implements IPrinter
     }
 
     @Override
-    public void printClone(Clone clone, boolean withDelimiter)
+    public boolean printClone(Clone clone, boolean withDelimiter)
     {
         if(withDelimiter)
         {
             printCloneDelimiter();
         }
         printClone(clone);
+        return true;
     }
 
     abstract protected void printFileHeader(CloneList clonePerFile);

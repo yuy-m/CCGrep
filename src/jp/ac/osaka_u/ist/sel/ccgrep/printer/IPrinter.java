@@ -18,7 +18,7 @@ public interface IPrinter
     void printFileDelimiter();
 
     void printClone(Clone clone);
-    void printClone(Clone clone, boolean withDelimiter);
+    boolean printClone(Clone clone, boolean withDelimiter);
     void printCloneDelimiter();
 
     void printFooter(CloneList.Statistic statistic);

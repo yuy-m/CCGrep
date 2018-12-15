@@ -30,15 +30,19 @@ public final class Parsers
     }
     public static <T> Repeat<T> repeat(int min, int max, IParser<T> parser)
     {
-        return new Repeat<T>(min, max, parser);
+        return new Repeat<T>(min, max, parser, false);
     }
     public static <T> Repeat<T> repeat(int min, IParser<T> parser)
     {
-        return new Repeat<T>(min, parser);
+        return new Repeat<T>(min, parser, false);
     }
-    public static <T> Repeat<T> repeat(IParser<T> parser)
+    public static <T> Repeat<T> repeatFullMatch(int min, int max, IParser<T> parser)
     {
-        return repeat(0, parser);
+        return new Repeat<T>(min, max, parser, true);
+    }
+    public static <T> Repeat<T> repeatFullMatch(int min, IParser<T> parser)
+    {
+        return new Repeat<T>(min, parser, true);
     }
     public static <T> Repeat<T> either(IParser<T> parser)
     {
@@ -87,28 +91,16 @@ public final class Parsers
     {
         return sequence(Arrays.<IParser<T>>asList(parsers));
     }
-    public static <T> Value<T> testValue(Predicate<? super Range<T>> pred)
-    {
-        return new Value<T>(pred, false);
-    }
     public static <T> Value<T> value(Predicate<? super Range<T>> pred)
     {
-        return new Value<T>(pred, true);
-    }
-    public static <T> Value<T> testValue(T value)
-    {
-        return new Value<T>(value, false);
+        return new Value<T>(pred);
     }
     public static <T> Value<T> value(T value)
     {
-        return new Value<T>(value, true);
-    }
-    public static <T> Value<T> testAny()
-    {
-        return Value.any();
+        return new Value<T>(value);
     }
     public static <T> Value<T> any()
     {
-        return Value.testAny();
+        return Value.any();
     }
 }

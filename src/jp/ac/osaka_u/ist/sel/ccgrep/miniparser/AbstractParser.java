@@ -1,6 +1,5 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -15,11 +14,11 @@ public abstract class AbstractParser<T>
     }
     public AbstractParser(IParser<T> parser)
     {
-        this(Collections.singletonList(parser));
+        super(parser);
     }
     public AbstractParser()
     {
-        super(Collections.emptyList());
+        super();
     }
 
     public IParser<T> getParser(int index)

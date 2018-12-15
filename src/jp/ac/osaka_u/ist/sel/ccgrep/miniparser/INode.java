@@ -107,6 +107,16 @@ public interface INode<T>
             this.children = children;
         }
 
+        protected InnerNode(INode<U> child)
+        {
+            this(Collections.singletonList(child));
+        }
+
+        protected InnerNode()
+        {
+            this(Collections.emptyList());
+        }
+
         @Override
         public U getValue()
         {

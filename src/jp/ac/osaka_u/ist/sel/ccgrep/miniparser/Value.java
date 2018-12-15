@@ -6,44 +6,25 @@ import java.util.function.Predicate;
 public class Value<T> extends AbstractParser<T>
 {
     private final Predicate<? super Range<T>> pred;
-    private final boolean consumeIfFailure;
-
-    public Value(Predicate<? super Range<T>> pred, boolean consumeIfFailure)
-    {
-        super();
-        this.pred = pred;
-        this.consumeIfFailure = consumeIfFailure;
-    }
 
     public Value(Predicate<? super Range<T>> pred)
     {
-        this(pred, true);
-    }
-
-    public Value(T t, boolean consumeIfFailure)
-    {
-        this(r -> r.matches(t), consumeIfFailure);
+        super();
+        this.pred = pred;
     }
 
     public Value(T t)
     {
-        this(t, true);
+        this(r -> r.matches(t));
     }
 
     @SuppressWarnings("rawtypes")
-    private static final Value ANY = new Value<>(r -> true, true);
-    @SuppressWarnings("rawtypes")
-    private static final Value TEST_ANY = new Value<>(r -> true, false);
+    private static final Value ANY = new Value<>(r -> true);
 
     @SuppressWarnings("unchecked")
     public static <U> Value<U> any()
     {
         return (Value<U>)ANY;
-    }
-    @SuppressWarnings("unchecked")
-    public static <U> Value<U> testAny()
-    {
-        return (Value<U>)TEST_ANY;
     }
 
     @Override
@@ -54,7 +35,7 @@ public class Value<T> extends AbstractParser<T>
             return false;
         }
         final boolean r = pred.test(range);
-        if(r || consumeIfFailure)
+        if(r)
         {
             range.popFront();
         }
@@ -73,10 +54,6 @@ public class Value<T> extends AbstractParser<T>
             final T t = range.front();
             range.popFront();
             return INode.leafWith(t);
-        }
-        else if(consumeIfFailure)
-        {
-            range.popFront();
         }
         return null;
     }

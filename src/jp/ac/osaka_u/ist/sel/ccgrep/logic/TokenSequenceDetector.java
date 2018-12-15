@@ -30,10 +30,6 @@ public class TokenSequenceDetector implements IDetector
         this.blindLevel = blindLevel;
         RegexDetectCompiler.setLanguage(tokenizer.getLanguage());
         this.matcher = RegexDetectCompiler.compile(needle);
-        if(matcher == null)
-        {
-            throw new CCGrepException("Query syntax is invalid.");
-        }
         fixedIds.forEach(id -> defaultIdmap.put(id, id));
     }
 

@@ -21,14 +21,12 @@ public class Sequence<T> extends AbstractParser<T>
     @Override
     public INode<T> parse(Range<T> range)
     {
-        final int pos = range.getPosition();
         final ArrayList<INode<T>> list = new ArrayList<>();
         for(final IParser<T> p: getParsers())
         {
             final INode<T> n = p.parse(range);
             if(n == null)
             {
-                range.setPosition(pos);
                 return null;
             }
             list.add(n);

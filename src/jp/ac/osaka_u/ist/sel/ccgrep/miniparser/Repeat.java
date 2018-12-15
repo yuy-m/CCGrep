@@ -7,8 +7,9 @@ public class Repeat<T> extends AbstractParser<T>
 {
     private final int min;
     private final int max;
+    private final boolean isFullMatchOnlyEnabled;
 
-    public Repeat(int min, int max, IParser<T> parser)
+    public Repeat(int min, int max, IParser<T> parser, boolean isFullMatchOnlyEnabled)
     {
         super(parser);
         if(min < 0 || max == 0 || (max >= 0 && min > max))
@@ -17,16 +18,12 @@ public class Repeat<T> extends AbstractParser<T>
         }
         this.min = min;
         this.max = max;
+        this.isFullMatchOnlyEnabled = isFullMatchOnlyEnabled;
     }
 
-    public Repeat(int min, IParser<T> parser)
+    public Repeat(int min, IParser<T> parser, boolean isFullMatchOnlyEnabled)
     {
-        this(min, -1, parser);
-    }
-
-    public Repeat(IParser<T> parser)
-    {
-        this(0, parser);
+        this(min, -1, parser, isFullMatchOnlyEnabled);
     }
 
     @Override
@@ -38,7 +35,8 @@ public class Repeat<T> extends AbstractParser<T>
             final int pos = range.getPosition();
             if(!getParser(0).matches(range))
             {
-                if(count < min)
+                if(count < min
+                    || (isFullMatchOnlyEnabled && pos < range.getPosition()))
                 {
                     return false;
                 }
@@ -67,7 +65,8 @@ public class Repeat<T> extends AbstractParser<T>
             final INode<T> n = getParser(0).parse(range);
             if(n == null)
             {
-                if(count < min)
+                if(count < min
+                    || (isFullMatchOnlyEnabled && pos < range.getPosition()))
                 {
                     return null;
                 }

@@ -17,7 +17,7 @@ public class BalancedParenSeqMatcher extends AbstractParser<GrepToken>
     public BalancedParenSeqMatcher(Language language, GrepToken terminator)
     {
         super(
-            repeat(sequence(
+            repeat(0, sequence(
                 discard(lookahead(not(value(terminator)))),
                 innerMemo.computeIfAbsent(language, Inner::new)
             ))
@@ -47,8 +47,8 @@ public class BalancedParenSeqMatcher extends AbstractParser<GrepToken>
                 final int cl = bp.close;
                 ps.add(
                     sequence(
-                        testValue(r -> op == r.front().getType()),
-                        repeat(this),
+                        value(r -> op == r.front().getType()),
+                        repeat(0, this),
                         value(r -> cl == r.front().getType())
                     )
                 );

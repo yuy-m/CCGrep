@@ -11,6 +11,7 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.BlindLevel;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.GrepToken;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.Language;
 import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.IParser;
+import jp.ac.osaka_u.ist.sel.ccgrep.CCGrepException;
 import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.INode;
 import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Range;
 import static jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Parsers.*;
@@ -22,7 +23,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
      * ROOT     -> OR_LONG !.
      * OR_LONG  -> OR_FIRST ('$|' OR_FIRST)*
      * OR_FIRST -> SEQ ('$/' SEQ)*
-     * SEQ      -> SUFFIX*
+     * SEQ      -> SUFFIX+
      * SUFFIX   -> SINGLE '$*'?
      * SINGLE   -> SP_SEQ / PAREN / ONE
      * SP_SEQ   -> '$$' !( '$$' / '$*' / '$(' / '$)' / '$|') &.
@@ -35,7 +36,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return sequence(
                 OR_LONG,
-                not(any())
+                lookahead(not(any()))
             );
         }
         @Override
@@ -50,7 +51,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return sequence(
                 OR_FIRST,
-                repeat(sequence(
+                repeatFullMatch(0, sequence(
                     value(r -> language.isSpecialOrLng(r.front())),
                     OR_FIRST
                 ))
@@ -75,7 +76,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return sequence(
                 SEQ,
-                repeat(sequence(
+                repeatFullMatch(0, sequence(
                     value(r -> language.isSpecialOrFst(r.front())),
                     SEQ
                 ))
@@ -98,7 +99,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected IParser<GrepToken> from()
         {
-            return repeat(SUFFIX);
+            return repeatFullMatch(1, SUFFIX);
         }
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
@@ -160,7 +161,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         protected IParser<GrepToken> from()
         {
             return sequence(
-                testValue(r -> language.isSpecialSeq(r.front())),
+                value(r -> language.isSpecialSeq(r.front())),
                 lookahead(
                     value(r -> !language.isSpecialSeq(r.front())
                             && !language.isSpecialMore0(r.front())
@@ -186,7 +187,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         protected IParser<GrepToken> from()
         {
             return sequence(
-                testValue(r -> language.isSpecialLpar(r.front())),
+                value(r -> language.isSpecialLpar(r.front())),
                 OR_LONG,
                 value(r -> language.isSpecialRpar(r.front()))
             );
@@ -237,14 +238,17 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         if(parser == null)
         {
             parser = mapper(
-                from()
+                from(),
                 /*r -> {
                     System.err.println("<"+name()
                         +" value=\""+(r.empty()?null:r.front())+"\">");
+                    final int pos = r.getPosition();
                     final INode<GrepToken> n = from().parse(r);
-                    System.err.println("<" + (n != null) + "/></" + name() + ">");
+                    System.err.println("<pos s=\""+pos+"\" e=\""+r.getPosition()
+                        +"\" r=\""+(n != null)+"\" v=\""+(r.empty()?null:r.front())+"\"/>");
+                    System.err.println("</" + name() + ">");
                     return n;
-                }//*/,
+                },//*/
                 to()
             );
         }
@@ -260,17 +264,29 @@ enum RegexDetectCompiler implements IParser<GrepToken>
     protected abstract IParser<GrepToken> from();
     protected abstract Function<INode<GrepToken>, INode<GrepToken>> to();
 
-    static IParser<GrepToken> compile(List<GrepToken> needle)
+    static IParser<GrepToken> compile(List<GrepToken> needle) throws CCGrepException
     {
         if(language == null)
         {
             throw new IllegalStateException("set language before.");
         }
 
-        final INode<GrepToken> n = ROOT.parse(new Range<GrepToken>(needle));
+        final Range<GrepToken> cRange = new Range<GrepToken>(needle);
+        final INode<GrepToken> n = ROOT.parse(cRange);
         if(n == null)
         {
-            return null;
+            if(cRange.empty())
+            {
+                throw new CCGrepException("Query syntax is invalid: at the end of the query.");
+            }
+            else
+            {
+                throw new CCGrepException(
+                    "Query syntax is invalid: at line " +
+                    + cRange.front().getLine()
+                    + ", column " + cRange.front().getCharPositionInLine()
+                    + ", token `" + cRange.front().getText() + "`.");
+            }
         }
         final IParser<GrepToken> p = n.casted();
         if(p.matches(new GrepRange(
@@ -279,7 +295,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
             Collections.emptyMap()
         )))
         {
-            return null;
+            throw new CCGrepException("Query syntax is invalid: matches empty sequence.");
         }
         return p;
     }

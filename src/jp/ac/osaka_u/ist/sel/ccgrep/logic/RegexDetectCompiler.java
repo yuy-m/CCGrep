@@ -147,7 +147,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected IParser<GrepToken> from()
         {
-            return selectFirst(SP_SEQ, PAREN, ONE);
+            return selectFirstEarly(SP_SEQ, PAREN, ONE);
         }
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
@@ -160,7 +160,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         protected IParser<GrepToken> from()
         {
             return sequence(
-                value(r -> language.isSpecialSeq(r.front())),
+                testValue(r -> language.isSpecialSeq(r.front())),
                 lookahead(
                     value(r -> !language.isSpecialSeq(r.front())
                             && !language.isSpecialMore0(r.front())
@@ -170,6 +170,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                             && !language.isSpecialRpar(r.front())
                             && !language.isSpecialOrFst(r.front())
                             && !language.isSpecialOrLng(r.front())
+                            && !language.isSpecialAny(r.front())
                     )
                 )
             );
@@ -185,7 +186,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         protected IParser<GrepToken> from()
         {
             return sequence(
-                value(r -> language.isSpecialLpar(r.front())),
+                testValue(r -> language.isSpecialLpar(r.front())),
                 OR_LONG,
                 value(r -> language.isSpecialRpar(r.front()))
             );
@@ -200,7 +201,12 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected IParser<GrepToken> from()
         {
-            return value(r -> !language.isSpecialRpar(r.front())
+            return value(r -> !language.isSpecialSeq(r.front())
+                            && !language.isSpecialMore0(r.front())
+                            && !language.isSpecialMore1(r.front())
+                            && !language.isSpecialEith(r.front())
+                            && !language.isSpecialLpar(r.front())
+                            && !language.isSpecialRpar(r.front())
                             && !language.isSpecialOrFst(r.front())
                             && !language.isSpecialOrLng(r.front())
                     );
@@ -230,7 +236,17 @@ enum RegexDetectCompiler implements IParser<GrepToken>
     {
         if(parser == null)
         {
-            parser = mapper(from(), to());
+            parser = mapper(
+                from()
+                /*r -> {
+                    System.err.println("<"+name()
+                        +" value=\""+(r.empty()?null:r.front())+"\">");
+                    final INode<GrepToken> n = from().parse(r);
+                    System.err.println("<" + (n != null) + "/></" + name() + ">");
+                    return n;
+                }//*/,
+                to()
+            );
         }
         return parser;
     }
@@ -251,7 +267,12 @@ enum RegexDetectCompiler implements IParser<GrepToken>
             throw new IllegalStateException("set language before.");
         }
 
-        final IParser<GrepToken> p = ROOT.parse(new Range<GrepToken>(needle)).casted();
+        final INode<GrepToken> n = ROOT.parse(new Range<GrepToken>(needle));
+        if(n == null)
+        {
+            return null;
+        }
+        final IParser<GrepToken> p = n.casted();
         if(p.matches(new GrepRange(
             Collections.emptyList(),
             BlindLevel.NONE,

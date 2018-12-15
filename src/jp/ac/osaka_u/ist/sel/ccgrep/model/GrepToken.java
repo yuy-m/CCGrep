@@ -34,18 +34,29 @@ public class GrepToken
     @Override
     public boolean equals(Object obj)
     {
-        return obj == this? true
-            : obj instanceof GrepToken? ((GrepToken)obj).getText().equals(this.getText())
-            : obj instanceof String? this.getText().equals((String)obj)
-            : false;
+        return obj == this
+            || (obj instanceof GrepToken && eq(getText(), ((GrepToken)obj).getText()));
     }
 
     public boolean equalsAsSpecialTo(Object obj)
     {
-        return obj == this? true
-            : obj instanceof GrepToken? getText().substring(1).equals(((GrepToken)obj).getText())
-            : obj instanceof String? getText().substring(1).equals((String)obj)
-            : false;
+        return obj == this
+            || (obj instanceof GrepToken && eq(getSpecialStringText(), ((GrepToken)obj).getText()));
+    }
+
+    private String specialStringText = null;
+    private String getSpecialStringText()
+    {
+        if(specialStringText == null)
+        {
+            specialStringText = getText().substring(1);
+        }
+        return specialStringText;
+    }
+
+    private boolean eq(String s1, String s2)
+    {
+        return s1.equals(s2);
     }
 
     public boolean matchesBlindly(GrepToken rhs, BlindLevel blindLevel, Map<String, String> constraint)
@@ -56,7 +67,7 @@ public class GrepToken
         }
         final String t = constraint.get(getText());
         return t != null
-            ? rhs.equals(t)
+            ? eq(t, rhs.getText())
             : getLanguage().findBlindLevel(this, rhs, blindLevel)
                     .matches(this, rhs, constraint);
     }

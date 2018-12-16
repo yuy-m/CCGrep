@@ -49,7 +49,7 @@
 
     <target name="makejar">
         <available file="${dir.target.dependencies}" property="unjarred"/>
-        <antcall target="unjar_dependencies"/>
+        <antcall target="copy_dependencies"/>
 
         <jar destfile="${jar.name}">
             <fileset dir="${dir.target.classes}" includes="**/*.class" />
@@ -60,12 +60,17 @@
         </jar>
    </target>
 
-   <target name="unjar_dependencies" unless="unjarred">
+   <target name="copy_dependencies" unless="unjarred">
         <mkdir dir="${dir.target.dependencies}" />
         <unjar dest="${dir.target.dependencies}" overwrite="no">
             <fileset dir="${dir.lib}" includes="*.jar"/>
         </unjar>
    </target>
+
+    <target name="rebuild" description="clean and build">
+        <antcall target="clean"/>
+        <antcall target="build"/>
+    </target>
 
     <target name="clean" description="clean">
         <delete dir="${dir.target}" />

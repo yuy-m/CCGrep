@@ -295,7 +295,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
             Collections.emptyMap()
         )))
         {
-            throw new CCGrepException("Query syntax is invalid: matches empty sequence.");
+            throw new CCGrepException("Query syntax is invalid: can match empty sequence.");
         }
         return p;
     }

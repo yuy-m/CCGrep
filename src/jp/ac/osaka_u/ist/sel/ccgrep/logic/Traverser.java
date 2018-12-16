@@ -41,36 +41,29 @@ public class Traverser
         try(Stream<String> s1 = haystackNames.stream().flatMap(this::fileStream))
         {
             verbosePrinter.printHeader();
-            int count = 0;
+            ///*
             final Iterator<String> it = s1.iterator();
             final CloneList.Statistic stat = new CloneList.Statistic();
             boolean needDelim = false;
-            while(it.hasNext() && (maxCount < 0 || count < maxCount))
+            while(it.hasNext() && (maxCount < 0 || stat.countAllClone() < maxCount))
             {
-                final CloneList cl = detector.detect(it.next(), maxCount < 0? -1: maxCount - count);
+                final int restCount = maxCount < 0? -1: maxCount - stat.countAllClone();
+                final CloneList cl = detector.detect(it.next(), restCount);
                 stat.add(cl);
                 needDelim |= verbosePrinter.printFile(cl, needDelim);
-                count += cl.size();
             }
+            /*
+            final CloneList.Statistic stat = new CloneList.Statistic();
+            final boolean[] needDelim = {false};
+            s1
+                .map(fileName -> detector.detect(fileName, -1))
+                .forEachOrdered(cl -> {
+                    stat.add(cl);
+                    needDelim[0] |= verbosePrinter.printFile(cl, needDelim[0]);
+                });//*/
             verbosePrinter.printFooter(stat);
             verbosePrinter.printNewLine();
-            return stat;//*/
-
-            /*
-            final int[] count = {0};
-            return StreamUtil.takeWhile(
-                    s1.map(fileName -> {
-                        final CloneList cl = detector.detect(fileName, maxCount < 0? -1: maxCount - count[0]);
-                        System.err.printf(" 1>%8d %8d +%8d\n", maxCount < 0? -1: maxCount - count[0], count[0], cl.size());
-                        return cl;
-                    }),
-                    cl -> {
-                        count[0] += cl.size();
-                        System.err.printf(" 2>%8d %8d +%8d\n", maxCount < 0? -1: maxCount - count[0], count[0], cl.size());
-                        return maxCount < 0 || count[0] < maxCount;
-                    }
-                )
-                .collect(Collectors.toList());//*/
+            return stat;
         }
     }
 

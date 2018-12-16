@@ -112,6 +112,11 @@ public class CCGrep
         debugLogger.println("finish.");
         debugLogger.println(stat.countAllClone() + " clone(s) found.");
 
+        if(frontend.isTimeEnabled)
+        {
+            System.err.printf("%.3f\n", stat.countTimeAsSeconds());
+        }
+
         return stat.countAllClone() == 0? 1: 0;
     }
 

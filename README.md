@@ -88,7 +88,6 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - When `n` set, print line numbers.
    - When `f` set, print whole code of clones.
    - When `e` set, comment out the file name and line numbers.
-   - When `t` set, print processing time(sec).
  - `-r,--recursive`         traverse directories recursively.
 
 #### Example

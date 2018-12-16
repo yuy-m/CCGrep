@@ -41,21 +41,20 @@ public class Traverser
         try(Stream<String> s1 = haystackNames.stream().flatMap(this::fileStream))
         {
             verbosePrinter.printHeader();
+            final CloneList.Statistic stat = new CloneList.Statistic();
+            stat.startStopwatch();
             ///*
             final Iterator<String> it = s1.iterator();
             boolean needDelim = false;
-            final CloneList.Statistic stat = new CloneList.Statistic();
-            stat.startStopwatch();
             while(it.hasNext() && (maxCount < 0 || stat.countAllClone() < maxCount))
             {
                 final int restCount = maxCount < 0? -1: maxCount - stat.countAllClone();
                 final CloneList cl = detector.detect(it.next(), restCount);
                 stat.add(cl);
                 needDelim |= verbosePrinter.printFile(cl, needDelim);
-            }
-            stat.stopStopwatch();
+            } //*/
+
             /*
-            final CloneList.Statistic stat = new CloneList.Statistic();
             final boolean[] needDelim = {false};
             s1
                 .map(fileName -> detector.detect(fileName, -1))
@@ -63,6 +62,8 @@ public class Traverser
                     stat.add(cl);
                     needDelim[0] |= verbosePrinter.printFile(cl, needDelim[0]);
                 });//*/
+
+            stat.stopStopwatch();
             verbosePrinter.printFooter(stat);
             verbosePrinter.printNewLine();
             return stat;

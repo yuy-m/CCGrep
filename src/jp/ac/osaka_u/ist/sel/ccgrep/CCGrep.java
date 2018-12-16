@@ -40,7 +40,6 @@ public class CCGrep
     }
 
     private final Frontend frontend;
-    private final long[] times = new long[3];
 
     private final Language language;
     private final BlindLevel blindLevel;
@@ -49,7 +48,6 @@ public class CCGrep
 
     public CCGrep(Frontend frontend) throws CCGrepException
     {
-        times[0] = System.nanoTime();
         this.frontend = frontend;
         final long t0 = System.nanoTime();
         this.language = findLanguage();
@@ -63,13 +61,6 @@ public class CCGrep
 
         final ITokenizer tokenizer = new AntlrTokenizer(language);
         this.detector = createDetector(tokenizer);
-
-        times[0] = System.nanoTime() - times[0];
-    }
-
-    private static double secondTime(long t)
-    {
-        return t / 1.0e+9;
     }
 
     private Language findLanguage() throws CCGrepException
@@ -109,19 +100,8 @@ public class CCGrep
         return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, frontend.fixedIds);
     }
 
-    private static double getUsingMemoryMB()
-    {
-        return(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024.0 * 1024.0);
-    }
-
-    private static final boolean MEMORY = false;
     public int grep()
     {
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
-        if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
-
-        times[1] = System.nanoTime();
-
         debugLogger.println("traversing...");
         final CloneList.Statistic stat =
             new Traverser(
@@ -131,19 +111,6 @@ public class CCGrep
             .traverse(frontend.haystackNames, frontend.maxCount);
         debugLogger.println("finish.");
         debugLogger.println(stat.countAllClone() + " clone(s) found.");
-
-        times[1] = System.nanoTime() - times[1];
-
-        if(MEMORY) System.err.printf("%7.3f\n", getUsingMemoryMB());
-
-        if(frontend.isTimeEnabled)
-        {
-            final long all = times[0] + times[1] /*+ times[2]*/;
-            System.err.print( "             :  seconds :     %\n");
-            System.err.printf("     prepare : %8.3f : %5.1f\n", secondTime(times[0]), 100.0 * times[0] / all);
-            System.err.printf("detect&print : %8.3f : %5.1f\n", secondTime(times[1]), 100.0 * times[1] / all);
-            System.err.printf("         all : %8.3f : %5.1f\n", secondTime(all), 100.0);
-        }
 
         return stat.countAllClone() == 0? 1: 0;
     }

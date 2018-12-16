@@ -4,6 +4,7 @@ package jp.ac.osaka_u.ist.sel.ccgrep.printer;
 import java.util.StringJoiner;
 import java.util.List;
 import java.io.PrintStream;
+import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
@@ -31,6 +32,7 @@ public class JsonPrinter extends AbstractPrinter
             .collect(Collectors.joining("\\n"));
         stream.println(
             "{" + System.lineSeparator()
+            + " \"startTime\":\"" + ZonedDateTime.now() + "\"," + System.lineSeparator()
             + " \"language\":\"" + language+ "\"," + System.lineSeparator()
             + " \"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
             + " \"queryCode\":\"" + qtext + "\"," + System.lineSeparator()
@@ -48,7 +50,8 @@ public class JsonPrinter extends AbstractPrinter
             + " \"countAllLine\":" + statistic.countAllLine() + "," + System.lineSeparator()
             + " \"countAllToken\":" + statistic.countAllToken() + "," + System.lineSeparator()
             + " \"countCloneFile\":" + statistic.countCloneFile() + "," + System.lineSeparator()
-            + " \"countAllClone\":" + statistic.countAllClone() + System.lineSeparator()
+            + " \"countAllClone\":" + statistic.countAllClone() + "," + System.lineSeparator()
+            + " \"procTime\":" + String.format("%.3f", statistic.countTimeAsSeconds()) + System.lineSeparator()
             + "}"
         );
     }

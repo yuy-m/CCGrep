@@ -18,7 +18,6 @@ public class Frontend
     String printOption = "";
     List<String> fixedIds = Collections.emptyList();
     boolean isJsonEnabled = false;
-    boolean isTimeEnabled = false;
     int maxCount = -1;
 
     String needleFileName = null;
@@ -48,10 +47,6 @@ public class Frontend
             if(cl.hasOption("json"))
             {
                 fe.isJsonEnabled = true;
-            }
-            if(cl.hasOption("time"))
-            {
-                fe.isTimeEnabled = true;
             }
             if(cl.hasOption("recursive"))
             {
@@ -157,6 +152,7 @@ public class Frontend
                 + " When `n` set, print line numbers."
                 + " When `f` set, print whole code of clones."
                 + " When `e` set, comment out the file name and line numbers."
+                + " When `t` set, print processing time(sec)."
             )
             .hasArg()
             .argName("OPTION")
@@ -200,12 +196,6 @@ public class Frontend
             .desc("specify identifier(s) to match exactly the same ones (e.g. 'getValue|string').")
             .hasArg()
             .argName("IDS")
-            .build()
-        )
-        .addOption(
-            Option.builder()
-            .longOpt("time")
-            .desc("print processing time to standard error.")
             .build()
         )
         .addOption(

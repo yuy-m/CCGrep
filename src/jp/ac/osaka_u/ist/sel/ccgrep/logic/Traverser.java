@@ -43,8 +43,9 @@ public class Traverser
             verbosePrinter.printHeader();
             ///*
             final Iterator<String> it = s1.iterator();
-            final CloneList.Statistic stat = new CloneList.Statistic();
             boolean needDelim = false;
+            final CloneList.Statistic stat = new CloneList.Statistic();
+            stat.startStopwatch();
             while(it.hasNext() && (maxCount < 0 || stat.countAllClone() < maxCount))
             {
                 final int restCount = maxCount < 0? -1: maxCount - stat.countAllClone();
@@ -52,6 +53,7 @@ public class Traverser
                 stat.add(cl);
                 needDelim |= verbosePrinter.printFile(cl, needDelim);
             }
+            stat.stopStopwatch();
             /*
             final CloneList.Statistic stat = new CloneList.Statistic();
             final boolean[] needDelim = {false};

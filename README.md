@@ -76,7 +76,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
  - `--fix <IDS>`         specify identifier(s) to match exactly the same
                         ones (e.g. 'getValue|string').
  - `-h,--help`              show help.
- - `   --json`              print clones with JSON format.
+ - `   --json`              print clones and execution information with JSON format.
  - `-l,--language <LANG>`   set target language.
    - c / c++ / java(by default) / python3.
    - With `-f` option, the language can be inferred from the file extension.
@@ -88,6 +88,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - When `n` set, print line numbers.
    - When `f` set, print whole code of clones.
    - When `e` set, comment out the file name and line numbers.
+   - When `t` set, print processing time(sec).
  - `-r,--recursive`         traverse directories recursively.
 
 #### Example

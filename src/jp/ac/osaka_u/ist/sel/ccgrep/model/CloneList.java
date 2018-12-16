@@ -59,6 +59,11 @@ public class CloneList
         private int countAllToken = 0;
         private int countCloneFile = 0;
         private int countAllClone = 0;
+
+        private long startTime;
+        private long endTime;
+        private int stopwatchState = 0; // 0:not start, 1:started, 2:stopped
+
         public Statistic()
         {}
         public Statistic(List<CloneList> clones)
@@ -75,6 +80,25 @@ public class CloneList
                 ++countCloneFile;
                 countAllClone += cloneList.size();
             }
+        }
+        public void startStopwatch()
+        {
+            if(stopwatchState != 0)
+            {
+                throw new IllegalStateException();
+            }
+            stopwatchState = 1;
+            startTime = System.nanoTime();
+        }
+        public void stopStopwatch()
+        {
+            final long t = System.nanoTime();
+            if(stopwatchState != 1)
+            {
+                throw new IllegalStateException();
+            }
+            endTime = t;
+            stopwatchState = 2;
         }
         public int countAllFile()
         {
@@ -95,6 +119,14 @@ public class CloneList
         public int countAllClone()
         {
             return countAllClone;
+        }
+        public double countTimeAsSeconds()
+        {
+            if(stopwatchState != 2)
+            {
+                throw new IllegalStateException();
+            }
+            return (endTime - startTime) / 1.0e+9;
         }
     }
 }

@@ -16,6 +16,8 @@ public class PrintOption
     final boolean isLineEnabled;
     final boolean isEscapeEnabled;
 
+    final boolean isTimeEnabled;
+
     public PrintOption(Language language, String opts)
     {
         this.language = language;
@@ -27,5 +29,6 @@ public class PrintOption
         this.isFileNameEnabled = !opts.contains("h");
         this.isLineEnabled = opts.contains("n");
         this.isEscapeEnabled = opts.contains("e");
+        this.isTimeEnabled = opts.contains("t");
     }
 }

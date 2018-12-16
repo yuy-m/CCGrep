@@ -45,6 +45,10 @@ public class GrepPrinter extends AbstractPrinter
         {
             stream.print(statistic.countAllClone());
         }
+        if(option.isTimeEnabled)
+        {
+            stream.printf("%.3f", statistic.countTimeAsSeconds());
+        }
     }
 
     @Override

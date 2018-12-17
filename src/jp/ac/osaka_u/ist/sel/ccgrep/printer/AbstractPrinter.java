@@ -32,44 +32,44 @@ abstract class AbstractPrinter implements IPrinter
     }
 
     @Override
-    public void println(List<CloneList> clones)
-    {
-        print(clones);
-        stream.println();
-    }
-
-    @Override
     public void print(List<CloneList> clones)
     {
         printHeader();
         final boolean[] needDelim = {false};
-        clones.forEach(clonePerFile -> {
-            needDelim[0] |= printFile(clonePerFile, needDelim[0]);
-        });
+        clones.stream()
+            .filter(this::isFilePrintable)
+            .forEach(clonePerFile -> {
+                printFileInLoop(clonePerFile, needDelim[0]);
+                needDelim[0] = true;
+            });
         printFooter(new CloneList.Statistic(clones));
     }
 
     @Override
     public void printFile(CloneList clonePerFile)
     {
-        printFileHeader(clonePerFile);
+        printlnFileHeader(clonePerFile);
         final boolean[] needDelim = {false};
         clonePerFile.forEach(clone -> {
-            needDelim[0] |= printClone(clone, needDelim[0]);
+            printClone(clone, needDelim[0]);
+            needDelim[0] = true;
         });
-        printFileFooter(clonePerFile);
+        printlnFileFooter(clonePerFile);
         clonePerFile.getCode().clearCodeCache();
     }
 
     @Override
-    public boolean printFile(CloneList clonePerFile, boolean withDelimiter)
+    public void printFileInLoop(CloneList clonePerFile, boolean withDelimiter)
     {
+        if(!isFilePrintable(clonePerFile))
+        {
+            throw new IllegalStateException();
+        }
         if(withDelimiter)
         {
             printFileDelimiter();
         }
         printFile(clonePerFile);
-        return true;
     }
 
     @Override
@@ -83,6 +83,6 @@ abstract class AbstractPrinter implements IPrinter
         return true;
     }
 
-    abstract protected void printFileHeader(CloneList clonePerFile);
-    abstract protected void printFileFooter(CloneList clonePerFile);
+    abstract protected void printlnFileHeader(CloneList clonePerFile);
+    abstract protected void printlnFileFooter(CloneList clonePerFile);
 }

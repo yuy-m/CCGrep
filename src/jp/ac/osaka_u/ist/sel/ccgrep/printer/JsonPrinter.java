@@ -43,9 +43,8 @@ public class JsonPrinter extends AbstractPrinter
     @Override
     public void printFooter(CloneList.Statistic statistic)
     {
-        stream.print(
-            System.lineSeparator()
-            + " ]," + System.lineSeparator()
+        stream.println(
+              " ]," + System.lineSeparator()
             + " \"countAllFile\":" + statistic.countAllFile() + "," + System.lineSeparator()
             + " \"countAllLine\":" + statistic.countAllLine() + "," + System.lineSeparator()
             + " \"countAllToken\":" + statistic.countAllToken() + "," + System.lineSeparator()
@@ -59,11 +58,17 @@ public class JsonPrinter extends AbstractPrinter
     @Override
     public void printFileDelimiter()
     {
-        stream.println(",");
+        stream.print("  ,");
     }
 
     @Override
-    public void printFileHeader(CloneList clonePerFile)
+    public boolean isFilePrintable(CloneList clonePerFile)
+    {
+        return true;
+    }
+
+    @Override
+    public void printlnFileHeader(CloneList clonePerFile)
     {
         final String s = "  {" + System.lineSeparator()
             + "   \"fileName\":\"" + escaped(clonePerFile.getFileName())  + "\"," + System.lineSeparator()
@@ -74,11 +79,10 @@ public class JsonPrinter extends AbstractPrinter
         stream.println(s);
     }
     @Override
-    public void printFileFooter(CloneList clonePerFile)
+    public void printlnFileFooter(CloneList clonePerFile)
     {
-        stream.print(
-            System.lineSeparator()
-            + "   ]" + System.lineSeparator()
+        stream.println(
+              "   ]" + System.lineSeparator()
             + "  }"
         );
     }
@@ -86,7 +90,7 @@ public class JsonPrinter extends AbstractPrinter
     @Override
     public void printCloneDelimiter()
     {
-        stream.println(",");
+        stream.print("    ,");
     }
 
     @Override
@@ -105,7 +109,7 @@ public class JsonPrinter extends AbstractPrinter
         final String str = clone.getCodeByLine().stream()
             .map(s -> escaped(s))
             .collect(Collectors.joining("\\n", header, footer));
-        stream.print(str);
+        stream.println(str);
     }
 
     private static String escaped(String s)

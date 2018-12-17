@@ -9,12 +9,12 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.CloneList;
 public interface IPrinter
 {
     void print(List<CloneList> clones);
-    void println(List<CloneList> clones);
 
     void printHeader();
 
+    boolean isFilePrintable(CloneList clonePerFile);
     void printFile(CloneList clonePerFile);
-    boolean printFile(CloneList clonePerFile, boolean withDelimiter);
+    void printFileInLoop(CloneList clonePerFile, boolean withDelimiter);
     void printFileDelimiter();
 
     void printClone(Clone clone);

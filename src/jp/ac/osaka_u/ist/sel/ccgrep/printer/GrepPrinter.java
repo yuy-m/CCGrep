@@ -20,18 +20,15 @@ public class GrepPrinter extends AbstractPrinter
     @Override
     public void print(List<CloneList> clones)
     {
-        final List<CloneList> cll = clones.stream()
-                .filter(cl -> !cl.isEmpty())
-                .collect(Collectors.toList());
-        printHeader();
-        if(!option.isCountOnlyEnabled)
+        if(option.isCountOnlyEnabled)
         {
-            final boolean[] needDelim = {false};
-            cll.forEach(clonePerFile -> {
-                needDelim[0] |= printFile(clonePerFile, needDelim[0]);
-            });
+            printHeader();
+            printFooter(new CloneList.Statistic(clones));
         }
-        printFooter(new CloneList.Statistic(clones));
+        else
+        {
+            super.print(clones);
+        }
     }
 
     @Override
@@ -43,18 +40,14 @@ public class GrepPrinter extends AbstractPrinter
     {
         if(option.isCountOnlyEnabled)
         {
-            stream.print(statistic.countAllClone());
+            stream.println(statistic.countAllClone());
         }
     }
 
     @Override
-    public boolean printFile(CloneList clonePerFile, boolean withDelimiter)
+    public boolean isFilePrintable(CloneList clonePerFile)
     {
-        if(option.isCountOnlyEnabled || clonePerFile.isEmpty())
-        {
-            return false;
-        }
-        return super.printFile(clonePerFile, withDelimiter);
+        return !option.isCountOnlyEnabled && !clonePerFile.isEmpty();
     }
 
     @Override
@@ -62,9 +55,9 @@ public class GrepPrinter extends AbstractPrinter
     {
         if(option.isFileNameOnlyEnabled)
         {
-            printFileHeader(clonePerFile);
-            stream.print(clonePerFile.getFileName());
-            printFileFooter(clonePerFile);
+            printlnFileHeader(clonePerFile);
+            stream.println(clonePerFile.getFileName());
+            printlnFileFooter(clonePerFile);
         }
         else
         {
@@ -72,23 +65,19 @@ public class GrepPrinter extends AbstractPrinter
         }
     }
     @Override
-    protected void printFileHeader(CloneList clonePerFile)
+    protected void printlnFileHeader(CloneList clonePerFile)
     {}
     @Override
-    protected void printFileFooter(CloneList clonePerFile)
+    protected void printlnFileFooter(CloneList clonePerFile)
     {}
 
     @Override
     public void printFileDelimiter()
-    {
-        stream.println();
-    }
+    {}
 
     @Override
     public void printCloneDelimiter()
-    {
-        stream.println();
-    }
+    {}
 
     @Override
     public void printClone(Clone clone)
@@ -139,7 +128,7 @@ public class GrepPrinter extends AbstractPrinter
             })
             .collect(Collectors.joining(System.lineSeparator()));
         sb.append(code);
-        stream.print(sb);
+        stream.println(sb);
     }
 
     private void printCloneWhenCodeDisabled(Clone clone)
@@ -158,6 +147,6 @@ public class GrepPrinter extends AbstractPrinter
             ? option.language.blockCommentEnd() + lines.get(0)
             : lines.get(0)
         );
-        stream.print(sj);
+        stream.println(sj);
     }
 }

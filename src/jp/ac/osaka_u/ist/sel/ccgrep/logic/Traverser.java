@@ -2,6 +2,8 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
@@ -75,12 +77,16 @@ public class Traverser
 
     private Stream<String> fileStream(String haystackName)
     {
-        Path haystackPath;
-        if("-".equals(haystackName)
-            || !Files.isDirectory(haystackPath = Paths.get(haystackName))
-        )
+        if("-".equals(haystackName))
         {
             return Stream.of(haystackName);
+        }
+        final Path haystackPath = Paths.get(haystackName);
+        if(!Files.isDirectory(haystackPath))
+        {
+            return fileMatcher.test(haystackName) || isTextFile(haystackPath)
+                    ? Stream.of(haystackName)
+                    : Stream.empty();
         }
         else
         {
@@ -94,6 +100,27 @@ public class Traverser
                 System.err.println("Error: cannot read file " + e.getMessage());
                 return Stream.empty();
             }
+        }
+    }
+
+    private static boolean isTextFile(Path path)
+    {
+        try(InputStream is = Files.newInputStream(path);
+            InputStream bis = new BufferedInputStream(is))
+        {
+            final byte[] b = new byte[1];
+            while(bis.read(b, 0, 1) > 0)
+            {
+                if(b[0] == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        catch(IOException e)
+        {
+            return false;
         }
     }
 }

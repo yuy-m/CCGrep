@@ -55,14 +55,15 @@ public class GrepCode
     {
         if(cache == null)
         {
-            try(Stream<String> s = Files.lines(Paths.get(getFileName())))
+            try
             {
-                cache = s.collect(Collectors.toList());
+                cache = Files.readAllLines(Paths.get(getFileName()));
             }
             catch(IOException e)
             {
+                // TODO: should be always the head of line.
                 System.err.println("Error: cannot read file " + getFileName());
-                cache = Collections.singletonList("<NO TEXT>");
+                cache = Collections.emptyList();
             }
         }
         return cache;
@@ -74,26 +75,6 @@ public class GrepCode
             Math.max(0, fromLine - 1),
             Math.min(cache.size(), toLine)
         );
-        /*return memo.computeIfAbsent(
-                getFileName(),
-                __ -> splitPattern.splitAsStream(
-                        token.getInputStream().getText(
-                            Interval.of(0, token.getInputStream().size() - 1)
-                        )
-                    )
-                    .collect(Collectors.toList())
-            )
-            .subList(fromLine - 1, toLine); //*/
-        /*try{
-            return Files.lines(Paths.get(getFileName()))
-                .skip(fromLine - 1)
-                .limit(toLine - fromLine + 1)
-                .collect(Collectors.toList());
-        }
-        catch(Exception e)
-        {
-            return getCodeByLine2(countLines);
-        } //*/
     }
 
     public String getFileName()

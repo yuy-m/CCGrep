@@ -18,6 +18,7 @@ public class Frontend
     String printOption = "";
     List<String> fixedIds = Collections.emptyList();
     boolean isJsonEnabled = false;
+    boolean isXmlEnabled = false;
     boolean isTimeEnabled = false;
     int maxCount = -1;
 
@@ -48,6 +49,10 @@ public class Frontend
             if(cl.hasOption("json"))
             {
                 fe.isJsonEnabled = true;
+            }
+            if(cl.hasOption("xml"))
+            {
+                fe.isXmlEnabled = true;
             }
             if(cl.hasOption("time"))
             {
@@ -192,6 +197,12 @@ public class Frontend
             Option.builder()
             .longOpt("json")
             .desc("print clones with JSON format.")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("xml")
+            .desc("print clones with XML format.")
             .build()
         )
         .addOption(

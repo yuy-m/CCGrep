@@ -123,9 +123,9 @@ public class CCGrep
     private IPrinter createPrinter()
     {
         final PrintOption po = new PrintOption(language, frontend.printOption);
-        return frontend.isJsonEnabled
-            ? new JsonPrinter(po, needle, language, blindLevel)
-            : new GrepPrinter(po);
+        return frontend.isJsonEnabled? new JsonPrinter(po, needle, language, blindLevel)
+             : frontend.isXmlEnabled? new XmlPrinter(po, needle, language, blindLevel)
+             : new GrepPrinter(po);
     }
 }
 

@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2018/12/14, written on 2018/12/06*
+*updated on 2018/12/19, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -89,6 +89,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - When `f` set, print whole code of clones.
    - When `e` set, comment out the file name and line numbers.
  - `-r,--recursive`         traverse directories recursively.
+ - `--xml`               print clones with XML format.
 
 #### Example
  - search recursively `target/` for `query.java`, and print head lines of clones with file name and line number.
@@ -127,9 +128,9 @@ Special tokens can be used for detection by regular expression.
 They are regular expression characters with `$` at the head.
  - Grouping `$(`, `$)`
  - Longest Selection `$|`
-   - matches longest. `$(a$|aa$)` matches whole `aa` .f `aa`;
+   - matches longest. `$(a$|aa$)` matches whole `aa` of `aa`;
  - First Selection `$/`
-   - matches first. `$(a$/aa$)` matches only first `a` .f `aa`;
+   - matches first. `$(a$/aa$)` matches only first `a` of `aa`;
  - 0-or-more `$*`
    - matches longest.
  - 1-or-more `$+`

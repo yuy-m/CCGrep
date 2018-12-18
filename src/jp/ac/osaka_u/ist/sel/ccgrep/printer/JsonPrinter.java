@@ -33,8 +33,8 @@ public class JsonPrinter extends AbstractPrinter
         stream.println(
             "{" + System.lineSeparator()
             + " \"startTime\":\"" + ZonedDateTime.now() + "\"," + System.lineSeparator()
-            + " \"language\":\"" + language+ "\"," + System.lineSeparator()
-            + " \"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
+            + " \"language\":\"" + language+ "\", "
+            +  "\"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
             + " \"queryCode\":\"" + qtext + "\"," + System.lineSeparator()
             + " \"clonesPerFile\":["
         );
@@ -72,9 +72,9 @@ public class JsonPrinter extends AbstractPrinter
     {
         final String s = "  {" + System.lineSeparator()
             + "   \"fileName\":\"" + escaped(clonePerFile.getFileName())  + "\"," + System.lineSeparator()
-            + "   \"countLine\":"  + clonePerFile.getCode().countLines()  + "," + System.lineSeparator()
-            + "   \"countToken\":" + clonePerFile.getCode().countTokens() + "," + System.lineSeparator()
-            + "   \"countClone\":" + clonePerFile.size()                  + "," + System.lineSeparator()
+            + "   \"countLine\":"  + clonePerFile.getCode().countLines()  + ", "
+            +    "\"countToken\":" + clonePerFile.getCode().countTokens() + ", "
+            +    "\"countClone\":" + clonePerFile.size()                  + "," + System.lineSeparator()
             + "   \"clones\":[";
         stream.println(s);
     }
@@ -98,10 +98,10 @@ public class JsonPrinter extends AbstractPrinter
     {
         final String header =
               "    {" + System.lineSeparator()
-            + "     \"startLine\":"   + clone.getStartLine()   + "," + System.lineSeparator()
-            + "     \"startColumn\":" + clone.getStartColumn() + "," + System.lineSeparator()
-            + "     \"endLine\":"     + clone.getEndLine()     + "," + System.lineSeparator()
-            + "     \"endColumn\":"   + clone.getEndColumn()   + "," + System.lineSeparator()
+            + "     \"startLine\":"   + clone.getStartLine()   + ", "
+            +      "\"startColumn\":" + clone.getStartColumn() + "," + System.lineSeparator()
+            + "     \"endLine\":"     + clone.getEndLine()     + ", "
+            +      "\"endColumn\":"   + clone.getEndColumn()   + "," + System.lineSeparator()
             + "     \"code\":\"";
         final String footer =
               "\"" + System.lineSeparator()

@@ -5,6 +5,7 @@ import java.util.StringJoiner;
 import java.util.List;
 import java.io.PrintStream;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
@@ -29,14 +30,13 @@ public class XmlPrinter extends AbstractPrinter
     {
         final String qtext = needle.getCodeByLine().stream()
             .map(s -> escaped(s))
-            .collect(Collectors.joining("\\n"));
+            .collect(Collectors.joining(System.lineSeparator()));
         stream.println(
-              "<ccgrep" + System.lineSeparator()
-            + " startTime=\"" + escaped(ZonedDateTime.now().toString()) + "\"" + System.lineSeparator()
+              "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" + System.lineSeparator()
+            + "<ccgrep" + System.lineSeparator()
+            + " startTime=\"" + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) + "\"" + System.lineSeparator()
             + " language=\"" + language+ "\" blindLevel=\"" + blindLevel + "\" >" + System.lineSeparator()
-            + " <queryCode>" + System.lineSeparator()
-            +    qtext + System.lineSeparator()
-            + " </queryCode>" + System.lineSeparator()
+            + " <queryCode xml:space=\"preserve\" >" + qtext + "</queryCode>" + System.lineSeparator()
             + " <clonesPerFile>"
         );
     }
@@ -94,15 +94,14 @@ public class XmlPrinter extends AbstractPrinter
         final String header =
               "    <clone" + System.lineSeparator()
             + "     startLine=\""   + clone.getStartLine()   + "\" "
-            +      "startColumn=\"" + clone.getStartColumn() + "\"" + System.lineSeparator()
-            + "     endLine=\""     + clone.getEndLine()     + "\" "
-            +      "endColumn=\""   + clone.getEndColumn()   + "\" >" + System.lineSeparator();
-        final String footer =
-              System.lineSeparator()
-            + "    </clone>";
+            +      "startColumn=\"" + clone.getStartColumn() + "\" "
+            +      "endLine=\""     + clone.getEndLine()     + "\" "
+            +      "endColumn=\""   + clone.getEndColumn()   + "\"" + System.lineSeparator()
+            + "     xml:space=\"preserve\" >";
+        final String footer = "</clone>";
         final String str = clone.getCodeByLine().stream()
             .map(s -> escaped(s))
-            .collect(Collectors.joining("\\n", header, footer));
+            .collect(Collectors.joining(System.lineSeparator(), header, footer));
         stream.println(str);
     }
 

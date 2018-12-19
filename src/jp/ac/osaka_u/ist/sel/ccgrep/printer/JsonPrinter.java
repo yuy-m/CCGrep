@@ -5,6 +5,7 @@ import java.util.StringJoiner;
 import java.util.List;
 import java.io.PrintStream;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
@@ -32,7 +33,7 @@ public class JsonPrinter extends AbstractPrinter
             .collect(Collectors.joining("\\n"));
         stream.println(
             "{" + System.lineSeparator()
-            + " \"startTime\":\"" + ZonedDateTime.now() + "\"," + System.lineSeparator()
+            + " \"startTime\":\"" + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) + "\"," + System.lineSeparator()
             + " \"language\":\"" + language+ "\", "
             +  "\"blindLevel\":\"" + blindLevel + "\"," + System.lineSeparator()
             + " \"queryCode\":\"" + qtext + "\"," + System.lineSeparator()
@@ -99,8 +100,8 @@ public class JsonPrinter extends AbstractPrinter
         final String header =
               "    {" + System.lineSeparator()
             + "     \"startLine\":"   + clone.getStartLine()   + ", "
-            +      "\"startColumn\":" + clone.getStartColumn() + "," + System.lineSeparator()
-            + "     \"endLine\":"     + clone.getEndLine()     + ", "
+            +      "\"startColumn\":" + clone.getStartColumn() + ", "
+            +      "\"endLine\":"     + clone.getEndLine()     + ", "
             +      "\"endColumn\":"   + clone.getEndColumn()   + "," + System.lineSeparator()
             + "     \"code\":\"";
         final String footer =

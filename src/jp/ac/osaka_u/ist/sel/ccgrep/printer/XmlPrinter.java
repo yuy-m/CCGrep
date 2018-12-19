@@ -64,7 +64,7 @@ public class XmlPrinter extends AbstractPrinter
     @Override
     public boolean isFilePrintable(CloneList clonePerFile)
     {
-        return true;
+        return !option.isMinimalEnabled || !clonePerFile.isEmpty();
     }
 
     @Override
@@ -99,10 +99,17 @@ public class XmlPrinter extends AbstractPrinter
             +      "endColumn=\""   + clone.getEndColumn()   + "\"" + System.lineSeparator()
             + "     xml:space=\"preserve\" >";
         final String footer = "</clone>";
-        final String str = clone.getCodeByLine().stream()
-            .map(s -> escaped(s))
-            .collect(Collectors.joining(System.lineSeparator(), header, footer));
-        stream.println(str);
+        if(option.isMinimalEnabled)
+        {
+            stream.println(header + footer);
+        }
+        else
+        {
+            final String str = clone.getCodeByLine().stream()
+                .map(s -> escaped(s))
+                .collect(Collectors.joining(System.lineSeparator(), header, footer));
+            stream.println(str);
+        }
     }
 
     private static String escaped(String s)

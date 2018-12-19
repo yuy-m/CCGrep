@@ -65,7 +65,7 @@ public class JsonPrinter extends AbstractPrinter
     @Override
     public boolean isFilePrintable(CloneList clonePerFile)
     {
-        return true;
+        return !option.isMinimalEnabled || !clonePerFile.isEmpty();
     }
 
     @Override
@@ -107,10 +107,17 @@ public class JsonPrinter extends AbstractPrinter
         final String footer =
               "\"" + System.lineSeparator()
             + "    }";
-        final String str = clone.getCodeByLine().stream()
-            .map(s -> escaped(s))
-            .collect(Collectors.joining("\\n", header, footer));
-        stream.println(str);
+        if(option.isMinimalEnabled)
+        {
+            stream.println(header + footer);
+        }
+        else
+        {
+            final String str = clone.getCodeByLine().stream()
+                .map(s -> escaped(s))
+                .collect(Collectors.joining("\\n", header, footer));
+            stream.println(str);
+        }
     }
 
     private static String escaped(String s)

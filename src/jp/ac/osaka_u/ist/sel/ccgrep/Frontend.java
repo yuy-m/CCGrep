@@ -162,6 +162,7 @@ public class Frontend
                 + " When `n` set, print line numbers."
                 + " When `f` set, print whole code of clones."
                 + " When `e` set, comment out the file name and line numbers."
+                + " When `m` set, in XML/JSON, NOT print clone-code or files-without-clone."
             )
             .hasArg()
             .argName("OPTION")

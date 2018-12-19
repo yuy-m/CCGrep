@@ -52,12 +52,12 @@ public class Traverser
             {
                 final int restCount = maxCount < 0? -1: maxCount - stat.countAllClone();
                 final CloneList cl = detector.detect(it.next(), restCount);
-                stat.add(cl);
                 if(verbosePrinter.isFilePrintable(cl))
                 {
                     verbosePrinter.printFileInLoop(cl, needDelim);
                     needDelim = true;
                 }
+                stat.add(cl);
             } //*/
 
             /*

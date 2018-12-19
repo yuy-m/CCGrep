@@ -16,6 +16,7 @@ public class GrepCode
     private final String fileName;
     private final int tokenCount;
     private List<String> cache;
+    private static final List<String> failedCode = Collections.singletonList("<CODE FETCH FAILED>");
     private final boolean isWithCode;
 
     private static final Pattern lineSplitPattern = Pattern.compile("\r\n|[\n\r\u2028\u2029\u0085]");
@@ -34,9 +35,8 @@ public class GrepCode
 
     public void clearCodeCache()
     {
-        if(!isWithCode && cache != null)
+        if(!isWithCode)
         {
-            cache.clear();
             cache = null;
         }
     }
@@ -48,7 +48,21 @@ public class GrepCode
 
     public int countLines()
     {
-        return getCodeByLine().size();
+        if(cache != null)
+        {
+            return getCodeByLine().size();
+        }
+        try
+        {
+            return Files.lines(Paths.get(getFileName()))
+                        .mapToInt(__ -> 1)
+                        .sum();
+        }
+        catch(IOException e)
+        {
+            System.err.println("Error: cannot read file " + getFileName());
+            return 0;
+        }
     }
 
     public List<String> getCodeByLine()
@@ -61,9 +75,8 @@ public class GrepCode
             }
             catch(IOException e)
             {
-                // TODO: should be always the head of line.
                 System.err.println("Error: cannot read file " + getFileName());
-                cache = Collections.emptyList();
+                return failedCode;
             }
         }
         return cache;
@@ -71,10 +84,16 @@ public class GrepCode
 
     public List<String> getCodeByLine(int fromLine, int toLine)
     {
-        return getCodeByLine().subList(
-            Math.max(0, fromLine - 1),
-            Math.min(cache.size(), toLine)
-        );
+        final List<String> code = getCodeByLine();
+        if(code == failedCode)
+        {
+            return code;
+        }
+        final int s = Math.max(0, fromLine - 1);
+        final int e = Math.min(code.size(), toLine);
+        return s <= e
+            ? code.subList(s, e)
+            : failedCode;
     }
 
     public String getFileName()

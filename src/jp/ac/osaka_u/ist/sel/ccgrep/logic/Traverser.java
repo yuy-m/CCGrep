@@ -98,7 +98,7 @@ public class Traverser
             }
             catch(IOException e)
             {
-                System.err.println("Error: cannot read file " + e.getMessage());
+                System.err.println("ccgrep : " + e.getMessage() + ": Cannot read");
                 return Stream.empty();
             }
         }

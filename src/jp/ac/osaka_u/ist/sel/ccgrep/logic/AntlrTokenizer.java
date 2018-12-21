@@ -2,6 +2,7 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -57,9 +58,14 @@ public class AntlrTokenizer implements ITokenizer
                 return extract(CharStreams.fromFileName(filename), null);
             }
         }
+        catch(FileNotFoundException e)
+        {
+            System.err.println("ccgrep: " + filename + ": No such file or directory");
+            return null;
+        }
         catch(IOException e)
         {
-            System.err.println(e.getMessage());
+            System.err.println("ccgrep: " + e.getMessage());
             return null;
         }
     }

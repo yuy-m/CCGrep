@@ -29,10 +29,6 @@ public class Frontend
     public static Frontend process(String[] args)
     {
         final Frontend fe = new Frontend();
-        if(args.length == 0)
-        {
-            args = new String[]{"-h"};
-        }
         try {
             final CommandLine cl = new DefaultParser().parse(options, args);
 
@@ -97,8 +93,7 @@ public class Frontend
                 }
                 else
                 {
-                    System.err.println("Illegal arguments.");
-                    showHelp();
+                    showErrorHelp();
                     return null;
                 }
             }
@@ -110,17 +105,25 @@ public class Frontend
         }
         catch(final ParseException e)
         {
-            System.err.println("Illegal command line argument:" + e.getMessage());
+            System.err.println("ccgrep: " + e.getMessage());
+            showErrorHelp();
             return null;
         }
     }
 
+    private static final String appName = "ccgrep";
+    private static final String appSyntax =
+                      appName + " [OPTIONS]... QUERY_CODE [TARGETS]..." + System.lineSeparator()
+        + "       " + appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
+
+    public static void showErrorHelp()
+    {
+        System.err.println(appSyntax);
+        System.err.println("Try '" + appName + " --help' for more information.");
+    }
+
     public static void showHelp()
     {
-        final String appName = "ccgrep";
-        final String appSyntax = appName + " [OPTIONS]... QUERY_CODE [TARGETS]..." + System.lineSeparator()
-                                + "       " + appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
-
         final String header = "\nCode clone detector like grep command.\n\n"
                             + "Example: ccgrep -r -p n -f query.java target/\n"
                             + "         ccgrep -r -p fn 'int a = 1;' target/\n"

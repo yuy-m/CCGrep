@@ -70,7 +70,7 @@ public class GrepCode
             }
             catch(IOException|UncheckedIOException e2)
             {
-                System.err.println("Error: cannot read file " + getFileName());
+                System.err.println("ccgrep: " + getFileName() + ": Cannot read");
                 return 0;
             }
         }
@@ -92,7 +92,7 @@ public class GrepCode
                 }
                 catch(IOException e2)
                 {
-                    System.err.println("Error: cannot read file " + getFileName());
+                    System.err.println("ccgrep: " + getFileName() + ": Cannot read");
                     return failedCode;
                 }
             }

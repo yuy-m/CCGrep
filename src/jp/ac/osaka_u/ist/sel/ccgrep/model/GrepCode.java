@@ -7,8 +7,10 @@ import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.charset.Charset;
 
 
 public class GrepCode
@@ -58,10 +60,19 @@ public class GrepCode
                         .mapToInt(__ -> 1)
                         .sum();
         }
-        catch(IOException e)
+        catch(IOException|UncheckedIOException e)
         {
-            System.err.println("Error: cannot read file " + getFileName());
-            return 0;
+            try
+            {
+                return Files.lines(Paths.get(getFileName()), Charset.forName("ISO_8859_1"))
+                            .mapToInt(__ -> 1)
+                            .sum();
+            }
+            catch(IOException|UncheckedIOException e2)
+            {
+                System.err.println("Error: cannot read file " + getFileName());
+                return 0;
+            }
         }
     }
 
@@ -75,8 +86,15 @@ public class GrepCode
             }
             catch(IOException e)
             {
-                System.err.println("Error: cannot read file " + getFileName());
-                return failedCode;
+                try
+                {
+                    cache = Files.readAllLines(Paths.get(getFileName()), Charset.forName("ISO_8859_1"));
+                }
+                catch(IOException e2)
+                {
+                    System.err.println("Error: cannot read file " + getFileName());
+                    return failedCode;
+                }
             }
         }
         return cache;

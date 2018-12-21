@@ -112,13 +112,13 @@ public class Frontend
     }
 
     private static final String appName = "ccgrep";
-    private static final String appSyntax =
-                      appName + " [OPTIONS]... QUERY_CODE [TARGETS]..." + System.lineSeparator()
-        + "       " + appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
+    private static final String appSyntax1 = appName + " [OPTIONS]... QUERY_CODE [TARGETS]...";
+    private static final String appSyntax2 = appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
 
     public static void showErrorHelp()
     {
-        System.err.println(appSyntax);
+        System.err.println(appSyntax1);
+        System.err.println(appSyntax2);
         System.err.println("Try '" + appName + " --help' for more information.");
     }
 
@@ -129,12 +129,15 @@ public class Frontend
                             + "         ccgrep -r -p fn 'int a = 1;' target/\n"
                             + "         (use single quote to suppress variable expansion)\n\n";
 
-                            final String footer = "\nWhen TARGETS is -, read standard input."
+        final String footer = "\nWhen TARGETS is -, read standard input."
             + " With no TARGETS, read . if a command-line -r is given, - otherwise."
             + " Exit status is 0 if any clone is detected, 1 otherwise;"
             + " if any error occurs, the exit status is 2.";
 
-        new HelpFormatter().printHelp(appSyntax, header, options, footer);
+        new HelpFormatter().printHelp(
+            appSyntax1 + "\n       " + appSyntax2,
+            header, options, footer
+        );
     }
 
     private static final Options options = new Options()

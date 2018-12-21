@@ -4,6 +4,7 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
@@ -88,10 +89,10 @@ public class Traverser
                     ? Stream.of(haystackName)
                     : Stream.empty();
         }
-        else
+        else if(isRecursiveEnabled)
         {
             try{
-                return Files.walk(haystackPath, isRecursiveEnabled? Integer.MAX_VALUE: 1)
+                return Files.walk(haystackPath)
                     .map(path -> path.toString())
                     .filter(fileMatcher::test);
             }
@@ -100,6 +101,11 @@ public class Traverser
                 System.err.println("Error: cannot read file " + e.getMessage());
                 return Stream.empty();
             }
+        }
+        else
+        {
+            System.err.println("ccgrep: " + haystackName + ": Is a directory");
+            return Stream.empty();
         }
     }
 

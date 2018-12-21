@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
+import jp.ac.osaka_u.ist.sel.ccgrep.CCGrepException;
 import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.*;
 import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
@@ -90,6 +91,10 @@ public class CCGrep
         final ITokenizer.TokenizerResult needleResult = frontend.needleFileName == null
             ? tokenizer.extractFromString(frontend.needleCode)
             : tokenizer.extractFromFile(frontend.needleFileName);
+        if(needleResult == null)
+        {
+            throw new CCGrepException("Query file not found.");
+        }
         this.needle = needleResult.code;
         final List<GrepToken> nTokens = needleResult.tokens;
 

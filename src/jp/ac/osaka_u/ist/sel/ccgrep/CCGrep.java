@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
-import jp.ac.osaka_u.ist.sel.ccgrep.CCGrepException;
 import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.*;
 import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
@@ -71,11 +70,11 @@ public class CCGrep
             return Language.findByName(frontend.languageName)
                 .orElseThrow(() -> new CCGrepException("The language " + frontend.languageName + " is not supported."));
         }
-        else if(frontend.needleFileName != null)
+        else if(frontend.needleType == Frontend.NEEDLE_FILE)
         {
-            return Language.findByFileNameWithExtension(frontend.needleFileName)
+            return Language.findByFileNameWithExtension(frontend.needle)
                 .orElseThrow(() -> new CCGrepException(
-                    "No language found from the extension of " + frontend.needleFileName
+                    "No language found from the extension of " + frontend.needle
                     + System.lineSeparator() + "specify languge by `-l LANG` or `-f FILE.EXT`"
                 ));
         }
@@ -88,9 +87,8 @@ public class CCGrep
     private IDetector createDetector(ITokenizer tokenizer) throws CCGrepException
     {
         debugLogger.print("tokenizing query...");
-        final ITokenizer.TokenizerResult needleResult = frontend.needleFileName == null
-            ? tokenizer.extractFromString(frontend.needleCode)
-            : tokenizer.extractFromFile(frontend.needleFileName);
+        final ITokenizer.TokenizerResult needleResult =
+            tokenizeNeedle(tokenizer, frontend.needleType, frontend.needle);
         if(needleResult == null)
         {
             throw new CCGrepException("Query file not found.");
@@ -103,6 +101,22 @@ public class CCGrep
 
         debugLogger.println("The query has " + nTokens.size() + " token(s).");
         return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, frontend.fixedIds);
+    }
+
+    private ITokenizer.TokenizerResult tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle)
+    {
+        switch(needleType)
+        {
+        case Frontend.NEEDLE_CODE:
+            return tokenizer.extractFromString(needle);
+        case Frontend.NEEDLE_FILE:
+            return tokenizer.extractFromFile(needle);
+        case Frontend.NEEDLE_STDIN:
+            return tokenizer.extractFromFile("-");
+        default:
+            assert false;
+            throw new IllegalArgumentException();
+        }
     }
 
     public int grep()

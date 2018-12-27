@@ -22,8 +22,11 @@ public class Frontend
     boolean isTimeEnabled = false;
     int maxCount = -1;
 
-    String needleFileName = null;
-    String needleCode = null;
+    String needle = null;
+    int needleType = NEEDLE_CODE;
+    static final int NEEDLE_CODE = 0;
+    static final int NEEDLE_FILE = 1;
+    static final int NEEDLE_STDIN = 2;
     List<String> haystackNames;
 
     public static Frontend process(String[] args)
@@ -76,7 +79,13 @@ public class Frontend
             }
             if(cl.hasOption("file"))
             {
-                fe.needleFileName = cl.getOptionValue("file");
+                fe.needle = cl.getOptionValue("file");
+                fe.needleType = NEEDLE_FILE;
+            }
+            if(cl.hasOption("stdin-query"))
+            {
+                fe.needle = cl.getOptionValue("stdin-query");
+                fe.needleType = NEEDLE_STDIN;
             }
             if(cl.hasOption("fix"))
             {
@@ -84,11 +93,11 @@ public class Frontend
                                 .split("\\|"));
             }
             List<String> restArgs = cl.getArgList();
-            if(fe.needleFileName == null)
+            if(fe.needleType == NEEDLE_CODE)
             {
                 if(!restArgs.isEmpty())
                 {
-                    fe.needleCode = restArgs.get(0);
+                    fe.needle = restArgs.get(0);
                     restArgs = restArgs.subList(1, restArgs.size());
                 }
                 else
@@ -180,6 +189,12 @@ public class Frontend
             .desc("obtain query from file. CANNOT give query as code string at once.")
             .hasArg()
             .argName("FILES")
+            .build()
+        )
+        .addOption(
+            Option.builder("s")
+            .longOpt("stdin-query")
+            .desc("obtain query from standard input. CANNOT give query as code string at once.")
             .build()
         )
         .addOption(

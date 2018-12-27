@@ -89,6 +89,8 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - When `f` set, print whole code of clones.
    - When `e` set, comment out the file name and line numbers.
  - `-r,--recursive`         traverse directories recursively.
+ - `-s,--stdin-query`       obtain query from standard input. CANNOT give
+                        query as code string at once.
  - `--xml`               print clones with XML format.
 
 #### Example

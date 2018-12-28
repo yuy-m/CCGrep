@@ -192,19 +192,22 @@ public class Frontend
             .argName("OPTION")
             .build()
         )
-        .addOption(
-            Option.builder("f")
-            .longOpt("file")
-            .desc("obtain query from file. CANNOT give query as code string at once.")
-            .hasArg()
-            .argName("FILES")
-            .build()
-        )
-        .addOption(
-            Option.builder("s")
-            .longOpt("stdin-query")
-            .desc("obtain query from standard input. CANNOT give query as code string at once.")
-            .build()
+        .addOptionGroup(
+            new OptionGroup()
+                .addOption(
+                    Option.builder("f")
+                    .longOpt("file")
+                    .desc("obtain query from file. CANNOT give query as code string at once.")
+                    .hasArg()
+                    .argName("FILES")
+                    .build()
+                )
+                .addOption(
+                    Option.builder("s")
+                    .longOpt("stdin-query")
+                    .desc("obtain query from standard input. CANNOT give query as code string at once.")
+                    .build()
+                )
         )
         .addOption(
             Option.builder("r")
@@ -224,17 +227,20 @@ public class Frontend
             .desc("print debug log to standard error.")
             .build()
         )
-        .addOption(
-            Option.builder()
-            .longOpt("json")
-            .desc("print clones with JSON format.")
-            .build()
-        )
-        .addOption(
-            Option.builder()
-            .longOpt("xml")
-            .desc("print clones with XML format.")
-            .build()
+        .addOptionGroup(
+            new OptionGroup()
+                .addOption(
+                    Option.builder()
+                    .longOpt("json")
+                    .desc("print clones with JSON format.")
+                    .build()
+                )
+                .addOption(
+                    Option.builder()
+                    .longOpt("xml")
+                    .desc("print clones with XML format.")
+                    .build()
+                )
         )
         .addOption(
             Option.builder()

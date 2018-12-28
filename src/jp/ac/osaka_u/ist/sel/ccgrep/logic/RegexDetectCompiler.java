@@ -62,9 +62,9 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return n -> {
                 final ArrayList<IParser<GrepToken>> l = new ArrayList<>();
-                l.add(rmConstr(n.getCastedChild(0)));
+                l.add(rmConstr(n.getCastedChild(0), true));
                 n.getChild(1).getChildren().stream()
-                    .map(n1 -> rmConstr(n1.getCastedChild(1)))
+                    .map(n1 -> rmConstr(n1.getCastedChild(1), true))
                     .forEach(l::add);
                 return selectLongest(l);
             };
@@ -87,9 +87,9 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return n -> {
                 final ArrayList<IParser<GrepToken>> l = new ArrayList<>();
-                l.add(rmConstr(n.getCastedChild(0)));
+                l.add(rmConstr(n.getCastedChild(0), true));
                 n.getChild(1).getChildren().stream()
-                    .map(n1 -> rmConstr(n1.getCastedChild(1)))
+                    .map(n1 -> rmConstr(n1.getCastedChild(1), true))
                     .forEach(l::add);
                 return selectFirst(l);
             };
@@ -135,7 +135,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 else
                 {
                     final GrepToken t = n.getChild(1).getChild(0).getValue();
-                    final IParser<GrepToken> p1 = rmConstr(p);
+                    final IParser<GrepToken> p1 = rmConstr(p, false);
                     return language.isSpecialMore0(t)? repeat(0, p1)
                          : language.isSpecialMore1(t)? repeat(1, p1)
                          : language.isSpecialEith(t) ? either(p1)
@@ -300,7 +300,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         return p;
     }
 
-    protected static IParser<GrepToken> rmConstr(IParser<GrepToken> p)
+    protected static IParser<GrepToken> rmConstr(IParser<GrepToken> p, boolean keepWhenSucc)
     {
         return new IParser<GrepToken>() {
             @Override
@@ -308,9 +308,12 @@ enum RegexDetectCompiler implements IParser<GrepToken>
             {
                 final GrepRange gr = ((GrepRange)range);
                 final HashMap<String, String> saved = new HashMap<>(gr.getConstraint());
-                final boolean b = p.matches(range);
-                gr.replaceConstraint(saved);
-                return b;
+                final boolean isSucc = p.matches(range);
+                if(!isSucc || !keepWhenSucc)
+                {
+                    gr.replaceConstraint(saved);
+                }
+                return isSucc;
             }
             @Override
             public INode<GrepToken> parse(Range<GrepToken> range)

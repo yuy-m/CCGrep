@@ -91,8 +91,7 @@ public class Frontend
             }
             if(cl.hasOption("fix"))
             {
-                fe.fixedIds = Arrays.asList(cl.getOptionValue("fix")
-                                .split("\\|"));
+                fe.fixedIds = Arrays.asList(cl.getOptionValues("fix"));
             }
             if(cl.hasOption("include"))
             {
@@ -240,9 +239,9 @@ public class Frontend
         .addOption(
             Option.builder()
             .longOpt("fix")
-            .desc("specify identifier(s) to match exactly the same ones (e.g. 'getValue|string').")
+            .desc("specify identifier to match exactly the same one.")
             .hasArg()
-            .argName("IDS")
+            .argName("ID")
             .build()
         )
         .addOption(

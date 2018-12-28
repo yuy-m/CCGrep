@@ -74,8 +74,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
  - `--exclude <FILE_PATTERN>`   skip files matching FILE_PATTERN.
  - `-f,--file <FILES>`      obtain query from file.
    - CANNOT give query as code string at once.
- - `--fix <IDS>`         specify identifier(s) to match exactly the same
-                        ones (e.g. 'getValue|string').
+ - `--fix <ID>`         specify identifier to match exactly the same one.
  - `-h,--help`              show help.
  - `--include <FILE_PATTERN>`   search ONLY files that match FILE_PATTERN.
  - `   --json`              print clones and execution information with JSON format.

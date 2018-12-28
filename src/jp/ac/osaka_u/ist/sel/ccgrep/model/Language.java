@@ -22,7 +22,7 @@ public enum Language
 {
     C(
         Arrays.asList("c"),
-        Arrays.asList(".c", ".h"),
+        Arrays.asList("c", "h"),
         CLexer::new,
         new SpecialSet(CLexer.class),
         new CommentSet("//", "/*", "*/"),
@@ -39,7 +39,7 @@ public enum Language
     ),
     CPP14(
         Arrays.asList("cpp", "cpp14", "c++", "c++14"),
-        Arrays.asList(".cpp", ".cc", ".c++", ".cxx", ".c", ".h", ".hpp"),
+        Arrays.asList("cpp", "cc", "c++", "cxx", "c", "h", "hpp"),
         CPP14Lexer::new,
         new SpecialSet(CPP14Lexer.class),
         new CommentSet("//", "/*", "*/"),
@@ -56,7 +56,7 @@ public enum Language
     ),
     JAVA9(
         Arrays.asList("java", "java9"),
-        Arrays.asList(".java"),
+        Arrays.asList("java"),
         Java9Lexer::new,
         new SpecialSet(Java9Lexer.class),
         new CommentSet("//", "/*", "*/"),
@@ -73,7 +73,7 @@ public enum Language
     ),
     PYTHON3(
         Arrays.asList("python", "python3"),
-        Arrays.asList(".py"),
+        Arrays.asList("py"),
         Python3Lexer::new,
         new SpecialSet(Python3Lexer.class),
         new CommentSet("#", "\"\"\"", "\"\"\""),
@@ -157,10 +157,9 @@ public enum Language
             .orElse(BlindLevel.NONE);
     }
 
-    public final boolean matchesExtension(String filename)
+    public final List<String> getExtensions()
     {
-        return extensions.stream()
-            .anyMatch(filename::endsWith);
+        return extensions;
     }
 
     public final String lineCommented(String str)

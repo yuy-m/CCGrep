@@ -21,6 +21,8 @@ public class Frontend
     boolean isXmlEnabled = false;
     boolean isTimeEnabled = false;
     int maxCount = -1;
+    List<String> includePatterns = Collections.emptyList();
+    List<String> excludePatterns = Collections.emptyList();
 
     String needle = null;
     int needleType = NEEDLE_CODE;
@@ -91,6 +93,14 @@ public class Frontend
             {
                 fe.fixedIds = Arrays.asList(cl.getOptionValue("fix")
                                 .split("\\|"));
+            }
+            if(cl.hasOption("include"))
+            {
+                fe.includePatterns = Arrays.asList(cl.getOptionValues("include"));
+            }
+            if(cl.hasOption("exclude"))
+            {
+                fe.excludePatterns = Arrays.asList(cl.getOptionValues("exclude"));
             }
             List<String> restArgs = cl.getArgList();
             if(fe.needleType == NEEDLE_CODE)
@@ -247,6 +257,22 @@ public class Frontend
             .desc("stop after NUM clones.")
             .hasArg()
             .argName("NUM")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("include")
+            .desc("search ONLY files that match FILE_PATTERN.")
+            .hasArg()
+            .argName("FILE_PATTERN")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("exclude")
+            .desc("skip files matching FILE_PATTERN.")
+            .hasArg()
+            .argName("FILE_PATTERN")
             .build()
         );
 }

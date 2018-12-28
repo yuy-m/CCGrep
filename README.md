@@ -71,11 +71,13 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
 #### Options
  - `-b,--blind <LEVEL>`     set blind level.
    - none(Type 1) / consistent(p-match)(by default) / full(Type 2).
+ - `--exclude <FILE_PATTERN>`   skip files matching FILE_PATTERN.
  - `-f,--file <FILES>`      obtain query from file.
    - CANNOT give query as code string at once.
  - `--fix <IDS>`         specify identifier(s) to match exactly the same
                         ones (e.g. 'getValue|string').
  - `-h,--help`              show help.
+ - `--include <FILE_PATTERN>`   search ONLY files that match FILE_PATTERN.
  - `   --json`              print clones and execution information with JSON format.
  - `-l,--language <LANG>`   set target language.
    - c / c++ / java(by default) / python3.

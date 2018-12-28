@@ -8,14 +8,12 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import org.apache.commons.io.FilenameUtils;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.IPrinter;
@@ -25,17 +23,27 @@ public class Traverser
 {
     private final IDetector detector;
     private final boolean isRecursiveEnabled;
-    private final Predicate<String> fileMatcher;
+    private final Predicate<String> extensionMatcher;
+    private final Predicate<String> includeMatcher;
+    private final Predicate<String> excludeMatcher;
     private final IPrinter verbosePrinter;
 
     public Traverser(
         IDetector detector, boolean isRecursiveEnabled,
-        Predicate<String> fileMatcher, IPrinter verbosePrinter
+        List<String> extensions, List<String> includePatterns, List<String> excludePatterns,
+        IPrinter verbosePrinter
     )
     {
         this.detector = detector;
         this.isRecursiveEnabled = isRecursiveEnabled;
-        this.fileMatcher = fileMatcher;
+        this.extensionMatcher = fileName -> FilenameUtils.isExtension(fileName, extensions);
+        this.includeMatcher = includePatterns.isEmpty()
+            ? fileName -> true
+            : fileName -> includePatterns.stream().anyMatch(
+                            p -> FilenameUtils.wildcardMatchOnSystem(fileName, p));
+        this.excludeMatcher = fileName ->
+                excludePatterns.stream().anyMatch(
+                    p -> FilenameUtils.wildcardMatchOnSystem(fileName, p));
         this.verbosePrinter = verbosePrinter;
     }
 
@@ -85,16 +93,24 @@ public class Traverser
         final Path haystackPath = Paths.get(haystackName);
         if(!Files.isDirectory(haystackPath))
         {
-            return fileMatcher.test(haystackName) || isTextFile(haystackPath)
-                    ? Stream.of(haystackName)
-                    : Stream.empty();
+            final String name = FilenameUtils.getName(haystackName);
+            if( ( includeMatcher.test(haystackName) ||  includeMatcher.test(name))
+             && (!excludeMatcher.test(haystackName) && !excludeMatcher.test(name))
+             && (extensionMatcher.test(haystackName) || isTextFile(haystackPath))
+            )
+            {
+                return Stream.of(haystackName);
+            }
+            return Stream.empty();
         }
         else if(isRecursiveEnabled)
         {
             try{
                 return Files.walk(haystackPath)
                     .map(path -> path.toString())
-                    .filter(fileMatcher::test);
+                    .filter(fileName -> extensionMatcher.test(fileName))
+                    .filter(fileName -> !excludeMatcher.test(FilenameUtils.getName(fileName)))
+                    .filter(fileName -> includeMatcher.test(FilenameUtils.getName(fileName)));
             }
             catch(IOException e)
             {

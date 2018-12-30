@@ -111,7 +111,7 @@ public class Frontend
                 }
                 else
                 {
-                    showErrorHelp();
+                    showErrorHelp(null);
                     return null;
                 }
             }
@@ -119,12 +119,19 @@ public class Frontend
                 !restArgs.isEmpty()? restArgs
                 : fe.isRecursiveEnabled? Collections.singletonList(".")
                 : Collections.singletonList("-");
+            final long stdinCnt = fe.haystackNames.stream()
+                                    .filter("-"::equals)
+                                    .count();
+            if(stdinCnt >= 2 || (fe.needleType == NEEDLE_STDIN && stdinCnt != 0))
+            {
+                showErrorHelp("Do not use standard input more than once.");
+                return null;
+            }
             return fe;
         }
         catch(final ParseException e)
         {
-            System.err.println("ccgrep: " + e.getMessage());
-            showErrorHelp();
+            showErrorHelp(e.getMessage());
             return null;
         }
     }
@@ -133,8 +140,12 @@ public class Frontend
     private static final String appSyntax1 = appName + " [OPTIONS]... QUERY_CODE [TARGETS]...";
     private static final String appSyntax2 = appName + " [OPTIONS]... -f QUERY_FILE [TARGETS]...";
 
-    public static void showErrorHelp()
+    public static void showErrorHelp(String msg)
     {
+        if(msg != null)
+        {
+            System.err.println("ccgrep: " + msg);
+        }
         System.err.println(appSyntax1);
         System.err.println(appSyntax2);
         System.err.println("Try '" + appName + " --help' for more information.");

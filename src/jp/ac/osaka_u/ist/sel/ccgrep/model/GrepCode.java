@@ -54,19 +54,17 @@ public class GrepCode
         {
             return getCodeByLine().size();
         }
-        try
+        try(Stream<String> s1 = Files.lines(Paths.get(getFileName())))
         {
-            return Files.lines(Paths.get(getFileName()))
-                        .mapToInt(__ -> 1)
-                        .sum();
+            return s1.mapToInt(__ -> 1)
+                    .sum();
         }
         catch(IOException|UncheckedIOException e)
         {
-            try
+            try(Stream<String> s2 = Files.lines(Paths.get(getFileName()), Charset.forName("ISO_8859_1")))
             {
-                return Files.lines(Paths.get(getFileName()), Charset.forName("ISO_8859_1"))
-                            .mapToInt(__ -> 1)
-                            .sum();
+                return s2.mapToInt(__ -> 1)
+                        .sum();
             }
             catch(IOException|UncheckedIOException e2)
             {

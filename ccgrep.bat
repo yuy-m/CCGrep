@@ -15,4 +15,3 @@ if exist "%DPATH%\%JARNAME%" (
   echo "No jar-file or class-file"
   exit 2
 )
-pause

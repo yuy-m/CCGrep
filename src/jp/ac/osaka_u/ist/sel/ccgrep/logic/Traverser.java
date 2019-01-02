@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -90,7 +91,20 @@ public class Traverser
         {
             return Stream.of(haystackName);
         }
-        final Path haystackPath = Paths.get(haystackName);
+        Path haystackPath;
+        try{
+            haystackPath = Paths.get(haystackName);
+        }
+        catch(InvalidPathException e)
+        {
+            System.err.println("ccgrep: " + haystackName + ": No such file or directory");
+            return Stream.empty();
+        }
+        if(!Files.exists(haystackPath))
+        {
+            System.err.println("ccgrep: " + haystackName + ": No such file or directory");
+            return Stream.empty();
+        }
         if(!Files.isDirectory(haystackPath))
         {
             final String name = FilenameUtils.getName(haystackName);

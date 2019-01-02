@@ -87,7 +87,7 @@ public class CCGrep
     private IDetector createDetector(ITokenizer tokenizer) throws CCGrepException
     {
         debugLogger.print("tokenizing query...");
-        final ITokenizer.TokenizerResult needleResult =
+        final ITokenizer.Result needleResult =
             tokenizeNeedle(tokenizer, frontend.needleType, frontend.needle);
         if(needleResult == null)
         {
@@ -103,7 +103,7 @@ public class CCGrep
         return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, frontend.fixedIds);
     }
 
-    private ITokenizer.TokenizerResult tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle)
+    private ITokenizer.Result tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle)
     {
         switch(needleType)
         {

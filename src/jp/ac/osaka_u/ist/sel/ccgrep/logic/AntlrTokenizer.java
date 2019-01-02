@@ -35,13 +35,13 @@ public class AntlrTokenizer implements ITokenizer
     }
 
     @Override
-    public TokenizerResult extractFromString(String code)
+    public Result extractFromString(String code)
     {
         return extract(CharStreams.fromString(code, "<string>"), code);
     }
 
     @Override
-    public TokenizerResult extractFromFile(String filename)
+    public Result extractFromFile(String filename)
     {
         try{
             if(filename.equals("-"))
@@ -61,23 +61,22 @@ public class AntlrTokenizer implements ITokenizer
         catch(FileNotFoundException e)
         {
             System.err.println("ccgrep: " + filename + ": No such file or directory");
-            return null;
         }
         catch(IOException e)
         {
             System.err.println("ccgrep: " + e.getMessage());
-            return null;
         }
+        return ITokenizer.Result.empty(filename);
     }
 
-    private TokenizerResult extract(CharStream stream, String code)
+    private Result extract(CharStream stream, String code)
     {
         final Lexer lexer = getLanguage().createLexer(stream);
         lexer.removeErrorListeners();
         final CommonTokenStream cts = new CommonTokenStream(lexer);
 
         final List<GrepToken> tokenList = language.filter(toList(cts));
-        return new TokenizerResult(new GrepCode(cts.getSourceName(), tokenList.size(), code), tokenList);
+        return new Result(new GrepCode(cts.getSourceName(), tokenList.size(), code), tokenList);
     }
 
     private final ArrayList<GrepToken> toList(CommonTokenStream cts)

@@ -37,7 +37,7 @@ public class TokenSequenceDetector implements IDetector
     public CloneList detect(final String haystackFileName, int maxCount)
     {
         debugLogger.print(" tokenizing " + haystackFileName + "...");
-        final ITokenizer.TokenizerResult haystackResult = tokenizer.extractFromFile(haystackFileName);
+        final ITokenizer.Result haystackResult = tokenizer.extractFromFile(haystackFileName);
         final List<GrepToken> hTokens = haystackResult.tokens;
         final GrepCode hCode = haystackResult.code;
 

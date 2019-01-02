@@ -76,7 +76,7 @@ public class AntlrTokenizer implements ITokenizer
         final CommonTokenStream cts = new CommonTokenStream(lexer);
 
         final List<GrepToken> tokenList = language.filter(toList(cts));
-        return new Result(new GrepCode(cts.getSourceName(), tokenList.size(), code), tokenList);
+        return new Result(new GrepCode(cts.getSourceName(), tokenList, code), tokenList);
     }
 
     private final ArrayList<GrepToken> toList(CommonTokenStream cts)

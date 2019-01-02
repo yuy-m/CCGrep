@@ -17,22 +17,48 @@ public class GrepCode
 {
     private final String fileName;
     private final int tokenCount;
+    private final int lineCount;
     private List<String> cache;
     private static final List<String> failedCode = Collections.singletonList("<CODE FETCH FAILED>");
     private final boolean isWithCode;
 
     private static final Pattern lineSplitPattern = Pattern.compile("\r\n|[\n\r\u2028\u2029\u0085]");
 
-    public GrepCode(String fileName, int tokenCount, String withCode)
+    public GrepCode(String fileName, int tokenCount, int lineCount, String withCode)
     {
         this.fileName = fileName;
         this.tokenCount = tokenCount;
+        this.lineCount = lineCount;
         this.isWithCode = withCode != null;
         if(isWithCode)
         {
             this.cache = lineSplitPattern.splitAsStream(withCode)
                                 .collect(Collectors.toList());
         }
+    }
+
+    public GrepCode(String fileName, List<GrepToken> tokens, String withCode)
+    {
+        this(fileName, tokens.size(), countLinesFromTokens(tokens), withCode);
+    }
+
+    private static int countLinesFromTokens(List<GrepToken> tokens)
+    {
+        if(tokens.isEmpty())
+        {
+            return 0;
+        }
+        int lineCount = 1;
+        int lastLine = tokens.get(0).getLine();
+        for(GrepToken token: tokens)
+        {
+            if(token.getLine() != lastLine)
+            {
+                ++lineCount;
+                lastLine = token.getLine();
+            }
+        }
+        return lineCount;
     }
 
     public void clearCodeCache()
@@ -50,28 +76,7 @@ public class GrepCode
 
     public int countLines()
     {
-        if(cache != null)
-        {
-            return getCodeByLine().size();
-        }
-        try(Stream<String> s1 = Files.lines(Paths.get(getFileName())))
-        {
-            return s1.mapToInt(__ -> 1)
-                    .sum();
-        }
-        catch(IOException|UncheckedIOException e)
-        {
-            try(Stream<String> s2 = Files.lines(Paths.get(getFileName()), Charset.forName("ISO_8859_1")))
-            {
-                return s2.mapToInt(__ -> 1)
-                        .sum();
-            }
-            catch(IOException|UncheckedIOException e2)
-            {
-                System.err.println("ccgrep: " + getFileName() + ": Cannot read");
-                return 0;
-            }
-        }
+        return lineCount;
     }
 
     public List<String> getCodeByLine()

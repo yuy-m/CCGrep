@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class AntlrTokenizer implements ITokenizer
     }
 
     @Override
-    public Result extractFromFile(String filename)
+    public Optional<Result> extractFromFile(String filename)
     {
         try{
             if(filename.equals("-"))
@@ -50,23 +51,22 @@ public class AntlrTokenizer implements ITokenizer
                 {
                     final String code = br.lines()
                             .collect(Collectors.joining(System.lineSeparator()));
-                    return extract(CharStreams.fromString(code, "<standard-input>"), code);
+                    return Optional.of(extract(CharStreams.fromString(code, "<standard-input>"), code));
                 }
             }
             else
             {
-                return extract(CharStreams.fromFileName(filename), null);
+                return Optional.of(extract(CharStreams.fromFileName(filename), null));
             }
-        }
-        catch(FileNotFoundException e)
-        {
-            System.err.println("ccgrep: " + filename + ": No such file or directory");
         }
         catch(IOException e)
         {
-            System.err.println("ccgrep: " + e.getMessage());
+            System.err.println(
+                "ccgrep: " + e.getMessage()
+                + (filename.equals(e.getMessage())? ": No such file or directory": "")
+            );
         }
-        return ITokenizer.Result.empty(filename);
+        return Optional.empty();
     }
 
     private Result extract(CharStream stream, String code)

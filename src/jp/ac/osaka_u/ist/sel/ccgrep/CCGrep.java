@@ -1,6 +1,7 @@
 package jp.ac.osaka_u.ist.sel.ccgrep;
 
 
+import java.util.Optional;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -87,14 +88,9 @@ public class CCGrep
     private IDetector createDetector(ITokenizer tokenizer) throws CCGrepException
     {
         debugLogger.print("tokenizing query...");
-        final ITokenizer.Result needleResult =
-            tokenizeNeedle(tokenizer, frontend.needleType, frontend.needle);
-        if(needleResult == null)
-        {
-            throw new CCGrepException("Query file not found.");
-        }
-        this.needle = needleResult.code;
-        final List<GrepToken> nTokens = needleResult.tokens;
+        final ITokenizer.Result nResult = tokenizeNeedle(tokenizer, frontend.needleType, frontend.needle);
+        this.needle = nResult.code;
+        final List<GrepToken> nTokens = nResult.tokens;
 
         debugLogger.println("finish.");
         nTokens.forEach(debugLogger::println);
@@ -103,20 +99,14 @@ public class CCGrep
         return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, frontend.fixedIds);
     }
 
-    private ITokenizer.Result tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle)
+    private ITokenizer.Result tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle) throws CCGrepException
     {
-        switch(needleType)
-        {
-        case Frontend.NEEDLE_CODE:
-            return tokenizer.extractFromString(needle);
-        case Frontend.NEEDLE_FILE:
-            return tokenizer.extractFromFile(needle);
-        case Frontend.NEEDLE_STDIN:
-            return tokenizer.extractFromFile("-");
-        default:
-            assert false;
-            throw new IllegalArgumentException();
-        }
+        final Optional<ITokenizer.Result> tResult =
+            needleType == Frontend.NEEDLE_CODE? Optional.of(tokenizer.extractFromString(needle))
+          : needleType == Frontend.NEEDLE_FILE? tokenizer.extractFromFile(needle)
+          : needleType == Frontend.NEEDLE_STDIN? tokenizer.extractFromFile("-")
+          : null;
+        return tResult.orElseThrow(() -> new CCGrepException("ccgrep: Cannot tokenize the query"));
     }
 
     public int grep()

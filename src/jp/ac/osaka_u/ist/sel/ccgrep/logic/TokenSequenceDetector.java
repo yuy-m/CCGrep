@@ -37,23 +37,26 @@ public class TokenSequenceDetector implements IDetector
     public CloneList detect(final String haystackFileName, int maxCount)
     {
         debugLogger.print(" tokenizing " + haystackFileName + "...");
-        final ITokenizer.Result haystackResult = tokenizer.extractFromFile(haystackFileName);
-        final List<GrepToken> hTokens = haystackResult.tokens;
-        final GrepCode hCode = haystackResult.code;
+        return tokenizer.extractFromFile(haystackFileName)
+            .map(haystackResult -> {
+                final List<GrepToken> hTokens = haystackResult.tokens;
+                final GrepCode hCode = haystackResult.code;
 
-        debugLogger.print("(" + hTokens.size() + " tokens),detecting...");
+                debugLogger.print("(" + hTokens.size() + " tokens),detecting...");
 
-        final Stream<Clone> stream = IntStream.range(0, hTokens.size())
-                .mapToObj(idx -> matchClone(hCode, hTokens, idx))
-                .filter(Objects::nonNull);
+                final Stream<Clone> stream = IntStream.range(0, hTokens.size())
+                        .mapToObj(idx -> matchClone(hCode, hTokens, idx))
+                        .filter(Objects::nonNull);
 
-        final List<Clone> clones =
-            (maxCount < 0? stream: stream.limit(maxCount))
-                .collect(Collectors.toList());
+                final List<Clone> clones =
+                    (maxCount < 0? stream: stream.limit(maxCount))
+                        .collect(Collectors.toList());
 
-        debugLogger.println("(" + clones.size() + " clones)finish.");
+                debugLogger.println("(" + clones.size() + " clones)finish.");
 
-        return new CloneList(hCode, clones);
+                return new CloneList(hCode, clones);
+            })
+            .orElseGet(() -> CloneList.empty(haystackFileName));
     }
 
     private Clone matchClone(GrepCode code, List<GrepToken> haystack, int index)

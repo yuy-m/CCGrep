@@ -22,6 +22,11 @@ public class CloneList
         this(code, Collections.emptyList());
     }
 
+    public static CloneList empty(String name)
+    {
+        return new CloneList(new GrepCode(name, 0, null));
+    }
+
     public GrepCode getCode()
     {
         return code;

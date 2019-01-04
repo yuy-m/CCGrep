@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2018/12/29, written on 2018/12/06*
+*updated on 2019/01/04, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -11,10 +11,13 @@ CCGrep is a simple clone detector based on grep command interface and you can us
 CCGrep can detect Type 1, 2(p-match or not), 3 clones.
 
 #### Language
- - C
- - C++
- - Java
- - Python3 (*experimental*)
+ - C (c, h)
+ - C++ (cpp, cc, c++, cxx, c, h, hpp)
+ - Java (java)
+ - Python3 (py) *experimental*
+
+When `-r` option is given, in specified directories,
+only files are searched that have extensions shown above.
 
 ## Demo
 Output samples with target [**Apache HTTP Server**](http://httpd.apache.org/).

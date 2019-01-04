@@ -170,7 +170,10 @@ public class Frontend
             + " With no TARGETS, read . if a command-line -r is given, - otherwise."
             + " Exit status is 0 if any clone is detected, 1 otherwise;"
             + " if any error occurs, the exit status is 2.\n\n"
-            + "When -r is given, in specified directories, only files are searched that have extensions shown below:\n"
+            + "Files specified invividually are searched"
+            + " only when they have extensions shown below or are text files."
+            + " When -r is given, files in specified directories are searched"
+            + " only when they have the extensions:\n"
             + Arrays.stream(Language.values())
                 .map(l -> String.format(" %-10s : %s", l, String.join(",", l.getExtensions())))
                 .collect(Collectors.joining("\n"));

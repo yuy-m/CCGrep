@@ -14,10 +14,7 @@ CCGrep can detect Type 1, 2(p-match or not), 3 clones.
  - C (c, h)
  - C++ (cpp, cc, c++, cxx, c, h, hpp)
  - Java (java)
- - Python3 (py) *experimental*
-
-When `-r` option is given, in specified directories,
-only files are searched that have extensions shown above.
+ - Python3 (py) *(experimental)*
 
 ## Demo
 Output samples with target [**Apache HTTP Server**](http://httpd.apache.org/).
@@ -105,6 +102,11 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - `$ ccgrep -r -p fn 'int a = 1;' target/`
 
 Note: to specify a query code, you should use SINGLE quotes `'` instead of DOUBLE quotes `"` because the variable expansion leads to unexpected results.
+
+Files specified invividually are searched only when they have extensions
+shown in [Language](#Language) or are text files.  
+When -r is given, files in specified
+directories are searched only when they have the extensions shown below.
 
 #### ClonesToDetect
 Clone type to detect can be set by command line option `-b MODE`.

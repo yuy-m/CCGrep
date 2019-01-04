@@ -27,7 +27,7 @@ public class Frontend
     List<String> excludePatterns = Collections.emptyList();
 
     String needle = null;
-    int needleType = NEEDLE_CODE;
+    int needleType = -1;
     static final int NEEDLE_CODE = 0;
     static final int NEEDLE_FILE = 1;
     static final int NEEDLE_STDIN = 2;
@@ -91,6 +91,11 @@ public class Frontend
                 fe.needle = cl.getOptionValue("stdin-query");
                 fe.needleType = NEEDLE_STDIN;
             }
+            if(cl.hasOption("e"))
+            {
+                fe.needle = String.join(" $| ", cl.getOptionValues("e"));
+                fe.needleType = NEEDLE_CODE;
+            }
             if(cl.hasOption("fix"))
             {
                 fe.fixedIds = Arrays.asList(cl.getOptionValues("fix"));
@@ -104,11 +109,12 @@ public class Frontend
                 fe.excludePatterns = Arrays.asList(cl.getOptionValues("exclude"));
             }
             List<String> restArgs = cl.getArgList();
-            if(fe.needleType == NEEDLE_CODE)
+            if(fe.needleType == -1)
             {
                 if(!restArgs.isEmpty())
                 {
                     fe.needle = restArgs.get(0);
+                    fe.needleType = NEEDLE_CODE;
                     restArgs = restArgs.subList(1, restArgs.size());
                 }
                 else
@@ -223,6 +229,13 @@ public class Frontend
                     Option.builder("s")
                     .longOpt("stdin-query")
                     .desc("obtain query from standard input. CANNOT give query as code string at once.")
+                    .build()
+                )
+                .addOption(
+                    Option.builder("e")
+                    .desc("use PATTERN for matching.")
+                    .hasArg()
+                    .argName("PATTERN")
                     .build()
                 )
         )

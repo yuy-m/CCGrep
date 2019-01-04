@@ -74,6 +74,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
 #### Options
  - `-b,--blind <LEVEL>`     set blind level.
    - none(Type 1) / consistent(p-match)(by default) / full(Type 2).
+ - `-e <PATTERN>`                  use PATTERN for matching.
  - `--exclude <FILE_PATTERN>`   skip files matching FILE_PATTERN.
  - `-f,--file <FILES>`      obtain query from file.
    - CANNOT give query as code string at once.

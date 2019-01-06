@@ -14,7 +14,6 @@ import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
 
 public class CCGrep
 {
-    static boolean DEBUG = false;
     public static void main(String[] args)
     {
         final Frontend fe = Frontend.process(args);

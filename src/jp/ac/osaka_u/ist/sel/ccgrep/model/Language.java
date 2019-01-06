@@ -154,7 +154,7 @@ public enum Language
             .map(minLevel -> blindLevel.value >= minLevel.value
                             ? blindLevel: minLevel)
             .findFirst()
-            .orElse(BlindLevel.NONE);
+            .orElse(BlindLevel.ONLY_TOKEN_TYPE);
     }
 
     public final List<String> getExtensions()

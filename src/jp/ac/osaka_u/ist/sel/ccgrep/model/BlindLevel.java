@@ -53,6 +53,12 @@ public enum BlindLevel
             return true;
         }
     ),
+    ONLY_TOKEN_TYPE(
+        new String[]{},
+        85,
+        HashMap::new,
+        (t1, t2, __) -> t1.getType() == t2.getType()
+    ),
     FULL(
         new String[]{"full"},
         100,

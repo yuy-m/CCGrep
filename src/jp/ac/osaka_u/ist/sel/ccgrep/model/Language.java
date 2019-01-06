@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -16,6 +17,7 @@ import jp.ac.osaka_u.ist.sel.ccgrep.antlr.c.CLexer;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.cpp14.CPP14Lexer;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.Java9Lexer;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.Python3Lexer;
+import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.Python3Parser;
 
 
 public enum Language
@@ -80,13 +82,14 @@ public enum Language
         Arrays.<BracketPair>asList(
             new BracketPair(Python3Lexer.OPEN_PAREN, Python3Lexer.CLOSE_PAREN),
             new BracketPair(Python3Lexer.OPEN_BRACK, Python3Lexer.CLOSE_BRACK),
-            new BracketPair(Python3Lexer.OPEN_BRACE, Python3Lexer.CLOSE_BRACE)
+            new BracketPair(Python3Lexer.OPEN_BRACE, Python3Lexer.CLOSE_BRACE),
+            new BracketPair(Python3Parser.INDENT, Python3Parser.DEDENT)
         ),
         Arrays.<BlindSet>asList(
             new BlindSet(BlindLevel.NONE, Python3Lexer.NAME),
             new BlindSet(BlindLevel.FULL, Python3Lexer.STRING, Python3Lexer.NUMBER, Python3Lexer.INTEGER, Python3Lexer.NONE, Python3Lexer.TRUE, Python3Lexer.FALSE, Python3Lexer.STRING_LITERAL, Python3Lexer.BYTES_LITERAL, Python3Lexer.DECIMAL_INTEGER, Python3Lexer.OCT_INTEGER, Python3Lexer.HEX_INTEGER, Python3Lexer.BIN_INTEGER, Python3Lexer.FLOAT_NUMBER, Python3Lexer.IMAG_NUMBER)
         ),
-        UnaryOperator.identity()
+        t -> filterPythonDedent(t, Python3Parser.NEWLINE, Python3Parser.INDENT, Python3Parser.DEDENT)
     );
 
     private final List<String> names;
@@ -147,9 +150,11 @@ public enum Language
 
     public final BlindLevel findBlindLevel(GrepToken needleToken, GrepToken haystackToken, BlindLevel blindLevel)
     {
+        final int nt = needleToken.getType();
+        final int ht = haystackToken.getType();
         return blindSets.stream()
-            .filter(set -> set.contains(needleToken.getType())
-                        && set.contains(haystackToken.getType()))
+            .filter(set -> set.contains(nt)
+                        && (nt == ht || set.contains(ht)))
             .map(set -> set.minLevel)
             .map(minLevel -> blindLevel.value >= minLevel.value
                             ? blindLevel: minLevel)
@@ -344,7 +349,7 @@ public enum Language
     // マクロの除去
     private static final Pattern pElse = Pattern.compile("#[ \\t]*el(se|if)(.|[\\n\\r])*");
     private static final Pattern pEndif = Pattern.compile("#[ \\t]*endif(.|[\\n\\r])*");
-    private static final List<GrepToken> preprocessorFilter(List<GrepToken> tokens, int directiveType)
+    private static List<GrepToken> preprocessorFilter(List<GrepToken> tokens, int directiveType)
     {
         final Iterator<GrepToken> it = tokens.iterator();
         while(it.hasNext())
@@ -363,6 +368,43 @@ public enum Language
                     }
                 }
                 it.remove();
+            }
+        }
+        return tokens;
+    }
+
+    // remove NEWLINE before DEDENT
+    private static List<GrepToken> filterPythonDedent(List<GrepToken> tokens, int newline, int indent, int dedent)
+    {
+        final Iterator<GrepToken> it0 = tokens.iterator();
+        while(it0.hasNext() && it0.next().getType() == newline)
+        {
+            it0.remove();
+        }
+
+        final ListIterator<GrepToken> it1 = tokens.listIterator(tokens.size());
+        while(it1.hasPrevious() && it1.previous().getType() == newline)
+        {
+            it1.remove();
+        }
+
+        final ListIterator<GrepToken> it = tokens.listIterator(tokens.size());
+        while(it.hasPrevious())
+        {
+            final int tt = it.previous().getType();
+            if(tt == indent || tt == dedent)
+            {
+                if(it.hasPrevious())
+                {
+                    if(it.previous().getType() == newline)
+                    {
+                        it.remove();
+                    }
+                    else
+                    {
+                        it.next();
+                    }
+                }
             }
         }
         return tokens;

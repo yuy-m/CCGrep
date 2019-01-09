@@ -43,7 +43,7 @@ public class Clone
 
     public int getStartColumn()
     {
-        return start.getCharPositionInLine();
+        return start.getCharPositionInLine() + 1;
     }
 
     public int getEndColumn()

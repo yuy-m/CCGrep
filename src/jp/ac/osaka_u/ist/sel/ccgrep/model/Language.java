@@ -364,6 +364,10 @@ public enum Language
                     while (token.getType() != directiveType || !pEndif.matcher(token.getText()).matches())
                     {
                         it.remove();
+                        if(!it.hasNext())
+                        {
+                            break;
+                        }
                         token = it.next();
                     }
                 }

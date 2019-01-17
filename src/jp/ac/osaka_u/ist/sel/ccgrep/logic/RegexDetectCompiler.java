@@ -284,7 +284,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 throw new CCGrepException(
                     "Query syntax is invalid: at line " +
                     + cRange.front().getLine()
-                    + ", column " + cRange.front().getCharPositionInLine()
+                    + ", column " + cRange.front().getColumn()
                     + ", token `" + cRange.front().getText() + "`.");
             }
         }

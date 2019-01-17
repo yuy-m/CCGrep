@@ -12,7 +12,7 @@ public class GrepToken
 
     private final String text;
     private final int line;
-    private final int charPositionInLine;
+    private final int column;
     private final int startIndex;
     private final int stopIndex;
     private final int tokenIndex;
@@ -24,7 +24,7 @@ public class GrepToken
 
         this.text = token.getText();
         this.line = token.getLine();
-        this.charPositionInLine = token.getCharPositionInLine();
+        this.column = token.getCharPositionInLine() + 1;
         this.startIndex = token.getStartIndex();
         this.stopIndex = token.getStopIndex();
         this.tokenIndex = token.getTokenIndex();
@@ -75,7 +75,7 @@ public class GrepToken
     @Override
     public String toString()
     {
-        return "[" + getLine() + ":" + getCharPositionInLine() + ":(" + getType() + ")`" + getText() + "`]";
+        return "[" + getLine() + ":" + getColumn() + ":(" + getType() + ")`" + getText() + "`]";
     }
 
     public Language getLanguage()
@@ -92,9 +92,9 @@ public class GrepToken
     {
         return line;
     }
-    public int getCharPositionInLine()
+    public int getColumn()
     {
-        return charPositionInLine;
+        return column;
     }
     public int getStartIndex()
     {

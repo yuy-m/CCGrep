@@ -101,8 +101,10 @@ public class JsonPrinter extends AbstractPrinter
               "    {" + System.lineSeparator()
             + "     \"startLine\":"   + clone.getStartLine()   + ", "
             +      "\"startColumn\":" + clone.getStartColumn() + ", "
+            +      "\"startToken\":" + (clone.getStartTokenIndex() + 1) + ", "
             +      "\"endLine\":"     + clone.getEndLine()     + ", "
-            +      "\"endColumn\":"   + clone.getEndColumn()   + "," + System.lineSeparator()
+            +      "\"endColumn\":"   + clone.getEndColumn()   + ", "
+            +      "\"endToken\":" + (clone.getEndTokenIndex() + 1) + "," + System.lineSeparator()
             + "     \"code\":\"";
         final String footer =
               "\"" + System.lineSeparator()

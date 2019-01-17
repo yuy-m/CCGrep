@@ -43,12 +43,22 @@ public class Clone
 
     public int getStartColumn()
     {
-        return start.getCharPositionInLine() + 1;
+        return start.getColumn();
     }
 
     public int getEndColumn()
     {
-        return end.getCharPositionInLine() + end.getText().length();
+        return end.getColumn() + end.getText().length() - 1;
+    }
+
+    public int getStartTokenIndex()
+    {
+        return start.getTokenIndex();
+    }
+
+    public int getEndTokenIndex()
+    {
+        return end.getTokenIndex();
     }
 
     @Override

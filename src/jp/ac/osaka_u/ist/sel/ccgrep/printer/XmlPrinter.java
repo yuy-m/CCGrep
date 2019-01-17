@@ -95,8 +95,10 @@ public class XmlPrinter extends AbstractPrinter
               "    <clone" + System.lineSeparator()
             + "     startLine=\""   + clone.getStartLine()   + "\" "
             +      "startColumn=\"" + clone.getStartColumn() + "\" "
+            +      "startToken=\"" + (clone.getStartTokenIndex() + 1) + "\" "
             +      "endLine=\""     + clone.getEndLine()     + "\" "
-            +      "endColumn=\""   + clone.getEndColumn()   + "\"" + System.lineSeparator()
+            +      "endColumn=\""   + clone.getEndColumn()   + "\" "
+            +      "endToken=\""   + (clone.getEndTokenIndex() + 1)   + "\"" + System.lineSeparator()
             + "     xml:space=\"preserve\" >";
         final String footer = "</clone>";
         if(option.isMinimalEnabled)

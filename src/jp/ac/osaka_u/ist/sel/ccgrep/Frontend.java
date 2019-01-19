@@ -23,6 +23,7 @@ public class Frontend
     boolean isXmlEnabled = false;
     boolean isTimeEnabled = false;
     int maxCount = -1;
+    boolean isFileMatchingEnabled = false;
     List<String> includePatterns = Collections.emptyList();
     List<String> excludePatterns = Collections.emptyList();
 
@@ -72,6 +73,10 @@ public class Frontend
             if(cl.hasOption("max-count"))
             {
                 fe.maxCount = Integer.parseUnsignedInt(cl.getOptionValue("max-count"));
+            }
+            if(cl.hasOption("file-match"))
+            {
+                fe.isFileMatchingEnabled = true;
             }
             if(cl.hasOption("language"))
             {
@@ -295,6 +300,12 @@ public class Frontend
             .desc("stop after NUM clones.")
             .hasArg()
             .argName("NUM")
+            .build()
+        )
+        .addOption(
+            Option.builder("x")
+            .longOpt("file-match")
+            .desc("force QUERY to match only whole file.")
             .build()
         )
         .addOption(

@@ -10,7 +10,7 @@ if %DPATH% == "C:\Program Files\ccgrep\bin" (
 if exist "%DPATH%\%JARNAME%" (
   java -jar "%DPATH%\%JARNAME%" %*
 ) else if exist "%DPATH%\target\classes" (
-  java -cp "%DPATH%\target\classes;%DPATH%\lib\antlr-runtime-4.7.1.jar;%DPATH%\lib\commons-cli-1.4.jar" jp.ac.osaka_u.ist.sel.ccgrep.CCGrep %*
+  java -cp "%DPATH%\target\classes;%DPATH%\lib\antlr-runtime-4.7.1.jar;%DPATH%\lib\commons-cli-1.4.jar;%DPATH%\lib\commons-io-2.6.jar" jp.ac.osaka_u.ist.sel.ccgrep.CCGrep %*
 ) else (
   echo "No jar-file or class-file"
   exit 2

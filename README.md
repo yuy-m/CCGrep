@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/01/04, written on 2018/12/06*
+*updated on 2019/01/19, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -93,6 +93,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
  - `-r,--recursive`         traverse directories recursively.
  - `-s,--stdin-query`       obtain query from standard input. CANNOT give
                         query as code string at once.
+ - `-x,--file-match`               force QUERY to match only whole file.
  - `--xml`               print clones with XML format.
 
 #### Example

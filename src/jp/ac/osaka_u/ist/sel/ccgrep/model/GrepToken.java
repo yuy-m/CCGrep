@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.Token;
 public class GrepToken
 {
     private final Language language;
+    private final Language.BlindSet blindSetCache;
 
     private final String text;
     private final int line;
@@ -21,6 +22,7 @@ public class GrepToken
     public GrepToken(Token token, Language language)
     {
         this.language = language;
+        this.blindSetCache = language.findBlindSet(this);
 
         this.text = token.getText();
         this.line = token.getLine();
@@ -68,7 +70,7 @@ public class GrepToken
         final String t = constraint.get(getText());
         return t != null
             ? eq(t, rhs.getText())
-            : getLanguage().findBlindLevel(this, rhs, blindLevel)
+            : getLanguage().findBlindLevel(this.blindSetCache, rhs.blindSetCache, blindLevel)
                     .matches(this, rhs, constraint);
     }
 

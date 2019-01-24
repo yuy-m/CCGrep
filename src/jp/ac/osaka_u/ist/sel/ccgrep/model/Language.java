@@ -148,18 +148,20 @@ public enum Language
         return lexerCreater.apply(stream);
     }
 
-    public final BlindLevel findBlindLevel(GrepToken needleToken, GrepToken haystackToken, BlindLevel blindLevel)
+    final BlindSet findBlindSet(GrepToken token)
     {
-        final int nt = needleToken.getType();
-        final int ht = haystackToken.getType();
+        final int nt = token.getType();
         return blindSets.stream()
-            .filter(set -> set.contains(nt)
-                        && (nt == ht || set.contains(ht)))
-            .map(set -> set.minLevel)
-            .map(minLevel -> blindLevel.value >= minLevel.value
-                            ? blindLevel: minLevel)
+            .filter(set -> set.contains(nt))
             .findFirst()
-            .orElse(BlindLevel.ONLY_TOKEN_TYPE);
+            .orElse(BlindSet.OTHERWISE_SET);
+    }
+
+    public final BlindLevel findBlindLevel(BlindSet needleSet, BlindSet haystackSet, BlindLevel blindLevel)
+    {
+        return needleSet == haystackSet
+            ? needleSet.findBlindLevel(blindLevel)
+            : BlindLevel.ONLY_TOKEN_TYPE;
     }
 
     public final List<String> getExtensions()
@@ -322,8 +324,16 @@ public enum Language
         }
     }
 
-    private static final class BlindSet
+    static class BlindSet
     {
+        static final BlindSet OTHERWISE_SET = new BlindSet(BlindLevel.ONLY_TOKEN_TYPE) {
+            @Override
+            BlindLevel findBlindLevel(BlindLevel blindLevel)
+            {
+                return BlindLevel.ONLY_TOKEN_TYPE;
+            }
+        };
+
         final BlindLevel minLevel;
         final int[] blindTypes;
         BlindSet(BlindLevel minLevel, int... blindTypes)
@@ -336,6 +346,12 @@ public enum Language
         boolean contains(int type)
         {
             return Arrays.binarySearch(blindTypes, type) >= 0;
+        }
+
+        BlindLevel findBlindLevel(BlindLevel blindLevel)
+        {
+            return blindLevel.value >= minLevel.value
+                    ? blindLevel: minLevel;
         }
     }
 

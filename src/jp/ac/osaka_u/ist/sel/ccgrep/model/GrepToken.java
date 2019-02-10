@@ -22,7 +22,6 @@ public class GrepToken
     public GrepToken(Token token, Language language)
     {
         this.language = language;
-        this.blindSetCache = language.findBlindSet(this);
 
         this.text = token.getText();
         this.line = token.getLine();
@@ -31,6 +30,8 @@ public class GrepToken
         this.stopIndex = token.getStopIndex();
         this.tokenIndex = token.getTokenIndex();
         this.type = token.getType();
+
+        this.blindSetCache = language.findBlindSet(this);
     }
 
     @Override

@@ -24,9 +24,10 @@ enum RegexDetectCompiler implements IParser<GrepToken>
      * OR_LONG  -> OR_FIRST ('$|' OR_FIRST)*
      * OR_FIRST -> SEQ ('$/' SEQ)*
      * SEQ      -> SUFFIX+
-     * SUFFIX   -> SINGLE '$*'?
+     * SUFFIX   -> PREFIX ('$*' / '$+' / '$?')?
+     * PREFIX   -> ('$=' / '$!')? SINGLE
      * SINGLE   -> SP_SEQ / PAREN / ONE
-     * SP_SEQ   -> '$$' !( '$$' / '$*' / '$(' / '$)' / '$|') &.
+     * SP_SEQ   -> '$$' !( '$$' / '$*' / '$+' / '$?' / '$=' / '$!' / '$(' / '$)' / '$|') &.
      * PAREN    -> '$(' OR_LONG '$)'
      * ONE      -> !( '$|' / '$)') .
      */
@@ -114,7 +115,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         protected IParser<GrepToken> from()
         {
             return sequence(
-                SINGLE,
+                PREFIX,
                 either(
                     value(r -> language.isSpecialMore0(r.front())
                             || language.isSpecialMore1(r.front())
@@ -144,6 +145,39 @@ enum RegexDetectCompiler implements IParser<GrepToken>
             };
         }
     },
+    PREFIX{
+        @Override
+        protected IParser<GrepToken> from()
+        {
+            return sequence(
+                either(
+                    value(r -> language.isSpecialLookaheadPos(r.front())
+                            || language.isSpecialLookaheadNeg(r.front())
+                    )
+                ),
+                SINGLE
+            );
+        }
+        @Override
+        protected Function<INode<GrepToken>, INode<GrepToken>> to()
+        {
+            return n -> {
+                final IParser<GrepToken> p = n.getCastedChild(1);
+                if(n.getChild(0).countChildren() == 0)
+                {
+                    return p;
+                }
+                else
+                {
+                    final GrepToken t = n.getChild(0).getChild(0).getValue();
+                    final IParser<GrepToken> p1 = rmConstr(p, false);
+                    return language.isSpecialLookaheadPos(t)? lookahead(p1)
+                         : language.isSpecialLookaheadNeg(t)? lookahead(not(p1))
+                         : null;
+                }
+            };
+        }
+    },
     SINGLE{
         @Override
         protected IParser<GrepToken> from()
@@ -167,6 +201,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                             && !language.isSpecialMore0(r.front())
                             && !language.isSpecialMore1(r.front())
                             && !language.isSpecialEith(r.front())
+                            && !language.isSpecialLookaheadPos(r.front())
+                            && !language.isSpecialLookaheadNeg(r.front())
                             && !language.isSpecialLpar(r.front())
                             && !language.isSpecialRpar(r.front())
                             && !language.isSpecialOrFst(r.front())

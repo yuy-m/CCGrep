@@ -261,6 +261,16 @@ public enum Language
         return token.getType() == specialSet.eith;
     }
 
+    public final boolean isSpecialLookaheadPos(GrepToken token)
+    {
+        return token.getType() == specialSet.lookaheadpos;
+    }
+
+    public final boolean isSpecialLookaheadNeg(GrepToken token)
+    {
+        return token.getType() == specialSet.lookaheadneg;
+    }
+
     public final boolean isSpecialAny(GrepToken token)
     {
         return token.getType() == specialSet.any;
@@ -277,6 +287,8 @@ public enum Language
         final int more0;
         final int more1;
         final int eith;
+        final int lookaheadpos;
+        final int lookaheadneg;
         final int any;
         SpecialSet(Class<? extends Lexer> cls)
         {
@@ -290,6 +302,8 @@ public enum Language
                 this.more0 = cls.getField("CCG_SPECIAL_MORE0").getInt(null);
                 this.more1 = cls.getField("CCG_SPECIAL_MORE1").getInt(null);
                 this.eith  = cls.getField("CCG_SPECIAL_EITH").getInt(null);
+                this.lookaheadpos  = cls.getField("CCG_SPECIAL_LAP").getInt(null);
+                this.lookaheadneg  = cls.getField("CCG_SPECIAL_LAN").getInt(null);
                 this.any   = cls.getField("CCG_SPECIAL_ANY").getInt(null);
             }
             catch(ReflectiveOperationException e)

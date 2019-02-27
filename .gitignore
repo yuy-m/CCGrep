@@ -43,3 +43,4 @@ target/depencencies
 !CCGrep.jar
 needle*
 result*
+.vscode

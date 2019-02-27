@@ -80,9 +80,4 @@ public class TokenSequenceDetector implements IDetector
             ? new Clone(code, range.getMatchedFirst(), range.getMatchedLast())
             : null;
     }
-
-    private Language getLanguage()
-    {
-        return tokenizer.getLanguage();
-    }
 }

@@ -2,7 +2,6 @@ package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 import java.util.Iterator;

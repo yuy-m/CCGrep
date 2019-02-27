@@ -2,7 +2,6 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 import java.util.Optional;
 import java.util.List;
-import java.util.Collections;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 

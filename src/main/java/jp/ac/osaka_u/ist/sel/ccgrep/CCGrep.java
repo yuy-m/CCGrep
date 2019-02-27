@@ -3,8 +3,6 @@ package jp.ac.osaka_u.ist.sel.ccgrep;
 
 import java.util.Optional;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
@@ -49,7 +47,6 @@ public class CCGrep
     public CCGrep(Frontend frontend) throws CCGrepException
     {
         this.frontend = frontend;
-        final long t0 = System.nanoTime();
         this.language = findLanguage();
         debugLogger.println("language: " + language);
 

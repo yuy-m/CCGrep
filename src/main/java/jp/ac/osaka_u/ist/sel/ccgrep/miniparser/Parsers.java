@@ -54,6 +54,7 @@ public final class Parsers
             ? parsers.get(0)
             : new SelectLongest<T>(parsers);
     }
+    @SafeVarargs
     public static <T> IParser<T> selectLongest(IParser<T>... parsers)
     {
         return selectLongest(Arrays.<IParser<T>>asList(parsers));

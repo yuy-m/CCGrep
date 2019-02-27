@@ -1,9 +1,7 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.printer;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.io.PrintStream;
-import java.util.stream.IntStream;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.Clone;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.CloneList;

@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/01/19, written on 2018/12/06*
+*updated on 2019/02/27, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -52,7 +52,7 @@ httpd-2.4.33/modules/aaa/mod_access_compat.c
 ## VS.
 ## Requirement
  - Java8
- - Apache Ant *(required only to build, not to use)*
+ - Apache Maven *(required only to build, not to use)*
 
 ## Install
 Optional.
@@ -154,7 +154,7 @@ e.g. `a$*a` matches both `abc` and `aaa`. And `aa$*` matches `aaa` but not `abc`
 
 ## Build
 
-`$ ant`
+`$ mvn package`
 
 ## Contribution
 ## Licence

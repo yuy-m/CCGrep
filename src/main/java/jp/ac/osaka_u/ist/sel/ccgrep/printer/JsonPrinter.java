@@ -1,9 +1,6 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.printer;
 
 
-import java.util.StringJoiner;
-import java.util.List;
-import java.io.PrintStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;

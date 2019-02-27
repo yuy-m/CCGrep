@@ -4,7 +4,6 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;

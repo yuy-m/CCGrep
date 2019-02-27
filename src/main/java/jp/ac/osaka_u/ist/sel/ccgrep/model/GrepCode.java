@@ -3,11 +3,9 @@ package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.charset.Charset;

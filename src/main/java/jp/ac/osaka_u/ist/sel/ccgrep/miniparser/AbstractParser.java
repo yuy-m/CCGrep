@@ -7,7 +7,7 @@ public abstract class AbstractParser<T>
     extends INode.InnerNode<T>
     implements IParser<T>
 {
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public AbstractParser(List<IParser<T>> parsers)
     {
         super((List<INode<T>>)(List)parsers);

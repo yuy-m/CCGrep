@@ -3,7 +3,6 @@ package jp.ac.osaka_u.ist.sel.ccgrep.miniparser;
 import java.util.NoSuchElementException;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 public interface INode<T>
 {
@@ -21,12 +20,12 @@ public interface INode<T>
     {
         return getChild(index).casted();
     }
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default <C extends INode<T>> List<C> getCastedChildren()
     {
         return (List<C>)(List)getChildren();
     }
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default <C extends INode<T>> C casted()
     {
         return (C)(INode)this;

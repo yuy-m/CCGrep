@@ -2,7 +2,6 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Range;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.GrepToken;

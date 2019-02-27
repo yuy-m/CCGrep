@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DPATH=${DPATH:-`dirname ${0}`}
-JARNAME="CCGrep.jar"
+JARNAME="ccgrep.jar"
 
 if [ "$DPATH" == "/usr/local/bin" ]; then
   DPATH="/usr/local/lib/ccgrep"
@@ -9,9 +9,7 @@ fi
 
 if [ -f "$DPATH/$JARNAME" ]; then
   java -jar "$DPATH/$JARNAME" "$@"
-elif [ -f "$DPATH/target/classes" ]; then
-  java -cp "$DPATH/target/classes:$DPATH/lib/antlr-runtime-4.7.1.jar:$DPATH/lib/commons-cli-1.4.jar:$DPATH/lib/commons-io-2.6.jar" jp.ac.osaka_u.ist.sel.ccgrep.CCGrep "$@"
 else
-  echo "No jar-file or class-file"
+  echo "$JARNAME not found."
   exit 2
 fi

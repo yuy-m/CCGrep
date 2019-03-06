@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/02/27, written on 2018/12/06*
+*updated on 2019/03/06, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -156,7 +156,14 @@ e.g. `a$*a` matches both `abc` and `aaa`. And `aa$*` matches `aaa` but not `abc`
 
 `$ mvn package`
 
-## Contribution
 ## Licence
+This software is released under the MIT License, see LICENSE.txt.
+
+This project uses the following components.
+
+ - [ANTLR 4](http://www.antlr.org/license.html) : BSD License
+ - [Apache Commons CLI](http://www.apache.org/licenses/LICENSE-2.0) : Apache License, Version 2.0
+ - [Apache Commons IO](http://www.apache.org/licenses/LICENSE-2.0) : Apache License, Version 2.0
+
 ## Author
-[yuy-mymt](http://sel.ist.osaka-u.ac.jp/)
+[Yuya Miyamoto](http://sel.ist.osaka-u.ac.jp/)

@@ -211,13 +211,14 @@ public class Frontend
             Option.builder("p")
             .longOpt("print")
             .desc("set printing option c/l/n/f/e like `-p fn`."
-                + " When `c` set, print ONLY the count of clones."
-                + " When `l` set, print ONLY file name per matched files."
-                + " When `h` set, NOT print file names."
-                + " When `n` set, print line numbers."
-                + " When `f` set, print whole code of clones."
-                + " When `e` set, comment out the file name and line numbers."
-                + " When `m` set, in XML/JSON, NOT print clone-code or files-without-clone."
+                + " If `c` is given, print ONLY the count of clones."
+                + " If `l` is given, print ONLY file name per matched files."
+                + " If `h` is given, NOT print file names."
+                + " If `n` is given, print line numbers."
+                + " If `N` is given, print pairs of start and end line number."
+                + " If `f` is given, print whole code of clones."
+                + " If `e` is given, comment out the file name and line numbers."
+                + " If `m` is given, in XML/JSON, NOT print clone-code or files-without-clone."
             )
             .hasArg()
             .argName("OPTION")

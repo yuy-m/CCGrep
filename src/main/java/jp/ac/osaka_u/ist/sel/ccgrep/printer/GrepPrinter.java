@@ -83,15 +83,15 @@ public class GrepPrinter extends AbstractPrinter
     {
         if(option.isCodeEnabled)
         {
-            printCloneWhenCodeEnabled(clone);
+            printCloneWithFullCode(clone);
         }
         else
         {
-            printCloneWhenCodeDisabled(clone);
+            printCloneWithOneLine(clone);
         }
     }
 
-    private void printCloneWhenCodeEnabled(Clone clone)
+    private void printCloneWithFullCode(Clone clone)
     {
         final List<String> lines =  clone.getCodeByLine();
         final StringBuilder sb = new StringBuilder();
@@ -130,7 +130,7 @@ public class GrepPrinter extends AbstractPrinter
         stream.println(sb);
     }
 
-    private void printCloneWhenCodeDisabled(Clone clone)
+    private void printCloneWithOneLine(Clone clone)
     {
         final List<String> lines =  clone.getCodeByLine(1);
         final StringJoiner sj = new StringJoiner(":", option.isEscapeEnabled? option.language.blockCommentBegin(): "", "");
@@ -140,7 +140,11 @@ public class GrepPrinter extends AbstractPrinter
         }
         if(option.isLineEnabled)
         {
-            sj.add(String.valueOf(clone.getStartLine()));
+            sj.add(
+                option.isLinePairEnabled
+                    ? clone.getStartLine() + "-" + clone.getEndLine()
+                    : "" + clone.getStartLine()
+            );
         }
         sj.add(option.isEscapeEnabled
             ? option.language.blockCommentEnd() + lines.get(0)

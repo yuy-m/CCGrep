@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/03/06, written on 2018/12/06*
+*updated on 2019/03/08, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -84,12 +84,13 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - With `-f` option, the language can be inferred from the file extension.
  - `-m,--max-count <NUM>`   stop after NUM clones.
  - `-p,--print <OPTION>`    set printing option c/l/n/f/e like `-p fn`.
-   - When `c` set, print ONLY the count of clones.
-   - When `l` set, print ONLY file name per matched files.
-   - When `h` set, NOT print file names.
-   - When `n` set, print line numbers.
-   - When `f` set, print whole code of clones.
-   - When `e` set, comment out the file name and line numbers.
+   - If `c` is given, print ONLY the count of clones.
+   - If `l` is given, print ONLY file name per matched files.
+   - If `h` is given, NOT print file names.
+   - If `n` is given, print line numbers.
+   - If `N` is given, print pairs of start and end line number.
+   - If `f` is given, print whole code of clones.
+   - If `e` is given, comment out the file name and line numbers.
  - `-r,--recursive`         traverse directories recursively.
  - `-s,--stdin-query`       obtain query from standard input. CANNOT give
                         query as code string at once.

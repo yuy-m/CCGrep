@@ -15,6 +15,7 @@ public class Frontend
     boolean isHelpEnabled = false;
     boolean isRecursiveEnabled = false;
     boolean isLogEnabled = false;
+    boolean isErrorMessageEnabled = true;
     String blindLevelName = "";
     String languageName = null;
     String printOption = "";
@@ -49,6 +50,10 @@ public class Frontend
             if(cl.hasOption("log"))
             {
                 fe.isLogEnabled = true;
+            }
+            if(cl.hasOption("no-messages"))
+            {
+                fe.isErrorMessageEnabled = false;
             }
             if(cl.hasOption("json"))
             {
@@ -264,6 +269,12 @@ public class Frontend
             Option.builder()
             .longOpt("log")
             .desc("print debug log to standard error.")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("no-messages")
+            .desc("suppress error messages.")
             .build()
         )
         .addOptionGroup(

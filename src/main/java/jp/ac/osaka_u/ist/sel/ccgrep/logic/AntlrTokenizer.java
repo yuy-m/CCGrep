@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.errorLogger;
 
 
 public class AntlrTokenizer implements ITokenizer
@@ -58,7 +59,7 @@ public class AntlrTokenizer implements ITokenizer
         }
         catch(IOException e)
         {
-            System.err.println(
+            errorLogger.println(
                 "ccgrep: " + e.getMessage()
                 + (filename.equals(e.getMessage())? ": No such file or directory": "")
             );

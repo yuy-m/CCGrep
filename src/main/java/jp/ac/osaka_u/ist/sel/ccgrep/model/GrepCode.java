@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.charset.Charset;
 
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.errorLogger;
 
 public class GrepCode
 {
@@ -93,7 +94,7 @@ public class GrepCode
                 }
                 catch(IOException e2)
                 {
-                    System.err.println("ccgrep: " + getFileName() + ": Cannot read");
+                    errorLogger.println("ccgrep: " + getFileName() + ": Cannot read");
                     return failedCode;
                 }
             }

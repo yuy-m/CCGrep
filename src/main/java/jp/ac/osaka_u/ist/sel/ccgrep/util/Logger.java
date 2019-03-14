@@ -6,14 +6,16 @@ import java.io.PrintStream;
 
 public class Logger
 {
-    public static final Logger debugLogger = new Logger(System.err);
+    public static final Logger debugLogger = new Logger(System.err, false);
+    public static final Logger errorLogger = new Logger(System.err, true);
 
     private final PrintStream stream;
-    private boolean isEnabled = false;
+    private boolean isEnabled;
 
-    private Logger(PrintStream stream)
+    private Logger(PrintStream stream, boolean isEnabled)
     {
         this.stream = stream;
+        this.isEnabled = isEnabled;
     }
 
     public void enable(boolean isEnabled)

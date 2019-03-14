@@ -7,7 +7,7 @@ import java.util.List;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.*;
-import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.*;
 
 
 public class CCGrep
@@ -24,6 +24,7 @@ public class CCGrep
             System.exit(0);
         }
         debugLogger.enable(fe.isLogEnabled);
+        errorLogger.enable(fe.isErrorMessageEnabled);
 
         int returnCode = 2;
         try{

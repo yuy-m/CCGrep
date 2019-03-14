@@ -273,20 +273,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
     {
         if(parser == null)
         {
-            parser = mapper(
-                from(),
-                /*r -> {
-                    System.err.println("<"+name()
-                        +" value=\""+(r.empty()?null:r.front())+"\">");
-                    final int pos = r.getPosition();
-                    final INode<GrepToken> n = from().parse(r);
-                    System.err.println("<pos s=\""+pos+"\" e=\""+r.getPosition()
-                        +"\" r=\""+(n != null)+"\" v=\""+(r.empty()?null:r.front())+"\"/>");
-                    System.err.println("</" + name() + ">");
-                    return n;
-                },//*/
-                to()
-            );
+            parser = mapper(from(), to());
         }
         return parser;
     }

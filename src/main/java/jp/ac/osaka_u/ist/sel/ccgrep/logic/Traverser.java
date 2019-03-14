@@ -17,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.IPrinter;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.errorLogger;
 
 
 public class Traverser
@@ -96,12 +97,12 @@ public class Traverser
         }
         catch(InvalidPathException e)
         {
-            System.err.println("ccgrep: " + haystackName + ": No such file or directory");
+            errorLogger.println("ccgrep: " + haystackName + ": No such file or directory");
             return Stream.empty();
         }
         if(!Files.exists(haystackPath))
         {
-            System.err.println("ccgrep: " + haystackName + ": No such file or directory");
+            errorLogger.println("ccgrep: " + haystackName + ": No such file or directory");
             return Stream.empty();
         }
         if(!Files.isDirectory(haystackPath))
@@ -127,13 +128,13 @@ public class Traverser
             }
             catch(IOException e)
             {
-                System.err.println("ccgrep : " + e.getMessage() + ": Cannot read");
+                errorLogger.println("ccgrep : " + e.getMessage() + ": Cannot read");
                 return Stream.empty();
             }
         }
         else
         {
-            System.err.println("ccgrep: " + haystackName + ": Is a directory");
+            errorLogger.println("ccgrep: " + haystackName + ": Is a directory");
             return Stream.empty();
         }
     }

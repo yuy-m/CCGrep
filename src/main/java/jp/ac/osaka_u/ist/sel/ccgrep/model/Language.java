@@ -33,8 +33,16 @@ public enum Language
             new BracketPair(CLexer.LeftBrace, CLexer.RightBrace)
         ),
         Arrays.<BlindSet>asList(
-            new BlindSet(BlindLevel.NONE, CLexer.Char, CLexer.Double, CLexer.Float, CLexer.Int, CLexer.Long, CLexer.Short, CLexer.Void, CLexer.Bool, CLexer.Identifier),
-            new BlindSet(BlindLevel.FULL, CLexer.Constant, CLexer.DigitSequence, CLexer.StringLiteral)
+            new BlindSet(
+                BlindLevel.NONE,
+                CLexer.Char, CLexer.Double, CLexer.Float,
+                CLexer.Int, CLexer.Long, CLexer.Short,
+                CLexer.Void, CLexer.Bool, CLexer.Identifier
+            ),
+            new BlindSet(
+                BlindLevel.FULL,
+                CLexer.Constant, CLexer.DigitSequence, CLexer.StringLiteral
+            )
         ),
         t -> preprocessorFilter(t, CLexer.Directive)
     ),
@@ -50,8 +58,22 @@ public enum Language
             new BracketPair(CPP14Lexer.LeftBrace, CPP14Lexer.RightBrace)
         ),
         Arrays.<BlindSet>asList(
-            new BlindSet(BlindLevel.NONE, CPP14Lexer.Auto, CPP14Lexer.Bool, CPP14Lexer.Char, CPP14Lexer.Char16, CPP14Lexer.Char32, CPP14Lexer.Double, CPP14Lexer.Float, CPP14Lexer.Int, CPP14Lexer.Long, CPP14Lexer.Short, CPP14Lexer.Void, CPP14Lexer.Wchar, CPP14Lexer.Identifier),
-            new BlindSet(BlindLevel.FULL, CPP14Lexer.False, CPP14Lexer.Nullptr, CPP14Lexer.True, CPP14Lexer.Integerliteral, CPP14Lexer.Decimalliteral, CPP14Lexer.Octalliteral, CPP14Lexer.Hexadecimalliteral, CPP14Lexer.Binaryliteral, CPP14Lexer.Characterliteral, CPP14Lexer.Floatingliteral, CPP14Lexer.Stringliteral, CPP14Lexer.Userdefinedintegerliteral, CPP14Lexer.Userdefinedfloatingliteral, CPP14Lexer.Userdefinedstringliteral, CPP14Lexer.Userdefinedcharacterliteral)
+            new BlindSet(
+                BlindLevel.NONE,
+                CPP14Lexer.Auto, CPP14Lexer.Bool, CPP14Lexer.Char,
+                CPP14Lexer.Char16, CPP14Lexer.Char32, CPP14Lexer.Double,
+                CPP14Lexer.Float, CPP14Lexer.Int, CPP14Lexer.Long,
+                CPP14Lexer.Short, CPP14Lexer.Void, CPP14Lexer.Wchar,
+                CPP14Lexer.Identifier
+            ),
+            new BlindSet(
+                BlindLevel.FULL,
+                CPP14Lexer.False, CPP14Lexer.Nullptr, CPP14Lexer.True,
+                CPP14Lexer.Integerliteral, CPP14Lexer.Decimalliteral, CPP14Lexer.Octalliteral,
+                CPP14Lexer.Hexadecimalliteral, CPP14Lexer.Binaryliteral, CPP14Lexer.Characterliteral,
+                CPP14Lexer.Floatingliteral, CPP14Lexer.Stringliteral, CPP14Lexer.Userdefinedintegerliteral,
+                CPP14Lexer.Userdefinedfloatingliteral, CPP14Lexer.Userdefinedstringliteral, CPP14Lexer.Userdefinedcharacterliteral
+            )
         ),
         t -> preprocessorFilter(t, CPP14Lexer.Directive)
     ),
@@ -67,8 +89,22 @@ public enum Language
             new BracketPair(Java9Lexer.LBRACK, Java9Lexer.RBRACK)
         ),
         Arrays.<BlindSet>asList(
-            new BlindSet(BlindLevel.NONE, Java9Lexer.BOOLEAN, Java9Lexer.BYTE, Java9Lexer.CHAR, Java9Lexer.DOUBLE, Java9Lexer.FLOAT, Java9Lexer.INT, Java9Lexer.LONG, Java9Lexer.SHORT, Java9Lexer.SUPER, Java9Lexer.THIS, Java9Lexer.VOID, Java9Lexer.Identifier),
-            new BlindSet(BlindLevel.FULL, Java9Lexer.IntegerLiteral, Java9Lexer.FloatingPointLiteral, Java9Lexer.BooleanLiteral, Java9Lexer.CharacterLiteral, Java9Lexer.StringLiteral, Java9Lexer.NullLiteral)
+            new BlindSet(
+                BlindLevel.NONE,
+                Java9Lexer.BOOLEAN, Java9Lexer.BYTE, Java9Lexer.CHAR,
+                Java9Lexer.DOUBLE, Java9Lexer.FLOAT, Java9Lexer.INT,
+                Java9Lexer.LONG, Java9Lexer.SHORT, Java9Lexer.SUPER,
+                Java9Lexer.THIS, Java9Lexer.VOID, Java9Lexer.Identifier,
+                Java9Lexer.T__0, Java9Lexer.T__1, Java9Lexer.T__2,
+                Java9Lexer.T__3, Java9Lexer.T__4, Java9Lexer.T__5,
+                Java9Lexer.T__6, Java9Lexer.T__7, Java9Lexer.T__8,
+                Java9Lexer.T__9
+            ),
+            new BlindSet(
+                BlindLevel.FULL,
+                Java9Lexer.IntegerLiteral, Java9Lexer.FloatingPointLiteral, Java9Lexer.BooleanLiteral,
+                Java9Lexer.CharacterLiteral, Java9Lexer.StringLiteral, Java9Lexer.NullLiteral
+            )
         ),
         UnaryOperator.identity()
     ),
@@ -86,7 +122,14 @@ public enum Language
         ),
         Arrays.<BlindSet>asList(
             new BlindSet(BlindLevel.NONE, Python3Lexer.NAME),
-            new BlindSet(BlindLevel.FULL, Python3Lexer.STRING, Python3Lexer.NUMBER, Python3Lexer.INTEGER, Python3Lexer.NONE, Python3Lexer.TRUE, Python3Lexer.FALSE, Python3Lexer.STRING_LITERAL, Python3Lexer.BYTES_LITERAL, Python3Lexer.DECIMAL_INTEGER, Python3Lexer.OCT_INTEGER, Python3Lexer.HEX_INTEGER, Python3Lexer.BIN_INTEGER, Python3Lexer.FLOAT_NUMBER, Python3Lexer.IMAG_NUMBER)
+            new BlindSet(
+                BlindLevel.FULL,
+                Python3Lexer.STRING, Python3Lexer.NUMBER, Python3Lexer.INTEGER,
+                Python3Lexer.NONE, Python3Lexer.TRUE, Python3Lexer.FALSE,
+                Python3Lexer.STRING_LITERAL, Python3Lexer.BYTES_LITERAL, Python3Lexer.DECIMAL_INTEGER,
+                Python3Lexer.OCT_INTEGER, Python3Lexer.HEX_INTEGER, Python3Lexer.BIN_INTEGER,
+                Python3Lexer.FLOAT_NUMBER, Python3Lexer.IMAG_NUMBER
+            )
         ),
         t -> filterPythonDedent(t, Python3Parser.NEWLINE, Python3Parser.INDENT, Python3Parser.DEDENT)
     );

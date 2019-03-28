@@ -1,23 +1,19 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
+import java.util.function.*;
+
 
 import org.apache.commons.io.FilenameUtils;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.IPrinter;
-import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.errorLogger;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.*;
 
 
 public class Traverser
@@ -55,7 +51,7 @@ public class Traverser
             verbosePrinter.printHeader();
             final CloneList.Statistic stat = new CloneList.Statistic();
             stat.startStopwatch();
-            ///*
+
             final Iterator<String> it = s1.iterator();
             boolean needDelim = false;
             while(it.hasNext() && (maxCount < 0 || stat.countAllClone() < maxCount))
@@ -68,16 +64,7 @@ public class Traverser
                     needDelim = true;
                 }
                 stat.add(cl);
-            } //*/
-
-            /*
-            final boolean[] needDelim = {false};
-            s1
-                .map(fileName -> detector.detect(fileName, -1))
-                .forEachOrdered(cl -> {
-                    stat.add(cl);
-                    needDelim[0] |= verbosePrinter.printFile(cl, needDelim[0]);
-                });//*/
+            }
 
             stat.stopStopwatch();
             verbosePrinter.printFooter(stat);
@@ -100,12 +87,12 @@ public class Traverser
             errorLogger.println("ccgrep: " + haystackName + ": No such file or directory");
             return Stream.empty();
         }
-        if(!Files.exists(haystackPath))
+        if(!Files.isReadable(haystackPath))
         {
-            errorLogger.println("ccgrep: " + haystackName + ": No such file or directory");
+            errorLogger.println("ccgrep: " + haystackName + ": Cannot be read");
             return Stream.empty();
         }
-        if(!Files.isDirectory(haystackPath))
+        else if(!Files.isDirectory(haystackPath))
         {
             final String name = FilenameUtils.getName(haystackName);
             if( ( includeMatcher.test(haystackName) ||  includeMatcher.test(name))
@@ -119,22 +106,49 @@ public class Traverser
         }
         else if(isRecursiveEnabled)
         {
-            try{
-                return Files.walk(haystackPath)
-                    .map(path -> path.toString())
-                    .filter(fileName -> extensionMatcher.test(fileName))
-                    .filter(fileName -> !excludeMatcher.test(FilenameUtils.getName(fileName)))
-                    .filter(fileName -> includeMatcher.test(FilenameUtils.getName(fileName)));
-            }
-            catch(IOException e)
-            {
-                errorLogger.println("ccgrep : " + e.getMessage() + ": Cannot read");
-                return Stream.empty();
-            }
+            return list(haystackPath)
+                .filter(p -> extensionMatcher.test(p.toString()))
+                .filter(p -> !excludeMatcher.test(FilenameUtils.getName(p.toString())))
+                .filter(p -> includeMatcher.test(FilenameUtils.getName(p.toString())))
+                .filter(p -> {
+                    if(Files.isReadable(p))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        errorLogger.println("ccgrep: " + p + ": Cannot be read");
+                        return false;
+                    }
+                })
+                .map(p -> p.toString());
         }
         else
         {
             errorLogger.println("ccgrep: " + haystackName + ": Is a directory");
+            return Stream.empty();
+        }
+    }
+
+    private Stream<Path> list(Path path)
+    {
+        try{
+            return Files.list(path)
+                .flatMap(p -> Files.isDirectory(p)? list(p): Stream.of(p));
+        }
+        catch(AccessDeniedException e)
+        {
+            errorLogger.println("ccgrep: " + path + ": Permission denied");
+            return Stream.empty();
+        }
+        catch(FileSystemException e)
+        {
+            errorLogger.println("ccgrep: " + path + ": " + e.getMessage().replace("\r", "").replace("\n", ""));
+            return Stream.empty();
+        }
+        catch(IOException e)
+        {
+            errorLogger.println("ccgrep: " + path + ": " + e + ": " + e.getMessage().replace("\r", "").replace("\n", ""));
             return Stream.empty();
         }
     }

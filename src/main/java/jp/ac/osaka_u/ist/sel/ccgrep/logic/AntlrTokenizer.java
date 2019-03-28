@@ -61,7 +61,7 @@ public class AntlrTokenizer implements ITokenizer
         {
             errorLogger.println(
                 "ccgrep: " + e.getMessage()
-                + (filename.equals(e.getMessage())? ": No such file or directory": "")
+                + (filename.equals(e.getMessage())? ": Cannot be read": "")
             );
         }
         return Optional.empty();

@@ -94,7 +94,7 @@ public class GrepCode
                 }
                 catch(IOException e2)
                 {
-                    errorLogger.println("ccgrep: " + getFileName() + ": Cannot read");
+                    errorLogger.println("ccgrep: " + getFileName() + ": " + e2.getMessage());
                     return failedCode;
                 }
             }

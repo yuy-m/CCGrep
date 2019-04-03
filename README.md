@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/03/14, written on 2018/12/06*
+*updated on 2019/04/03, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -77,6 +77,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - CANNOT give query as code string at once.
  - `--fix <ID>`         specify identifier to match exactly the same one.
  - `-h,--help`              show help.
+ - `ignore-extension`         search all files ignoring file extensions.
  - `--include <FILE_PATTERN>`   search ONLY files that match FILE_PATTERN.
  - `   --json`              print clones and execution information with JSON format.
  - `-l,--language <LANG>`   set target language.

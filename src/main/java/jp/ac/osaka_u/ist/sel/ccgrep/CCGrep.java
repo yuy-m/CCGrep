@@ -112,7 +112,8 @@ public class CCGrep
         final CloneList.Statistic stat =
             new Traverser(
                 detector, frontend.isRecursiveEnabled,
-                language.getExtensions(), frontend.includePatterns, frontend.excludePatterns,
+                frontend.isIgnoreExtensionEnabled? null: language.getExtensions(),
+                frontend.includePatterns, frontend.excludePatterns,
                 createPrinter()
             )
             .traverse(frontend.haystackNames, frontend.maxCount);

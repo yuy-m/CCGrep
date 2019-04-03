@@ -27,6 +27,7 @@ public class Frontend
     boolean isFileMatchingEnabled = false;
     List<String> includePatterns = Collections.emptyList();
     List<String> excludePatterns = Collections.emptyList();
+    boolean isIgnoreExtensionEnabled = false;
 
     String needle = null;
     int needleType = -1;
@@ -117,6 +118,10 @@ public class Frontend
             if(cl.hasOption("exclude"))
             {
                 fe.excludePatterns = Arrays.asList(cl.getOptionValues("exclude"));
+            }
+            if(cl.hasOption("ignore-extension"))
+            {
+                fe.isIgnoreExtensionEnabled = true;
             }
             List<String> restArgs = cl.getArgList();
             if(fe.needleType == -1)
@@ -334,6 +339,12 @@ public class Frontend
             .desc("skip files matching FILE_PATTERN.")
             .hasArg()
             .argName("FILE_PATTERN")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("ignore-extension")
+            .desc("search all files ignoring file extensions.")
             .build()
         );
 }

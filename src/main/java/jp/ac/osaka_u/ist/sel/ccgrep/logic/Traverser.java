@@ -33,7 +33,9 @@ public class Traverser
     {
         this.detector = detector;
         this.isRecursiveEnabled = isRecursiveEnabled;
-        this.extensionMatcher = fileName -> FilenameUtils.isExtension(fileName, extensions);
+        this.extensionMatcher = extensions == null
+            ? fileName -> isTextFile(Paths.get(fileName))
+            : fileName -> FilenameUtils.isExtension(fileName, extensions);
         this.includeMatcher = includePatterns.isEmpty()
             ? fileName -> true
             : fileName -> includePatterns.stream().anyMatch(

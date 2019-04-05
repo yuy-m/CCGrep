@@ -64,6 +64,10 @@ public class AntlrTokenizer implements ITokenizer
                 + (filename.equals(e.getMessage())? ": Cannot be read": "")
             );
         }
+        catch(StringIndexOutOfBoundsException e)
+        {
+            errorLogger.println("ccgrep: " + filename + ": Cannot be read");
+        }
         return Optional.empty();
     }
 

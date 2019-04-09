@@ -1156,7 +1156,22 @@ fragment ID_CONTINUE
 
 /** v ccgrep v **/
 
-CCG_SPECIAL_ID : '$' NAME;
+CCG_SPECIAL_ID
+    : '$' NAME
+    | '$' STRING
+    | '$' NUMBER
+    | '$' INTEGER
+    | '$' NONE
+    | '$' TRUE
+    | '$' FALSE
+    | '$' STRING_LITERAL
+    | '$' BYTES_LITERAL
+    | '$' DECIMAL_INTEGER
+    | '$' OCT_INTEGER
+    | '$' HEX_INTEGER
+    | '$' BIN_INTEGER
+    | '$' FLOAT_NUMBER
+    | '$' IMAG_NUMBER;
 CCG_SPECIAL_SEQ : '$$';
 CCG_SPECIAL_LPAR  : '$(';
 CCG_SPECIAL_RPAR  : '$)';

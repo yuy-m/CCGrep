@@ -1872,7 +1872,14 @@ LINE_COMMENT
 
 /** v ccgrep v **/
 
-CCG_SPECIAL_ID : '$' Identifier;
+CCG_SPECIAL_ID
+    : '$' Identifier
+    | '$' IntegerLiteral
+    | '$' FloatingPointLiteral
+    | '$' BooleanLiteral
+    | '$' CharacterLiteral
+    | '$' StringLiteral
+    | '$' NullLiteral;
 CCG_SPECIAL_SEQ : '$$';
 CCG_SPECIAL_LPAR  : '$(';
 CCG_SPECIAL_RPAR  : '$)';

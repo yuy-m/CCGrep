@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/04/03, written on 2018/12/06*
+*updated on 2019/04/09, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -119,11 +119,11 @@ Clone type to detect can be set by command line option `-b MODE`.
  - `consistent` : Same as `full`, except that same tokens in the query match same ones in targets (p-match clones).(**by default**)
 clones).
 
-#### FixedIdentifier `$id`
-In a query, identifiers can starts with `$` (e.g. `$value`).
-These identifiers match exact same identifiers regardless of the [blind level](#ClonesToDetect).
+#### FixedToken `$token`
+In a query, identifiers and literals can starts with `$` (e.g. `$value`, `$10`, `$"Hello"`).
+These tokens match exact same tokens regardless of the [blind level](#ClonesToDetect).
 
-Note: No spaces are allowed between `$` and identifier.  
+Note: No spaces are allowed between `$` and token.  
 Note: assume that the language uses no `$` in their grammar.
 
 You can also use `--fix` option to fix identifiers.

@@ -1,4 +1,4 @@
-// Generated from Python3.g4 by ANTLR 4.7.1
+// Generated from Python3.g4 by ANTLR 4.7.2
 
 package jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class Python3Parser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -62,60 +62,69 @@ public class Python3Parser extends Parser {
 		RULE_testlist = 75, RULE_dictorsetmaker = 76, RULE_classdef = 77, RULE_arglist = 78, 
 		RULE_argument = 79, RULE_comp_iter = 80, RULE_comp_for = 81, RULE_comp_if = 82, 
 		RULE_encoding_decl = 83, RULE_yield_expr = 84, RULE_yield_arg = 85;
-	public static final String[] ruleNames = {
-		"single_input", "file_input", "eval_input", "decorator", "decorators", 
-		"decorated", "async_funcdef", "funcdef", "parameters", "typedargslist", 
-		"tfpdef", "varargslist", "vfpdef", "stmt", "simple_stmt", "small_stmt", 
-		"expr_stmt", "annassign", "testlist_star_expr", "augassign", "del_stmt", 
-		"pass_stmt", "flow_stmt", "break_stmt", "continue_stmt", "return_stmt", 
-		"yield_stmt", "raise_stmt", "import_stmt", "import_name", "import_from", 
-		"import_as_name", "dotted_as_name", "import_as_names", "dotted_as_names", 
-		"dotted_name", "global_stmt", "nonlocal_stmt", "assert_stmt", "compound_stmt", 
-		"async_stmt", "if_stmt", "while_stmt", "for_stmt", "try_stmt", "with_stmt", 
-		"with_item", "except_clause", "suite", "test", "test_nocond", "lambdef", 
-		"lambdef_nocond", "or_test", "and_test", "not_test", "comparison", "comp_op", 
-		"star_expr", "expr", "xor_expr", "and_expr", "shift_expr", "arith_expr", 
-		"term", "factor", "power", "atom_expr", "atom", "testlist_comp", "trailer", 
-		"subscriptlist", "subscript", "sliceop", "exprlist", "testlist", "dictorsetmaker", 
-		"classdef", "arglist", "argument", "comp_iter", "comp_for", "comp_if", 
-		"encoding_decl", "yield_expr", "yield_arg"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"single_input", "file_input", "eval_input", "decorator", "decorators", 
+			"decorated", "async_funcdef", "funcdef", "parameters", "typedargslist", 
+			"tfpdef", "varargslist", "vfpdef", "stmt", "simple_stmt", "small_stmt", 
+			"expr_stmt", "annassign", "testlist_star_expr", "augassign", "del_stmt", 
+			"pass_stmt", "flow_stmt", "break_stmt", "continue_stmt", "return_stmt", 
+			"yield_stmt", "raise_stmt", "import_stmt", "import_name", "import_from", 
+			"import_as_name", "dotted_as_name", "import_as_names", "dotted_as_names", 
+			"dotted_name", "global_stmt", "nonlocal_stmt", "assert_stmt", "compound_stmt", 
+			"async_stmt", "if_stmt", "while_stmt", "for_stmt", "try_stmt", "with_stmt", 
+			"with_item", "except_clause", "suite", "test", "test_nocond", "lambdef", 
+			"lambdef_nocond", "or_test", "and_test", "not_test", "comparison", "comp_op", 
+			"star_expr", "expr", "xor_expr", "and_expr", "shift_expr", "arith_expr", 
+			"term", "factor", "power", "atom_expr", "atom", "testlist_comp", "trailer", 
+			"subscriptlist", "subscript", "sliceop", "exprlist", "testlist", "dictorsetmaker", 
+			"classdef", "arglist", "argument", "comp_iter", "comp_for", "comp_if", 
+			"encoding_decl", "yield_expr", "yield_arg"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, "'def'", "'return'", "'raise'", "'from'", "'import'", 
-		"'as'", "'global'", "'nonlocal'", "'assert'", "'if'", "'elif'", "'else'", 
-		"'while'", "'for'", "'in'", "'try'", "'finally'", "'with'", "'except'", 
-		"'lambda'", "'or'", "'and'", "'not'", "'is'", "'None'", "'True'", "'False'", 
-		"'class'", "'yield'", "'del'", "'pass'", "'continue'", "'break'", "'async'", 
-		"'await'", null, null, null, null, null, null, null, null, null, null, 
-		"'.'", "'...'", "'*'", "'('", "')'", "','", "':'", "';'", "'**'", "'='", 
-		"'['", "']'", "'|'", "'^'", "'&'", "'<<'", "'>>'", "'+'", "'-'", "'/'", 
-		"'%'", "'//'", "'~'", "'{'", "'}'", "'<'", "'>'", "'=='", "'>='", "'<='", 
-		"'<>'", "'!='", "'@'", "'->'", "'+='", "'-='", "'*='", "'@='", "'/='", 
-		"'%='", "'&='", "'|='", "'^='", "'<<='", "'>>='", "'**='", "'//='", null, 
-		null, null, "'$$'", "'$('", "'$)'", "'$|'", "'$/'", "'$*'", "'$+'", "'$?'", 
-		"'$='", "'$!'", "'$.'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "STRING", "NUMBER", "INTEGER", "DEF", "RETURN", "RAISE", "FROM", 
-		"IMPORT", "AS", "GLOBAL", "NONLOCAL", "ASSERT", "IF", "ELIF", "ELSE", 
-		"WHILE", "FOR", "IN", "TRY", "FINALLY", "WITH", "EXCEPT", "LAMBDA", "OR", 
-		"AND", "NOT", "IS", "NONE", "TRUE", "FALSE", "CLASS", "YIELD", "DEL", 
-		"PASS", "CONTINUE", "BREAK", "ASYNC", "AWAIT", "NEWLINE", "NAME", "STRING_LITERAL", 
-		"BYTES_LITERAL", "DECIMAL_INTEGER", "OCT_INTEGER", "HEX_INTEGER", "BIN_INTEGER", 
-		"FLOAT_NUMBER", "IMAG_NUMBER", "DOT", "ELLIPSIS", "STAR", "OPEN_PAREN", 
-		"CLOSE_PAREN", "COMMA", "COLON", "SEMI_COLON", "POWER", "ASSIGN", "OPEN_BRACK", 
-		"CLOSE_BRACK", "OR_OP", "XOR", "AND_OP", "LEFT_SHIFT", "RIGHT_SHIFT", 
-		"ADD", "MINUS", "DIV", "MOD", "IDIV", "NOT_OP", "OPEN_BRACE", "CLOSE_BRACE", 
-		"LESS_THAN", "GREATER_THAN", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ_1", "NOT_EQ_2", 
-		"AT", "ARROW", "ADD_ASSIGN", "SUB_ASSIGN", "MULT_ASSIGN", "AT_ASSIGN", 
-		"DIV_ASSIGN", "MOD_ASSIGN", "AND_ASSIGN", "OR_ASSIGN", "XOR_ASSIGN", "LEFT_SHIFT_ASSIGN", 
-		"RIGHT_SHIFT_ASSIGN", "POWER_ASSIGN", "IDIV_ASSIGN", "SKIP_", "UNKNOWN_CHAR", 
-		"CCG_SPECIAL_ID", "CCG_SPECIAL_SEQ", "CCG_SPECIAL_LPAR", "CCG_SPECIAL_RPAR", 
-		"CCG_SPECIAL_ORLNG", "CCG_SPECIAL_ORFST", "CCG_SPECIAL_MORE0", "CCG_SPECIAL_MORE1", 
-		"CCG_SPECIAL_EITH", "CCG_SPECIAL_LAP", "CCG_SPECIAL_LAN", "CCG_SPECIAL_ANY", 
-		"INDENT", "DEDENT"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, "'def'", "'return'", "'raise'", "'from'", "'import'", 
+			"'as'", "'global'", "'nonlocal'", "'assert'", "'if'", "'elif'", "'else'", 
+			"'while'", "'for'", "'in'", "'try'", "'finally'", "'with'", "'except'", 
+			"'lambda'", "'or'", "'and'", "'not'", "'is'", "'None'", "'True'", "'False'", 
+			"'class'", "'yield'", "'del'", "'pass'", "'continue'", "'break'", "'async'", 
+			"'await'", null, null, null, null, null, null, null, null, null, null, 
+			"'.'", "'...'", "'*'", "'('", "')'", "','", "':'", "';'", "'**'", "'='", 
+			"'['", "']'", "'|'", "'^'", "'&'", "'<<'", "'>>'", "'+'", "'-'", "'/'", 
+			"'%'", "'//'", "'~'", "'{'", "'}'", "'<'", "'>'", "'=='", "'>='", "'<='", 
+			"'<>'", "'!='", "'@'", "'->'", "'+='", "'-='", "'*='", "'@='", "'/='", 
+			"'%='", "'&='", "'|='", "'^='", "'<<='", "'>>='", "'**='", "'//='", null, 
+			null, null, "'$$'", "'$('", "'$)'", "'$|'", "'$/'", "'$*'", "'$+'", "'$?'", 
+			"'$='", "'$!'", "'$.'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "STRING", "NUMBER", "INTEGER", "DEF", "RETURN", "RAISE", "FROM", 
+			"IMPORT", "AS", "GLOBAL", "NONLOCAL", "ASSERT", "IF", "ELIF", "ELSE", 
+			"WHILE", "FOR", "IN", "TRY", "FINALLY", "WITH", "EXCEPT", "LAMBDA", "OR", 
+			"AND", "NOT", "IS", "NONE", "TRUE", "FALSE", "CLASS", "YIELD", "DEL", 
+			"PASS", "CONTINUE", "BREAK", "ASYNC", "AWAIT", "NEWLINE", "NAME", "STRING_LITERAL", 
+			"BYTES_LITERAL", "DECIMAL_INTEGER", "OCT_INTEGER", "HEX_INTEGER", "BIN_INTEGER", 
+			"FLOAT_NUMBER", "IMAG_NUMBER", "DOT", "ELLIPSIS", "STAR", "OPEN_PAREN", 
+			"CLOSE_PAREN", "COMMA", "COLON", "SEMI_COLON", "POWER", "ASSIGN", "OPEN_BRACK", 
+			"CLOSE_BRACK", "OR_OP", "XOR", "AND_OP", "LEFT_SHIFT", "RIGHT_SHIFT", 
+			"ADD", "MINUS", "DIV", "MOD", "IDIV", "NOT_OP", "OPEN_BRACE", "CLOSE_BRACE", 
+			"LESS_THAN", "GREATER_THAN", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ_1", 
+			"NOT_EQ_2", "AT", "ARROW", "ADD_ASSIGN", "SUB_ASSIGN", "MULT_ASSIGN", 
+			"AT_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", "AND_ASSIGN", "OR_ASSIGN", "XOR_ASSIGN", 
+			"LEFT_SHIFT_ASSIGN", "RIGHT_SHIFT_ASSIGN", "POWER_ASSIGN", "IDIV_ASSIGN", 
+			"SKIP_", "UNKNOWN_CHAR", "CCG_SPECIAL_ID", "CCG_SPECIAL_SEQ", "CCG_SPECIAL_LPAR", 
+			"CCG_SPECIAL_RPAR", "CCG_SPECIAL_ORLNG", "CCG_SPECIAL_ORFST", "CCG_SPECIAL_MORE0", 
+			"CCG_SPECIAL_MORE1", "CCG_SPECIAL_EITH", "CCG_SPECIAL_LAP", "CCG_SPECIAL_LAN", 
+			"CCG_SPECIAL_ANY", "INDENT", "DEDENT"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -165,6 +174,7 @@ public class Python3Parser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class Single_inputContext extends ParserRuleContext {
 		public TerminalNode NEWLINE() { return getToken(Python3Parser.NEWLINE, 0); }
 		public Simple_stmtContext simple_stmt() {
@@ -443,10 +453,13 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class DecoratorContext extends ParserRuleContext {
+		public TerminalNode AT() { return getToken(Python3Parser.AT, 0); }
 		public Dotted_nameContext dotted_name() {
 			return getRuleContext(Dotted_nameContext.class,0);
 		}
 		public TerminalNode NEWLINE() { return getToken(Python3Parser.NEWLINE, 0); }
+		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
+		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
@@ -682,13 +695,16 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class FuncdefContext extends ParserRuleContext {
+		public TerminalNode DEF() { return getToken(Python3Parser.DEF, 0); }
 		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
 		public ParametersContext parameters() {
 			return getRuleContext(ParametersContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public SuiteContext suite() {
 			return getRuleContext(SuiteContext.class,0);
 		}
+		public TerminalNode ARROW() { return getToken(Python3Parser.ARROW, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}
@@ -749,6 +765,8 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class ParametersContext extends ParserRuleContext {
+		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
+		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
 		public TypedargslistContext typedargslist() {
 			return getRuleContext(TypedargslistContext.class,0);
 		}
@@ -807,11 +825,21 @@ public class Python3Parser extends Parser {
 		public TfpdefContext tfpdef(int i) {
 			return getRuleContext(TfpdefContext.class,i);
 		}
+		public TerminalNode STAR() { return getToken(Python3Parser.STAR, 0); }
+		public TerminalNode POWER() { return getToken(Python3Parser.POWER, 0); }
+		public List<TerminalNode> ASSIGN() { return getTokens(Python3Parser.ASSIGN); }
+		public TerminalNode ASSIGN(int i) {
+			return getToken(Python3Parser.ASSIGN, i);
+		}
 		public List<TestContext> test() {
 			return getRuleContexts(TestContext.class);
 		}
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public TypedargslistContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1114,6 +1142,7 @@ public class Python3Parser extends Parser {
 
 	public static class TfpdefContext extends ParserRuleContext {
 		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}
@@ -1172,11 +1201,21 @@ public class Python3Parser extends Parser {
 		public VfpdefContext vfpdef(int i) {
 			return getRuleContext(VfpdefContext.class,i);
 		}
+		public TerminalNode STAR() { return getToken(Python3Parser.STAR, 0); }
+		public TerminalNode POWER() { return getToken(Python3Parser.POWER, 0); }
+		public List<TerminalNode> ASSIGN() { return getTokens(Python3Parser.ASSIGN); }
+		public TerminalNode ASSIGN(int i) {
+			return getToken(Python3Parser.ASSIGN, i);
+		}
 		public List<TestContext> test() {
 			return getRuleContexts(TestContext.class);
 		}
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public VarargslistContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1615,6 +1654,10 @@ public class Python3Parser extends Parser {
 			return getRuleContext(Small_stmtContext.class,i);
 		}
 		public TerminalNode NEWLINE() { return getToken(Python3Parser.NEWLINE, 0); }
+		public List<TerminalNode> SEMI_COLON() { return getTokens(Python3Parser.SEMI_COLON); }
+		public TerminalNode SEMI_COLON(int i) {
+			return getToken(Python3Parser.SEMI_COLON, i);
+		}
 		public Simple_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1837,6 +1880,10 @@ public class Python3Parser extends Parser {
 		public TestlistContext testlist() {
 			return getRuleContext(TestlistContext.class,0);
 		}
+		public List<TerminalNode> ASSIGN() { return getTokens(Python3Parser.ASSIGN); }
+		public TerminalNode ASSIGN(int i) {
+			return getToken(Python3Parser.ASSIGN, i);
+		}
 		public Expr_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1991,12 +2038,14 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class AnnassignContext extends ParserRuleContext {
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public List<TestContext> test() {
 			return getRuleContexts(TestContext.class);
 		}
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
 		}
+		public TerminalNode ASSIGN() { return getToken(Python3Parser.ASSIGN, 0); }
 		public AnnassignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2059,6 +2108,10 @@ public class Python3Parser extends Parser {
 		}
 		public Star_exprContext star_expr(int i) {
 			return getRuleContext(Star_exprContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public Testlist_star_exprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2188,6 +2241,19 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class AugassignContext extends ParserRuleContext {
+		public TerminalNode ADD_ASSIGN() { return getToken(Python3Parser.ADD_ASSIGN, 0); }
+		public TerminalNode SUB_ASSIGN() { return getToken(Python3Parser.SUB_ASSIGN, 0); }
+		public TerminalNode MULT_ASSIGN() { return getToken(Python3Parser.MULT_ASSIGN, 0); }
+		public TerminalNode AT_ASSIGN() { return getToken(Python3Parser.AT_ASSIGN, 0); }
+		public TerminalNode DIV_ASSIGN() { return getToken(Python3Parser.DIV_ASSIGN, 0); }
+		public TerminalNode MOD_ASSIGN() { return getToken(Python3Parser.MOD_ASSIGN, 0); }
+		public TerminalNode AND_ASSIGN() { return getToken(Python3Parser.AND_ASSIGN, 0); }
+		public TerminalNode OR_ASSIGN() { return getToken(Python3Parser.OR_ASSIGN, 0); }
+		public TerminalNode XOR_ASSIGN() { return getToken(Python3Parser.XOR_ASSIGN, 0); }
+		public TerminalNode LEFT_SHIFT_ASSIGN() { return getToken(Python3Parser.LEFT_SHIFT_ASSIGN, 0); }
+		public TerminalNode RIGHT_SHIFT_ASSIGN() { return getToken(Python3Parser.RIGHT_SHIFT_ASSIGN, 0); }
+		public TerminalNode POWER_ASSIGN() { return getToken(Python3Parser.POWER_ASSIGN, 0); }
+		public TerminalNode IDIV_ASSIGN() { return getToken(Python3Parser.IDIV_ASSIGN, 0); }
 		public AugassignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2233,6 +2299,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Del_stmtContext extends ParserRuleContext {
+		public TerminalNode DEL() { return getToken(Python3Parser.DEL, 0); }
 		public ExprlistContext exprlist() {
 			return getRuleContext(ExprlistContext.class,0);
 		}
@@ -2274,6 +2341,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Pass_stmtContext extends ParserRuleContext {
+		public TerminalNode PASS() { return getToken(Python3Parser.PASS, 0); }
 		public Pass_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2397,6 +2465,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Break_stmtContext extends ParserRuleContext {
+		public TerminalNode BREAK() { return getToken(Python3Parser.BREAK, 0); }
 		public Break_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2433,6 +2502,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Continue_stmtContext extends ParserRuleContext {
+		public TerminalNode CONTINUE() { return getToken(Python3Parser.CONTINUE, 0); }
 		public Continue_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2469,6 +2539,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Return_stmtContext extends ParserRuleContext {
+		public TerminalNode RETURN() { return getToken(Python3Parser.RETURN, 0); }
 		public TestlistContext testlist() {
 			return getRuleContext(TestlistContext.class,0);
 		}
@@ -2558,12 +2629,14 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Raise_stmtContext extends ParserRuleContext {
+		public TerminalNode RAISE() { return getToken(Python3Parser.RAISE, 0); }
 		public List<TestContext> test() {
 			return getRuleContexts(TestContext.class);
 		}
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
 		}
+		public TerminalNode FROM() { return getToken(Python3Parser.FROM, 0); }
 		public Raise_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2680,6 +2753,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Import_nameContext extends ParserRuleContext {
+		public TerminalNode IMPORT() { return getToken(Python3Parser.IMPORT, 0); }
 		public Dotted_as_namesContext dotted_as_names() {
 			return getRuleContext(Dotted_as_namesContext.class,0);
 		}
@@ -2721,11 +2795,24 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Import_fromContext extends ParserRuleContext {
+		public TerminalNode FROM() { return getToken(Python3Parser.FROM, 0); }
+		public TerminalNode IMPORT() { return getToken(Python3Parser.IMPORT, 0); }
 		public Dotted_nameContext dotted_name() {
 			return getRuleContext(Dotted_nameContext.class,0);
 		}
+		public TerminalNode STAR() { return getToken(Python3Parser.STAR, 0); }
+		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
 		public Import_as_namesContext import_as_names() {
 			return getRuleContext(Import_as_namesContext.class,0);
+		}
+		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
+		public List<TerminalNode> DOT() { return getTokens(Python3Parser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(Python3Parser.DOT, i);
+		}
+		public List<TerminalNode> ELLIPSIS() { return getTokens(Python3Parser.ELLIPSIS); }
+		public TerminalNode ELLIPSIS(int i) {
+			return getToken(Python3Parser.ELLIPSIS, i);
 		}
 		public Import_fromContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2858,6 +2945,7 @@ public class Python3Parser extends Parser {
 		public TerminalNode NAME(int i) {
 			return getToken(Python3Parser.NAME, i);
 		}
+		public TerminalNode AS() { return getToken(Python3Parser.AS, 0); }
 		public Import_as_nameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2910,6 +2998,7 @@ public class Python3Parser extends Parser {
 		public Dotted_nameContext dotted_name() {
 			return getRuleContext(Dotted_nameContext.class,0);
 		}
+		public TerminalNode AS() { return getToken(Python3Parser.AS, 0); }
 		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
 		public Dotted_as_nameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2965,6 +3054,10 @@ public class Python3Parser extends Parser {
 		}
 		public Import_as_nameContext import_as_name(int i) {
 			return getRuleContext(Import_as_nameContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public Import_as_namesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3038,6 +3131,10 @@ public class Python3Parser extends Parser {
 		public Dotted_as_nameContext dotted_as_name(int i) {
 			return getRuleContext(Dotted_as_nameContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
+		}
 		public Dotted_as_namesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3095,6 +3192,10 @@ public class Python3Parser extends Parser {
 		public TerminalNode NAME(int i) {
 			return getToken(Python3Parser.NAME, i);
 		}
+		public List<TerminalNode> DOT() { return getTokens(Python3Parser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(Python3Parser.DOT, i);
+		}
 		public Dotted_nameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3148,9 +3249,14 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Global_stmtContext extends ParserRuleContext {
+		public TerminalNode GLOBAL() { return getToken(Python3Parser.GLOBAL, 0); }
 		public List<TerminalNode> NAME() { return getTokens(Python3Parser.NAME); }
 		public TerminalNode NAME(int i) {
 			return getToken(Python3Parser.NAME, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public Global_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3207,9 +3313,14 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Nonlocal_stmtContext extends ParserRuleContext {
+		public TerminalNode NONLOCAL() { return getToken(Python3Parser.NONLOCAL, 0); }
 		public List<TerminalNode> NAME() { return getTokens(Python3Parser.NAME); }
 		public TerminalNode NAME(int i) {
 			return getToken(Python3Parser.NAME, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public Nonlocal_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3266,12 +3377,14 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Assert_stmtContext extends ParserRuleContext {
+		public TerminalNode ASSERT() { return getToken(Python3Parser.ASSERT, 0); }
 		public List<TestContext> test() {
 			return getRuleContexts(TestContext.class);
 		}
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(Python3Parser.COMMA, 0); }
 		public Assert_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3520,11 +3633,16 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class If_stmtContext extends ParserRuleContext {
+		public TerminalNode IF() { return getToken(Python3Parser.IF, 0); }
 		public List<TestContext> test() {
 			return getRuleContexts(TestContext.class);
 		}
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
+		}
+		public List<TerminalNode> COLON() { return getTokens(Python3Parser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(Python3Parser.COLON, i);
 		}
 		public List<SuiteContext> suite() {
 			return getRuleContexts(SuiteContext.class);
@@ -3532,6 +3650,11 @@ public class Python3Parser extends Parser {
 		public SuiteContext suite(int i) {
 			return getRuleContext(SuiteContext.class,i);
 		}
+		public List<TerminalNode> ELIF() { return getTokens(Python3Parser.ELIF); }
+		public TerminalNode ELIF(int i) {
+			return getToken(Python3Parser.ELIF, i);
+		}
+		public TerminalNode ELSE() { return getToken(Python3Parser.ELSE, 0); }
 		public If_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3609,8 +3732,13 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class While_stmtContext extends ParserRuleContext {
+		public TerminalNode WHILE() { return getToken(Python3Parser.WHILE, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
+		}
+		public List<TerminalNode> COLON() { return getTokens(Python3Parser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(Python3Parser.COLON, i);
 		}
 		public List<SuiteContext> suite() {
 			return getRuleContexts(SuiteContext.class);
@@ -3618,6 +3746,7 @@ public class Python3Parser extends Parser {
 		public SuiteContext suite(int i) {
 			return getRuleContext(SuiteContext.class,i);
 		}
+		public TerminalNode ELSE() { return getToken(Python3Parser.ELSE, 0); }
 		public While_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3675,11 +3804,17 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class For_stmtContext extends ParserRuleContext {
+		public TerminalNode FOR() { return getToken(Python3Parser.FOR, 0); }
 		public ExprlistContext exprlist() {
 			return getRuleContext(ExprlistContext.class,0);
 		}
+		public TerminalNode IN() { return getToken(Python3Parser.IN, 0); }
 		public TestlistContext testlist() {
 			return getRuleContext(TestlistContext.class,0);
+		}
+		public List<TerminalNode> COLON() { return getTokens(Python3Parser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(Python3Parser.COLON, i);
 		}
 		public List<SuiteContext> suite() {
 			return getRuleContexts(SuiteContext.class);
@@ -3687,6 +3822,7 @@ public class Python3Parser extends Parser {
 		public SuiteContext suite(int i) {
 			return getRuleContext(SuiteContext.class,i);
 		}
+		public TerminalNode ELSE() { return getToken(Python3Parser.ELSE, 0); }
 		public For_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3748,18 +3884,25 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Try_stmtContext extends ParserRuleContext {
+		public TerminalNode TRY() { return getToken(Python3Parser.TRY, 0); }
+		public List<TerminalNode> COLON() { return getTokens(Python3Parser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(Python3Parser.COLON, i);
+		}
 		public List<SuiteContext> suite() {
 			return getRuleContexts(SuiteContext.class);
 		}
 		public SuiteContext suite(int i) {
 			return getRuleContext(SuiteContext.class,i);
 		}
+		public TerminalNode FINALLY() { return getToken(Python3Parser.FINALLY, 0); }
 		public List<Except_clauseContext> except_clause() {
 			return getRuleContexts(Except_clauseContext.class);
 		}
 		public Except_clauseContext except_clause(int i) {
 			return getRuleContext(Except_clauseContext.class,i);
 		}
+		public TerminalNode ELSE() { return getToken(Python3Parser.ELSE, 0); }
 		public Try_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3869,14 +4012,20 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class With_stmtContext extends ParserRuleContext {
+		public TerminalNode WITH() { return getToken(Python3Parser.WITH, 0); }
 		public List<With_itemContext> with_item() {
 			return getRuleContexts(With_itemContext.class);
 		}
 		public With_itemContext with_item(int i) {
 			return getRuleContext(With_itemContext.class,i);
 		}
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public SuiteContext suite() {
 			return getRuleContext(SuiteContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public With_stmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3940,6 +4089,7 @@ public class Python3Parser extends Parser {
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}
+		public TerminalNode AS() { return getToken(Python3Parser.AS, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -3992,9 +4142,11 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Except_clauseContext extends ParserRuleContext {
+		public TerminalNode EXCEPT() { return getToken(Python3Parser.EXCEPT, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}
+		public TerminalNode AS() { return getToken(Python3Parser.AS, 0); }
 		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
 		public Except_clauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -4171,6 +4323,8 @@ public class Python3Parser extends Parser {
 		public Or_testContext or_test(int i) {
 			return getRuleContext(Or_testContext.class,i);
 		}
+		public TerminalNode IF() { return getToken(Python3Parser.IF, 0); }
+		public TerminalNode ELSE() { return getToken(Python3Parser.ELSE, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}
@@ -4330,6 +4484,8 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class LambdefContext extends ParserRuleContext {
+		public TerminalNode LAMBDA() { return getToken(Python3Parser.LAMBDA, 0); }
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}
@@ -4387,6 +4543,8 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Lambdef_nocondContext extends ParserRuleContext {
+		public TerminalNode LAMBDA() { return getToken(Python3Parser.LAMBDA, 0); }
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public Test_nocondContext test_nocond() {
 			return getRuleContext(Test_nocondContext.class,0);
 		}
@@ -4450,6 +4608,10 @@ public class Python3Parser extends Parser {
 		public And_testContext and_test(int i) {
 			return getRuleContext(And_testContext.class,i);
 		}
+		public List<TerminalNode> OR() { return getTokens(Python3Parser.OR); }
+		public TerminalNode OR(int i) {
+			return getToken(Python3Parser.OR, i);
+		}
 		public Or_testContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4509,6 +4671,10 @@ public class Python3Parser extends Parser {
 		public Not_testContext not_test(int i) {
 			return getRuleContext(Not_testContext.class,i);
 		}
+		public List<TerminalNode> AND() { return getTokens(Python3Parser.AND); }
+		public TerminalNode AND(int i) {
+			return getToken(Python3Parser.AND, i);
+		}
 		public And_testContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4562,6 +4728,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Not_testContext extends ParserRuleContext {
+		public TerminalNode NOT() { return getToken(Python3Parser.NOT, 0); }
 		public Not_testContext not_test() {
 			return getRuleContext(Not_testContext.class,0);
 		}
@@ -4699,6 +4866,16 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Comp_opContext extends ParserRuleContext {
+		public TerminalNode LESS_THAN() { return getToken(Python3Parser.LESS_THAN, 0); }
+		public TerminalNode GREATER_THAN() { return getToken(Python3Parser.GREATER_THAN, 0); }
+		public TerminalNode EQUALS() { return getToken(Python3Parser.EQUALS, 0); }
+		public TerminalNode GT_EQ() { return getToken(Python3Parser.GT_EQ, 0); }
+		public TerminalNode LT_EQ() { return getToken(Python3Parser.LT_EQ, 0); }
+		public TerminalNode NOT_EQ_1() { return getToken(Python3Parser.NOT_EQ_1, 0); }
+		public TerminalNode NOT_EQ_2() { return getToken(Python3Parser.NOT_EQ_2, 0); }
+		public TerminalNode IN() { return getToken(Python3Parser.IN, 0); }
+		public TerminalNode NOT() { return getToken(Python3Parser.NOT, 0); }
+		public TerminalNode IS() { return getToken(Python3Parser.IS, 0); }
 		public Comp_opContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4815,6 +4992,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Star_exprContext extends ParserRuleContext {
+		public TerminalNode STAR() { return getToken(Python3Parser.STAR, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -4861,6 +5039,10 @@ public class Python3Parser extends Parser {
 		}
 		public Xor_exprContext xor_expr(int i) {
 			return getRuleContext(Xor_exprContext.class,i);
+		}
+		public List<TerminalNode> OR_OP() { return getTokens(Python3Parser.OR_OP); }
+		public TerminalNode OR_OP(int i) {
+			return getToken(Python3Parser.OR_OP, i);
 		}
 		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -4921,6 +5103,10 @@ public class Python3Parser extends Parser {
 		public And_exprContext and_expr(int i) {
 			return getRuleContext(And_exprContext.class,i);
 		}
+		public List<TerminalNode> XOR() { return getTokens(Python3Parser.XOR); }
+		public TerminalNode XOR(int i) {
+			return getToken(Python3Parser.XOR, i);
+		}
 		public Xor_exprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4980,6 +5166,10 @@ public class Python3Parser extends Parser {
 		public Shift_exprContext shift_expr(int i) {
 			return getRuleContext(Shift_exprContext.class,i);
 		}
+		public List<TerminalNode> AND_OP() { return getTokens(Python3Parser.AND_OP); }
+		public TerminalNode AND_OP(int i) {
+			return getToken(Python3Parser.AND_OP, i);
+		}
 		public And_exprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5038,6 +5228,14 @@ public class Python3Parser extends Parser {
 		}
 		public Arith_exprContext arith_expr(int i) {
 			return getRuleContext(Arith_exprContext.class,i);
+		}
+		public List<TerminalNode> LEFT_SHIFT() { return getTokens(Python3Parser.LEFT_SHIFT); }
+		public TerminalNode LEFT_SHIFT(int i) {
+			return getToken(Python3Parser.LEFT_SHIFT, i);
+		}
+		public List<TerminalNode> RIGHT_SHIFT() { return getTokens(Python3Parser.RIGHT_SHIFT); }
+		public TerminalNode RIGHT_SHIFT(int i) {
+			return getToken(Python3Parser.RIGHT_SHIFT, i);
 		}
 		public Shift_exprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5106,6 +5304,14 @@ public class Python3Parser extends Parser {
 		public TermContext term(int i) {
 			return getRuleContext(TermContext.class,i);
 		}
+		public List<TerminalNode> ADD() { return getTokens(Python3Parser.ADD); }
+		public TerminalNode ADD(int i) {
+			return getToken(Python3Parser.ADD, i);
+		}
+		public List<TerminalNode> MINUS() { return getTokens(Python3Parser.MINUS); }
+		public TerminalNode MINUS(int i) {
+			return getToken(Python3Parser.MINUS, i);
+		}
 		public Arith_exprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5173,6 +5379,26 @@ public class Python3Parser extends Parser {
 		public FactorContext factor(int i) {
 			return getRuleContext(FactorContext.class,i);
 		}
+		public List<TerminalNode> STAR() { return getTokens(Python3Parser.STAR); }
+		public TerminalNode STAR(int i) {
+			return getToken(Python3Parser.STAR, i);
+		}
+		public List<TerminalNode> AT() { return getTokens(Python3Parser.AT); }
+		public TerminalNode AT(int i) {
+			return getToken(Python3Parser.AT, i);
+		}
+		public List<TerminalNode> DIV() { return getTokens(Python3Parser.DIV); }
+		public TerminalNode DIV(int i) {
+			return getToken(Python3Parser.DIV, i);
+		}
+		public List<TerminalNode> MOD() { return getTokens(Python3Parser.MOD); }
+		public TerminalNode MOD(int i) {
+			return getToken(Python3Parser.MOD, i);
+		}
+		public List<TerminalNode> IDIV() { return getTokens(Python3Parser.IDIV); }
+		public TerminalNode IDIV(int i) {
+			return getToken(Python3Parser.IDIV, i);
+		}
 		public TermContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5237,6 +5463,9 @@ public class Python3Parser extends Parser {
 		public FactorContext factor() {
 			return getRuleContext(FactorContext.class,0);
 		}
+		public TerminalNode ADD() { return getToken(Python3Parser.ADD, 0); }
+		public TerminalNode MINUS() { return getToken(Python3Parser.MINUS, 0); }
+		public TerminalNode NOT_OP() { return getToken(Python3Parser.NOT_OP, 0); }
 		public PowerContext power() {
 			return getRuleContext(PowerContext.class,0);
 		}
@@ -5317,6 +5546,7 @@ public class Python3Parser extends Parser {
 		public Atom_exprContext atom_expr() {
 			return getRuleContext(Atom_exprContext.class,0);
 		}
+		public TerminalNode POWER() { return getToken(Python3Parser.POWER, 0); }
 		public FactorContext factor() {
 			return getRuleContext(FactorContext.class,0);
 		}
@@ -5440,8 +5670,18 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class AtomContext extends ParserRuleContext {
+		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
+		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
+		public TerminalNode OPEN_BRACK() { return getToken(Python3Parser.OPEN_BRACK, 0); }
+		public TerminalNode CLOSE_BRACK() { return getToken(Python3Parser.CLOSE_BRACK, 0); }
+		public TerminalNode OPEN_BRACE() { return getToken(Python3Parser.OPEN_BRACE, 0); }
+		public TerminalNode CLOSE_BRACE() { return getToken(Python3Parser.CLOSE_BRACE, 0); }
 		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
 		public TerminalNode NUMBER() { return getToken(Python3Parser.NUMBER, 0); }
+		public TerminalNode ELLIPSIS() { return getToken(Python3Parser.ELLIPSIS, 0); }
+		public TerminalNode NONE() { return getToken(Python3Parser.NONE, 0); }
+		public TerminalNode TRUE() { return getToken(Python3Parser.TRUE, 0); }
+		public TerminalNode FALSE() { return getToken(Python3Parser.FALSE, 0); }
 		public Yield_exprContext yield_expr() {
 			return getRuleContext(Yield_exprContext.class,0);
 		}
@@ -5645,6 +5885,10 @@ public class Python3Parser extends Parser {
 		public Comp_forContext comp_for() {
 			return getRuleContext(Comp_forContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
+		}
 		public Testlist_compContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5792,12 +6036,17 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class TrailerContext extends ParserRuleContext {
+		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
+		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
+		public TerminalNode OPEN_BRACK() { return getToken(Python3Parser.OPEN_BRACK, 0); }
 		public SubscriptlistContext subscriptlist() {
 			return getRuleContext(SubscriptlistContext.class,0);
 		}
+		public TerminalNode CLOSE_BRACK() { return getToken(Python3Parser.CLOSE_BRACK, 0); }
+		public TerminalNode DOT() { return getToken(Python3Parser.DOT, 0); }
 		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
 		public TrailerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5882,6 +6131,10 @@ public class Python3Parser extends Parser {
 		public SubscriptContext subscript(int i) {
 			return getRuleContext(SubscriptContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
+		}
 		public SubscriptlistContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5954,6 +6207,7 @@ public class Python3Parser extends Parser {
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
 		}
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public SliceopContext sliceop() {
 			return getRuleContext(SliceopContext.class,0);
 		}
@@ -6037,6 +6291,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class SliceopContext extends ParserRuleContext {
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}
@@ -6098,6 +6353,10 @@ public class Python3Parser extends Parser {
 		}
 		public Star_exprContext star_expr(int i) {
 			return getRuleContext(Star_exprContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public ExprlistContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -6229,6 +6488,10 @@ public class Python3Parser extends Parser {
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
+		}
 		public TestlistContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -6301,6 +6564,14 @@ public class Python3Parser extends Parser {
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
 		}
+		public List<TerminalNode> COLON() { return getTokens(Python3Parser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(Python3Parser.COLON, i);
+		}
+		public List<TerminalNode> POWER() { return getTokens(Python3Parser.POWER); }
+		public TerminalNode POWER(int i) {
+			return getToken(Python3Parser.POWER, i);
+		}
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -6315,6 +6586,10 @@ public class Python3Parser extends Parser {
 		}
 		public Star_exprContext star_expr(int i) {
 			return getRuleContext(Star_exprContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
 		}
 		public DictorsetmakerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -6600,10 +6875,14 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class ClassdefContext extends ParserRuleContext {
+		public TerminalNode CLASS() { return getToken(Python3Parser.CLASS, 0); }
 		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
+		public TerminalNode COLON() { return getToken(Python3Parser.COLON, 0); }
 		public SuiteContext suite() {
 			return getRuleContext(SuiteContext.class,0);
 		}
+		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
+		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
@@ -6678,6 +6957,10 @@ public class Python3Parser extends Parser {
 		public ArgumentContext argument(int i) {
 			return getRuleContext(ArgumentContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(Python3Parser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(Python3Parser.COMMA, i);
+		}
 		public ArglistContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -6750,6 +7033,9 @@ public class Python3Parser extends Parser {
 		public TestContext test(int i) {
 			return getRuleContext(TestContext.class,i);
 		}
+		public TerminalNode ASSIGN() { return getToken(Python3Parser.ASSIGN, 0); }
+		public TerminalNode POWER() { return getToken(Python3Parser.POWER, 0); }
+		public TerminalNode STAR() { return getToken(Python3Parser.STAR, 0); }
 		public Comp_forContext comp_for() {
 			return getRuleContext(Comp_forContext.class,0);
 		}
@@ -6892,9 +7178,11 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Comp_forContext extends ParserRuleContext {
+		public TerminalNode FOR() { return getToken(Python3Parser.FOR, 0); }
 		public ExprlistContext exprlist() {
 			return getRuleContext(ExprlistContext.class,0);
 		}
+		public TerminalNode IN() { return getToken(Python3Parser.IN, 0); }
 		public Or_testContext or_test() {
 			return getRuleContext(Or_testContext.class,0);
 		}
@@ -6965,6 +7253,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Comp_ifContext extends ParserRuleContext {
+		public TerminalNode IF() { return getToken(Python3Parser.IF, 0); }
 		public Test_nocondContext test_nocond() {
 			return getRuleContext(Test_nocondContext.class,0);
 		}
@@ -7057,6 +7346,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Yield_exprContext extends ParserRuleContext {
+		public TerminalNode YIELD() { return getToken(Python3Parser.YIELD, 0); }
 		public Yield_argContext yield_arg() {
 			return getRuleContext(Yield_argContext.class,0);
 		}
@@ -7107,6 +7397,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Yield_argContext extends ParserRuleContext {
+		public TerminalNode FROM() { return getToken(Python3Parser.FROM, 0); }
 		public TestContext test() {
 			return getRuleContext(TestContext.class,0);
 		}

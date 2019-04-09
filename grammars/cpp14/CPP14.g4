@@ -2370,7 +2370,23 @@ LineComment
 
 /** v ccgrep v **/
 
-CCG_SPECIAL_ID : '$' Identifier;
+CCG_SPECIAL_ID
+    : '$' Identifier
+    | '$' False
+    | '$' Nullptr
+    | '$' True
+    | '$' Integerliteral
+    | '$' Decimalliteral
+    | '$' Octalliteral
+    | '$' Hexadecimalliteral
+    | '$' Binaryliteral
+    | '$' Characterliteral
+    | '$' Floatingliteral
+    | '$' Stringliteral
+    | '$' Userdefinedintegerliteral
+    | '$' Userdefinedfloatingliteral
+    | '$' Userdefinedstringliteral
+    | '$' Userdefinedcharacterliteral;
 CCG_SPECIAL_SEQ : '$$';
 CCG_SPECIAL_LPAR  : '$(';
 CCG_SPECIAL_RPAR  : '$)';

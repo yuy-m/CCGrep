@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.c.CLexer;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.cpp14.CPP14Lexer;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.Java9Lexer;
+import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.Java9QueryLexer;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.Python3Lexer;
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.Python3Parser;
 
@@ -24,6 +25,7 @@ public enum Language
     C(
         Arrays.asList("c"),
         Arrays.asList("c", "h"),
+        CLexer::new,
         CLexer::new,
         new SpecialSet(CLexer.class),
         new CommentSet("//", "/*", "*/"),
@@ -44,11 +46,12 @@ public enum Language
                 CLexer.Constant, CLexer.DigitSequence, CLexer.StringLiteral
             )
         ),
-        t -> preprocessorFilter(t, CLexer.Directive)
+        t -> filterPreprocessor(t, CLexer.Directive)
     ),
     CPP14(
         Arrays.asList("cpp", "cpp14", "c++", "c++14"),
         Arrays.asList("cpp", "cc", "c++", "cxx", "c", "h", "hpp"),
+        CPP14Lexer::new,
         CPP14Lexer::new,
         new SpecialSet(CPP14Lexer.class),
         new CommentSet("//", "/*", "*/"),
@@ -75,13 +78,14 @@ public enum Language
                 CPP14Lexer.Userdefinedfloatingliteral, CPP14Lexer.Userdefinedstringliteral, CPP14Lexer.Userdefinedcharacterliteral
             )
         ),
-        t -> preprocessorFilter(t, CPP14Lexer.Directive)
+        t -> filterPreprocessor(t, CPP14Lexer.Directive)
     ),
     JAVA9(
         Arrays.asList("java", "java9"),
         Arrays.asList("java"),
+        Java9QueryLexer::new,
         Java9Lexer::new,
-        new SpecialSet(Java9Lexer.class),
+        new SpecialSet(Java9QueryLexer.class),
         new CommentSet("//", "/*", "*/"),
         Arrays.<BracketPair>asList(
             new BracketPair(Java9Lexer.LPAREN, Java9Lexer.RPAREN),
@@ -106,11 +110,12 @@ public enum Language
                 Java9Lexer.CharacterLiteral, Java9Lexer.StringLiteral, Java9Lexer.NullLiteral
             )
         ),
-        UnaryOperator.identity()
+        Language::filterJavaDollar
     ),
     PYTHON3(
         Arrays.asList("python", "python3"),
         Arrays.asList("py"),
+        Python3Lexer::new,
         Python3Lexer::new,
         new SpecialSet(Python3Lexer.class),
         new CommentSet("#", "\"\"\"", "\"\"\""),
@@ -136,6 +141,7 @@ public enum Language
 
     private final List<String> names;
     private final List<String> extensions;
+    private final Function<CharStream, Lexer> queryLexerCreater;
     private final Function<CharStream, Lexer> lexerCreater;
 
     private final SpecialSet specialSet;
@@ -147,6 +153,7 @@ public enum Language
 
     Language(
         List<String> names, List<String> extensions,
+        Function<CharStream, Lexer> queryLexerCreater,
         Function<CharStream, Lexer> lexerCreater,
         SpecialSet specialSet,
         CommentSet commentSet,
@@ -156,6 +163,7 @@ public enum Language
     {
         this.names = names;
         this.extensions = extensions;
+        this.queryLexerCreater = queryLexerCreater;
         this.lexerCreater = lexerCreater;
 
         this.specialSet = specialSet;
@@ -183,6 +191,11 @@ public enum Language
         return Arrays.stream(Language.values())
             .filter(l -> l.extensions.stream().anyMatch(fileName::endsWith))
             .findFirst();
+    }
+
+    public final Lexer createQueryLexer(CharStream stream)
+    {
+        return queryLexerCreater.apply(stream);
     }
 
     public final Lexer createLexer(CharStream stream)
@@ -421,7 +434,7 @@ public enum Language
     // マクロの除去
     private static final Pattern pElse = Pattern.compile("#[ \\t]*el(se|if)(.|[\\n\\r])*");
     private static final Pattern pEndif = Pattern.compile("#[ \\t]*endif(.|[\\n\\r])*");
-    private static List<GrepToken> preprocessorFilter(List<GrepToken> tokens, int directiveType)
+    private static List<GrepToken> filterPreprocessor(List<GrepToken> tokens, int directiveType)
     {
         final Iterator<GrepToken> it = tokens.iterator();
         while(it.hasNext())
@@ -482,6 +495,16 @@ public enum Language
                     }
                 }
             }
+        }
+        return tokens;
+    }
+
+    private static List<GrepToken> filterJavaDollar(List<GrepToken> tokens)
+    {
+        final Iterator<GrepToken> it = tokens.iterator();
+        for(GrepToken t: tokens)
+        {
+            t.setText(t.getText().replace("\\$", "$"));
         }
         return tokens;
     }

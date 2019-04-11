@@ -62,7 +62,7 @@ Total lexer+parser time 3634ms.
 Total lexer+parser time 2497ms.
 
  */
-grammar Java9;
+grammar Java9Query;
 
 @header {
 package jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9;
@@ -1833,7 +1833,9 @@ Identifier
 
 fragment
 JavaLetter
-	:	[a-zA-Z$_] // these are the "java letters" below 0x7F
+	:	[a-zA-Z_] // ccgrep
+	|	'\\$'     // ccgrep
+	//:	[a-zA-Z$_] // these are the "java letters" below 0x7F
 	|	// covers all characters above 0x7F which are not a surrogate
 		~[\u0000-\u007F\uD800-\uDBFF]
 		{Character.isJavaIdentifierStart(_input.LA(-1))}?
@@ -1844,7 +1846,9 @@ JavaLetter
 
 fragment
 JavaLetterOrDigit
-	:	[a-zA-Z0-9$_] // these are the "java letters or digits" below 0x7F
+	:	[a-zA-Z0-9_] // ccgrep
+	|	'\\$'        // ccgrep
+	//:	[a-zA-Z0-9$_] // these are the "java letters or digits" below 0x7F
 	|	// covers all characters above 0x7F which are not a surrogate
 		~[\u0000-\u007F\uD800-\uDBFF]
 		{Character.isJavaIdentifierPart(_input.LA(-1))}?
@@ -1867,3 +1871,35 @@ COMMENT
 LINE_COMMENT
     :   '//' ~[\r\n]* -> channel(HIDDEN)
     ;
+
+/** v ccgrep v **/
+
+CCG_SPECIAL_ID
+    : '$' Identifier
+    | '$' IntegerLiteral
+    | '$' FloatingPointLiteral
+    | '$' BooleanLiteral
+    | '$' CharacterLiteral
+    | '$' StringLiteral
+    | '$' NullLiteral;
+CCG_SPECIAL_SEQ : '$$';
+CCG_SPECIAL_LPAR  : '$(';
+CCG_SPECIAL_RPAR  : '$)';
+CCG_SPECIAL_ORLNG : '$|';
+CCG_SPECIAL_ORFST : '$/';
+CCG_SPECIAL_MORE0 : '$*';
+CCG_SPECIAL_MORE1 : '$+';
+CCG_SPECIAL_EITH  : '$?';
+CCG_SPECIAL_LAP  : '$=';
+CCG_SPECIAL_LAN  : '$!';
+CCG_SPECIAL_ANY   : '$.';
+/*
+CCG_SPECIAL_REP
+    : '${' DigitSequence ',' DigitSequence '}'
+    | '${' DigitSequence ','}'
+    ;
+CCG_SPECIAL_EXPR : '$()';
+CCG_SPECIAL_BLOCK : '${}';
+*/
+
+/** ^ ccgrep ^ **/

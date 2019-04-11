@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/04/09, written on 2018/12/06*
+*updated on 2019/04/11, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -124,7 +124,7 @@ In a query, identifiers and literals can starts with `$` (e.g. `$value`, `$10`, 
 These tokens match exact same tokens regardless of the [blind level](#ClonesToDetect).
 
 Note: No spaces are allowed between `$` and token.  
-Note: assume that the language uses no `$` in their grammar.
+Note: You can escape `$` by backslash to use it as just a character (e.g. `\$ab`).
 
 You can also use `--fix` option to fix identifiers.
 

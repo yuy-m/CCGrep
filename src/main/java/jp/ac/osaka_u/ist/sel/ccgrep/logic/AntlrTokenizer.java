@@ -34,28 +34,52 @@ public class AntlrTokenizer implements ITokenizer
     }
 
     @Override
-    public Result extractFromString(String code)
+    public Result extractQueryFromString(String code)
     {
-        return extract(CharStreams.fromString(code, "<string>"), code);
+        return extract(
+            getLanguage().createQueryLexer(CharStreams.fromString(code, "<string>")),
+            code
+        );
     }
 
     @Override
     public Optional<Result> extractFromFile(String filename)
     {
+        return extractFromFileInner(filename, false);
+    }
+
+    @Override
+    public Optional<Result> extractQueryFromFile(String filename)
+    {
+        return extractFromFileInner(filename, true);
+    }
+
+    private Optional<Result> extractFromFileInner(String filename, boolean isQuery)
+    {
         try{
+            String code = null;
+            CharStream cs;
             if(filename.equals("-"))
             {
                 try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in)))
                 {
-                    final String code = br.lines()
+                    code = br.lines()
                             .collect(Collectors.joining(System.lineSeparator()));
-                    return Optional.of(extract(CharStreams.fromString(code, "<standard-input>"), code));
+                    cs = CharStreams.fromString(code, "<standard-input>");
                 }
             }
             else
             {
-                return Optional.of(extract(CharStreams.fromFileName(filename), null));
+                cs = CharStreams.fromFileName(filename);
             }
+            return Optional.of(
+                extract(
+                    isQuery
+                        ?getLanguage().createQueryLexer(cs)
+                        : getLanguage().createLexer(cs),
+                    code
+                )
+            );
         }
         catch(IOException e)
         {
@@ -71,9 +95,8 @@ public class AntlrTokenizer implements ITokenizer
         return Optional.empty();
     }
 
-    private Result extract(CharStream stream, String code)
+    private Result extract(Lexer lexer, String code)
     {
-        final Lexer lexer = getLanguage().createLexer(stream);
         lexer.removeErrorListeners();
         final CommonTokenStream cts = new CommonTokenStream(lexer);
 

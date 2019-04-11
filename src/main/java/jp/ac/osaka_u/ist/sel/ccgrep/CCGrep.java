@@ -99,9 +99,9 @@ public class CCGrep
     private ITokenizer.Result tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle) throws CCGrepException
     {
         final Optional<ITokenizer.Result> tResult =
-            needleType == Frontend.NEEDLE_CODE? Optional.of(tokenizer.extractFromString(needle))
-          : needleType == Frontend.NEEDLE_FILE? tokenizer.extractFromFile(needle)
-          : needleType == Frontend.NEEDLE_STDIN? tokenizer.extractFromFile("-")
+            needleType == Frontend.NEEDLE_CODE? Optional.of(tokenizer.extractQueryFromString(needle))
+          : needleType == Frontend.NEEDLE_FILE? tokenizer.extractQueryFromFile(needle)
+          : needleType == Frontend.NEEDLE_STDIN? tokenizer.extractQueryFromFile("-")
           : null;
         return tResult.orElseThrow(() -> new CCGrepException("ccgrep: Cannot tokenize the query"));
     }

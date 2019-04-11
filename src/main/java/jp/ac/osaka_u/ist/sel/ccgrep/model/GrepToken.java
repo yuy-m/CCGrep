@@ -11,7 +11,7 @@ public class GrepToken
     private final Language language;
     private final Language.BlindSet blindSetCache;
 
-    private final String text;
+    private String text;
     private final int line;
     private final int column;
     private final int startIndex;
@@ -89,6 +89,11 @@ public class GrepToken
     public String getText()
     {
         return text;
+    }
+
+    public void setText(String text)
+    {
+        this.text = text;
     }
 
     public int getLine()

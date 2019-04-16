@@ -16,14 +16,43 @@ public class Clone
         this.end = end;
     }
 
-    public List<String> getCodeByLine()
+    public List<String> getCodeByLine(boolean isMatchingOnly)
     {
-        return code.getCodeByLine(start.getLine(), end.getLine());
+        return getCodeByLine(isMatchingOnly, countLine());
     }
 
-    public List<String> getCodeByLine(int countLines)
+    public List<String> getCodeByLine(boolean isMatchingOnly, int countLines)
     {
-        return code.getCodeByLine(start.getLine(), start.getLine() + countLines - 1);
+        assert countLines > 0;
+        final List<String> lines = code.getCodeByLine(start.getLine(), start.getLine() + countLines - 1);
+        return isMatchingOnly? removeNonMatching(lines): lines;
+    }
+
+    private List<String> removeNonMatching(List<String> lines)
+    {
+        if(getStartLine() == getEndLine())
+        {
+            lines.set(
+                0,
+                lines.get(0).substring(getStartColumn() - 1, getEndColumn())
+            );
+        }
+        else
+        {
+            lines.set(
+                0,
+                lines.get(0).substring(getStartColumn() - 1)
+            );
+            final int idxEnd = getEndLine() - getStartLine();
+            if(idxEnd < lines.size())
+            {
+                lines.set(
+                    idxEnd,
+                    lines.get(idxEnd).substring(0, getEndColumn())
+                );
+            }
+        }
+        return lines;
     }
 
     public String getFileName()
@@ -59,6 +88,11 @@ public class Clone
     public int getEndTokenIndex()
     {
         return end.getTokenIndex();
+    }
+
+    public int countLine()
+    {
+        return end.getLine() - start.getLine() + 1;
     }
 
     @Override

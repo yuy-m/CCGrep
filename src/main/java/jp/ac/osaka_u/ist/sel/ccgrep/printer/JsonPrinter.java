@@ -112,7 +112,7 @@ public class JsonPrinter extends AbstractPrinter
         }
         else
         {
-            final String str = clone.getCodeByLine().stream()
+            final String str = clone.getCodeByLine(option.isMatchingOnlyEnabled).stream()
                 .map(s -> escaped(s))
                 .collect(Collectors.joining("\\n", header, footer));
             stream.println(str);

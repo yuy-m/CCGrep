@@ -93,6 +93,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - If `n` is given, print line numbers.
    - If `N` is given, print pairs of start and end line number.
    - If `f` is given, print whole code of clones.
+   - If `o` is given, print only the matched parts of a clone code.
    - If `e` is given, comment out the file name and line numbers.
  - `-r,--recursive`         traverse directories recursively.
  - `-s,--stdin-query`       obtain query from standard input. CANNOT give

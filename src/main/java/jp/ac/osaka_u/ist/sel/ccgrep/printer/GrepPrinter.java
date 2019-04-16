@@ -104,7 +104,7 @@ public class GrepPrinter extends AbstractPrinter
 
     private void printCloneWithFullCode(Clone clone)
     {
-        final List<String> lines =  clone.getCodeByLine();
+        final List<String> lines =  clone.getCodeByLine(option.isMatchingOnlyEnabled);
         final StringBuilder sb = new StringBuilder();
         if(option.isFileNameEnabled)
         {
@@ -143,7 +143,8 @@ public class GrepPrinter extends AbstractPrinter
 
     private void printCloneWithOneLine(Clone clone)
     {
-        final List<String> lines =  clone.getCodeByLine(1);
+        String line = clone.getCodeByLine(option.isMatchingOnlyEnabled, 1).get(0);
+
         final StringJoiner sj = new StringJoiner(":", option.isEscapeEnabled? option.language.blockCommentBegin(): "", "");
         if(option.isFileNameEnabled)
         {
@@ -158,8 +159,8 @@ public class GrepPrinter extends AbstractPrinter
             );
         }
         sj.add(option.isEscapeEnabled
-            ? option.language.blockCommentEnd() + lines.get(0)
-            : lines.get(0)
+            ? option.language.blockCommentEnd() + line
+            : line
         );
         stream.println(sj);
     }

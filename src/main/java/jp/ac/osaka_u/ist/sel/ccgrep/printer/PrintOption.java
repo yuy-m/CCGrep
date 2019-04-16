@@ -17,6 +17,7 @@ public class PrintOption
     final boolean isLineEnabled;
     final boolean isLinePairEnabled;
     final boolean isEscapeEnabled;
+    final boolean isMatchingOnlyEnabled;
 
     final boolean isMinimalEnabled;
 
@@ -30,6 +31,7 @@ public class PrintOption
 
         this.isCodeEnabled = opts.contains("f");
         this.isFileNameEnabled = !opts.contains("h");
+        this.isMatchingOnlyEnabled = opts.contains("o");
 
         this.isLineEnabled = opts.contains("n") || opts.contains("N");
         this.isLinePairEnabled = opts.contains("N");

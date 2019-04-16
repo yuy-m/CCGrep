@@ -9,6 +9,7 @@ public class PrintOption
     final Language language;
 
     final boolean isCountOnlyEnabled;
+    final boolean isCountByFileOnlyEnabled;
     final boolean isFileNameOnlyEnabled;
 
     final boolean isCodeEnabled;
@@ -23,7 +24,8 @@ public class PrintOption
     {
         this.language = language;
 
-        this.isCountOnlyEnabled = opts.contains("c");
+        this.isCountOnlyEnabled = opts.contains("C");
+        this.isCountByFileOnlyEnabled = opts.contains("c");
         this.isFileNameOnlyEnabled = opts.contains("l");
 
         this.isCodeEnabled = opts.contains("f");

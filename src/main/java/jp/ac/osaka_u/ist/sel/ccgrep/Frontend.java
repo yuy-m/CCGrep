@@ -221,7 +221,8 @@ public class Frontend
             Option.builder("p")
             .longOpt("print")
             .desc("set printing option c/l/n/f/e like `-p fn`."
-                + " If `c` is given, print ONLY the count of clones."
+                + " If `c` is given, print the count of clones file by file."
+                + " If `C` is given, print ONLY the count of all clones."
                 + " If `l` is given, print ONLY file name per matched files."
                 + " If `h` is given, NOT print file names."
                 + " If `n` is given, print line numbers."

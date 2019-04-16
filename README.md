@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/04/11, written on 2018/12/06*
+*updated on 2019/04/16, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -86,7 +86,8 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
  - `-m,--max-count <NUM>`   stop after NUM clones.
  - `--no-messages`          suppress error messages.
  - `-p,--print <OPTION>`    set printing option c/l/n/f/e like `-p fn`.
-   - If `c` is given, print ONLY the count of clones.
+   - If `c` is given, print the count of clones file by file.
+   - If `C` is given, print ONLY the count of all clones.
    - If `l` is given, print ONLY file name per matched files.
    - If `h` is given, NOT print file names.
    - If `n` is given, print line numbers.

@@ -46,7 +46,8 @@ public class GrepPrinter extends AbstractPrinter
     @Override
     public boolean isFilePrintable(CloneList clonePerFile)
     {
-        return !option.isCountOnlyEnabled && !clonePerFile.isEmpty();
+        return !option.isCountOnlyEnabled
+            && (option.isCountByFileOnlyEnabled || !clonePerFile.isEmpty());
     }
 
     @Override
@@ -56,6 +57,16 @@ public class GrepPrinter extends AbstractPrinter
         {
             printlnFileHeader(clonePerFile);
             stream.println(clonePerFile.getFileName());
+            printlnFileFooter(clonePerFile);
+        }
+        else if(option.isCountByFileOnlyEnabled)
+        {
+            printlnFileHeader(clonePerFile);
+            stream.println(
+                option.isFileNameEnabled
+                    ? clonePerFile.getFileName() + ":" + clonePerFile.size()
+                    : clonePerFile.size()
+            );
             printlnFileFooter(clonePerFile);
         }
         else

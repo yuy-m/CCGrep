@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
-import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.errorLogger;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.*;
 
 
 public class AntlrTokenizer implements ITokenizer
@@ -88,9 +88,9 @@ public class AntlrTokenizer implements ITokenizer
                 + (filename.equals(e.getMessage())? ": Cannot be read": "")
             );
         }
-        catch(StringIndexOutOfBoundsException e)
+        catch(Exception e)
         {
-            errorLogger.println("ccgrep: " + filename + ": Cannot be read");
+            errorLogger.println("ccgrep: " + filename + ": Cannot be read: " + e);
         }
         return Optional.empty();
     }

@@ -437,24 +437,21 @@ public enum Language
     private static List<GrepToken> filterPreprocessor(List<GrepToken> tokens, int directiveType)
     {
         final Iterator<GrepToken> it = tokens.iterator();
-        while(it.hasNext())
+        outer:while(it.hasNext())
         {
             GrepToken token = it.next();
             if(token.getType() == directiveType)
             {
                 if (pElse.matcher(token.getText()).matches())
                 {
-                    it.remove();
-                    token = it.next();
-                    while (token.getType() != directiveType || !pEndif.matcher(token.getText()).matches())
-                    {
+                    do{
                         it.remove();
                         if(!it.hasNext())
                         {
-                            break;
+                            break outer;
                         }
                         token = it.next();
-                    }
+                    } while (token.getType() != directiveType || !pEndif.matcher(token.getText()).matches());
                 }
                 it.remove();
             }
@@ -501,7 +498,6 @@ public enum Language
 
     private static List<GrepToken> filterJavaDollar(List<GrepToken> tokens)
     {
-        final Iterator<GrepToken> it = tokens.iterator();
         for(GrepToken t: tokens)
         {
             t.setText(t.getText().replace("\\$", "$"));

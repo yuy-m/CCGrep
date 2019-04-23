@@ -14,21 +14,21 @@ public class CCGrep
 {
     public static void main(String[] args)
     {
-        final Frontend fe = Frontend.process(args);
-        if(fe == null)
+        final CCGrepOption option = CommandLineFrontend.process(args);
+        if(option == null)
         {
             System.exit(2);
         }
-        else if(fe.isHelpEnabled)
+        else if(option.isHelpEnabled)
         {
             System.exit(0);
         }
-        debugLogger.enable(fe.isLogEnabled);
-        errorLogger.enable(fe.isErrorMessageEnabled);
+        debugLogger.enable(option.isLogEnabled);
+        errorLogger.enable(option.isErrorMessageEnabled);
 
         int returnCode = 2;
         try{
-            final CCGrep ccgrep = new CCGrep(fe);
+            final CCGrep ccgrep = new CCGrep(option);
             returnCode = ccgrep.grep();
         }
         catch(CCGrepException e)
@@ -38,22 +38,22 @@ public class CCGrep
         System.exit(returnCode);
     }
 
-    private final Frontend frontend;
+    private final CCGrepOption option;
 
     private final Language language;
     private final BlindLevel blindLevel;
     private GrepCode needle;
     private final IDetector detector;
 
-    public CCGrep(Frontend frontend) throws CCGrepException
+    public CCGrep(CCGrepOption option) throws CCGrepException
     {
-        this.frontend = frontend;
+        this.option = option;
         this.language = findLanguage();
         debugLogger.println("language: " + language);
 
-        this.blindLevel = BlindLevel.findByName(frontend.blindLevelName)
+        this.blindLevel = BlindLevel.findByName(option.blindLevelName)
             .orElseThrow(() ->
-                new CCGrepException("BlindLevel `" + frontend.blindLevelName + "` is not supported.")
+                new CCGrepException("BlindLevel `" + option.blindLevelName + "` is not supported.")
             );
         debugLogger.println("blind level: " + blindLevel);
 
@@ -63,16 +63,16 @@ public class CCGrep
 
     private Language findLanguage() throws CCGrepException
     {
-        if(frontend.languageName != null)
+        if(option.languageName != null)
         {
-            return Language.findByName(frontend.languageName)
-                .orElseThrow(() -> new CCGrepException("The language " + frontend.languageName + " is not supported."));
+            return Language.findByName(option.languageName)
+                .orElseThrow(() -> new CCGrepException("The language " + option.languageName + " is not supported."));
         }
-        else if(frontend.needleType == Frontend.NEEDLE_FILE)
+        else if(option.needleType == CCGrepOption.NEEDLE_FILE)
         {
-            return Language.findByFileNameWithExtension(frontend.needle)
+            return Language.findByFileNameWithExtension(option.needle)
                 .orElseThrow(() -> new CCGrepException(
-                    "No language found from the extension of " + frontend.needle
+                    "No language found from the extension of " + option.needle
                     + System.lineSeparator() + "specify languge by `-l LANG` or `-f FILE.EXT`"
                 ));
         }
@@ -85,7 +85,7 @@ public class CCGrep
     private IDetector createDetector(ITokenizer tokenizer) throws CCGrepException
     {
         debugLogger.print("tokenizing query...");
-        final ITokenizer.Result nResult = tokenizeNeedle(tokenizer, frontend.needleType, frontend.needle);
+        final ITokenizer.Result nResult = tokenizeNeedle(tokenizer, option.needleType, option.needle);
         this.needle = nResult.code;
         final List<GrepToken> nTokens = nResult.tokens;
 
@@ -93,15 +93,15 @@ public class CCGrep
         nTokens.forEach(debugLogger::println);
 
         debugLogger.println("The query has " + nTokens.size() + " token(s).");
-        return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, frontend.fixedIds, frontend.isFileMatchingEnabled);
+        return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, option.fixedIds, option.isFileMatchingEnabled);
     }
 
     private ITokenizer.Result tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle) throws CCGrepException
     {
         final Optional<ITokenizer.Result> tResult =
-            needleType == Frontend.NEEDLE_CODE? Optional.of(tokenizer.extractQueryFromString(needle))
-          : needleType == Frontend.NEEDLE_FILE? tokenizer.extractQueryFromFile(needle)
-          : needleType == Frontend.NEEDLE_STDIN? tokenizer.extractQueryFromFile("-")
+            needleType == CCGrepOption.NEEDLE_CODE? Optional.of(tokenizer.extractQueryFromString(needle))
+          : needleType == CCGrepOption.NEEDLE_FILE? tokenizer.extractQueryFromFile(needle)
+          : needleType == CCGrepOption.NEEDLE_STDIN? tokenizer.extractQueryFromFile("-")
           : null;
         return tResult.orElseThrow(() -> new CCGrepException("ccgrep: Cannot tokenize the query"));
     }
@@ -111,16 +111,16 @@ public class CCGrep
         debugLogger.println("traversing...");
         final CloneList.Statistic stat =
             new Traverser(
-                detector, frontend.isRecursiveEnabled,
-                frontend.isIgnoreExtensionEnabled? null: language.getExtensions(),
-                frontend.includePatterns, frontend.excludePatterns,
+                detector, option.isRecursiveEnabled,
+                option.isIgnoreExtensionEnabled? null: language.getExtensions(),
+                option.includePatterns, option.excludePatterns,
                 createPrinter()
             )
-            .traverse(frontend.haystackNames, frontend.maxCount);
+            .traverse(option.haystackNames, option.maxCount);
         debugLogger.println("finish.");
         debugLogger.println(stat.countAllClone() + " clone(s) found.");
 
-        if(frontend.isTimeEnabled)
+        if(option.isTimeEnabled)
         {
             System.err.printf("%.3f\n", stat.countTimeAsSeconds());
         }
@@ -130,9 +130,9 @@ public class CCGrep
 
     private IPrinter createPrinter()
     {
-        final PrintOption po = new PrintOption(language, frontend.printOption);
-        return frontend.isJsonEnabled? new JsonPrinter(po, needle, language, blindLevel)
-             : frontend.isXmlEnabled? new XmlPrinter(po, needle, language, blindLevel)
+        final PrintOption po = new PrintOption(language, option.printOption);
+        return option.isJsonEnabled? new JsonPrinter(po, needle, language, blindLevel)
+             : option.isXmlEnabled? new XmlPrinter(po, needle, language, blindLevel)
              : new GrepPrinter(po);
     }
 }

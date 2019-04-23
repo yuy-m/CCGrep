@@ -10,126 +10,98 @@ import org.apache.commons.cli.*;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.Language;
 
-public class Frontend
+public class CommandLineFrontend
 {
-    boolean isHelpEnabled = false;
-    boolean isRecursiveEnabled = false;
-    boolean isLogEnabled = false;
-    boolean isErrorMessageEnabled = true;
-    String blindLevelName = "";
-    String languageName = null;
-    String printOption = "";
-    List<String> fixedIds = Collections.emptyList();
-    boolean isJsonEnabled = false;
-    boolean isXmlEnabled = false;
-    boolean isTimeEnabled = false;
-    int maxCount = -1;
-    boolean isFileMatchingEnabled = false;
-    List<String> includePatterns = Collections.emptyList();
-    List<String> excludePatterns = Collections.emptyList();
-    boolean isIgnoreExtensionEnabled = false;
-
-    String needle = null;
-    int needleType = -1;
-    static final int NEEDLE_CODE = 0;
-    static final int NEEDLE_FILE = 1;
-    static final int NEEDLE_STDIN = 2;
-    List<String> haystackNames;
-
-    public static Frontend process(String[] args)
+    public static CCGrepOption process(String[] args)
     {
-        final Frontend fe = new Frontend();
+        final CCGrepOption option = new CCGrepOption();
         try {
             final CommandLine cl = new DefaultParser().parse(options, args);
 
             if(cl.hasOption("help"))
             {
-                fe.isHelpEnabled = true;
+                option.enableHelp(true);
                 showHelp();
-                return fe;
+                return option;
             }
             if(cl.hasOption("log"))
             {
-                fe.isLogEnabled = true;
+                option.enableLog(true);
             }
             if(cl.hasOption("no-messages"))
             {
-                fe.isErrorMessageEnabled = false;
+                option.enableErrorMessage(false);
             }
             if(cl.hasOption("json"))
             {
-                fe.isJsonEnabled = true;
+                option.enableJson(true);
             }
             if(cl.hasOption("xml"))
             {
-                fe.isXmlEnabled = true;
+                option.enableXml(true);
             }
             if(cl.hasOption("time"))
             {
-                fe.isTimeEnabled = true;
+                option.enableTime(true);
             }
             if(cl.hasOption("recursive"))
             {
-                fe.isRecursiveEnabled = true;
+                option.enableRecursive(true);
             }
             if(cl.hasOption("blind"))
             {
-                fe.blindLevelName = cl.getOptionValue("blind");
+                option.setBlindLevelName(cl.getOptionValue("blind"));
             }
             if(cl.hasOption("max-count"))
             {
-                fe.maxCount = Integer.parseUnsignedInt(cl.getOptionValue("max-count"));
+                option.setMaxCount(Integer.parseUnsignedInt(cl.getOptionValue("max-count")));
             }
             if(cl.hasOption("file-match"))
             {
-                fe.isFileMatchingEnabled = true;
+                option.enableFileMatching(true);
             }
             if(cl.hasOption("language"))
             {
-                fe.languageName = cl.getOptionValue("language");
+                option.setLanguageName(cl.getOptionValue("language"));
             }
             if(cl.hasOption("print"))
             {
-                fe.printOption = cl.getOptionValue("print");
+                option.setPrintOption(cl.getOptionValue("print"));
             }
             if(cl.hasOption("file"))
             {
-                fe.needle = cl.getOptionValue("file");
-                fe.needleType = NEEDLE_FILE;
+                option.setNeedleFileName(cl.getOptionValue("file"));
             }
             if(cl.hasOption("stdin-query"))
             {
-                fe.needle = cl.getOptionValue("stdin-query");
-                fe.needleType = NEEDLE_STDIN;
+                option.setNeedleStdin();
             }
             if(cl.hasOption("e"))
             {
-                fe.needle = String.join(" $| ", cl.getOptionValues("e"));
-                fe.needleType = NEEDLE_CODE;
+                option.setNeedleCode(String.join(" $| ", cl.getOptionValues("e")));
             }
             if(cl.hasOption("fix"))
             {
-                fe.fixedIds = Arrays.asList(cl.getOptionValues("fix"));
+                option.setFixedIds(Arrays.asList(cl.getOptionValues("fix")));
             }
             if(cl.hasOption("include"))
             {
-                fe.includePatterns = Arrays.asList(cl.getOptionValues("include"));
+                option.setIncludePatterns(Arrays.asList(cl.getOptionValues("include")));
             }
             if(cl.hasOption("exclude"))
             {
-                fe.excludePatterns = Arrays.asList(cl.getOptionValues("exclude"));
+                option.setExcludePatterns(Arrays.asList(cl.getOptionValues("exclude")));
             }
             if(cl.hasOption("ignore-extension"))
             {
-                fe.isIgnoreExtensionEnabled = true;
+                option.enableIgnoreExtension(true);
             }
             List<String> restArgs = cl.getArgList();
-            if(fe.needleType == -1)
+            if(option.getNeedleType() == CCGrepOption.NEEDLE_NONE)
             {
                 if(!restArgs.isEmpty())
                 {
-                    fe.needle = restArgs.get(0);
-                    fe.needleType = NEEDLE_CODE;
+                    option.setNeedleCode(restArgs.get(0));
                     restArgs = restArgs.subList(1, restArgs.size());
                 }
                 else
@@ -138,21 +110,14 @@ public class Frontend
                     return null;
                 }
             }
-            fe.haystackNames =
+            option.setHaystackNames(
                 !restArgs.isEmpty()? restArgs
-                : fe.isRecursiveEnabled? Collections.singletonList(".")
-                : Collections.singletonList("-");
-            final long stdinCnt = fe.haystackNames.stream()
-                                    .filter("-"::equals)
-                                    .count();
-            if(stdinCnt >= 2 || (fe.needleType == NEEDLE_STDIN && stdinCnt != 0))
-            {
-                showErrorHelp("Do not use standard input more than once.");
-                return null;
-            }
-            return fe;
+                : option.isRecursiveEnabled? Collections.singletonList(".")
+                : Collections.singletonList("-")
+            );
+            return option;
         }
-        catch(final ParseException e)
+        catch(final ParseException|CCGrepException e)
         {
             showErrorHelp(e.getMessage());
             return null;

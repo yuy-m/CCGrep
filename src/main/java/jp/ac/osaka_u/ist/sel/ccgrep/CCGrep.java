@@ -7,37 +7,11 @@ import java.util.List;
 import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.logic.*;
 import jp.ac.osaka_u.ist.sel.ccgrep.printer.*;
-import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.*;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
 
 
 public class CCGrep
 {
-    public static void main(String[] args)
-    {
-        final CCGrepOption option = CommandLineFrontend.process(args);
-        if(option == null)
-        {
-            System.exit(2);
-        }
-        else if(option.isHelpEnabled)
-        {
-            System.exit(0);
-        }
-        debugLogger.enable(option.isLogEnabled);
-        errorLogger.enable(option.isErrorMessageEnabled);
-
-        int returnCode = 2;
-        try{
-            final CCGrep ccgrep = new CCGrep(option);
-            returnCode = ccgrep.grep();
-        }
-        catch(CCGrepException e)
-        {
-            System.err.println(e.getMessage());
-        }
-        System.exit(returnCode);
-    }
-
     private final CCGrepOption option;
 
     private final Language language;

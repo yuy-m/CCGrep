@@ -150,7 +150,7 @@
               </descriptorRefs>
               <archive>
                 <manifest>
-                  <mainClass>jp.ac.osaka_u.ist.sel.ccgrep.CCGrep</mainClass>
+                  <mainClass>jp.ac.osaka_u.ist.sel.ccgrep.CommandLineFrontend</mainClass>
                 </manifest>
               </archive>
             </configuration>
@@ -162,7 +162,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>jp.ac.osaka_u.ist.sel.ccgrep.CCGrep</mainClass>
+              <mainClass>jp.ac.osaka_u.ist.sel.ccgrep.CommandLineFrontend</mainClass>
             </manifest>
           </archive>
         </configuration>

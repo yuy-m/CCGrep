@@ -9,9 +9,37 @@ import java.util.Collections;
 import org.apache.commons.cli.*;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.Language;
+import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.*;
+
 
 public class CommandLineFrontend
 {
+    public static void main(String[] args)
+    {
+        final CCGrepOption option = CommandLineFrontend.process(args);
+        if(option == null)
+        {
+            System.exit(2);
+        }
+        else if(option.isHelpEnabled)
+        {
+            System.exit(0);
+        }
+        debugLogger.enable(option.isLogEnabled);
+        errorLogger.enable(option.isErrorMessageEnabled);
+
+        int returnCode = 2;
+        try{
+            final CCGrep ccgrep = new CCGrep(option);
+            returnCode = ccgrep.grep();
+        }
+        catch(CCGrepException e)
+        {
+            System.err.println(e.getMessage());
+        }
+        System.exit(returnCode);
+    }
+
     public static CCGrepOption process(String[] args)
     {
         final CCGrepOption option = new CCGrepOption();

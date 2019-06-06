@@ -1,7 +1,7 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
-
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Iterator;
@@ -203,13 +203,17 @@ public enum Language
         return lexerCreater.apply(stream);
     }
 
+    private final HashMap<Integer, BlindSet> blindSetTable = new HashMap<>();
     final BlindSet findBlindSet(GrepToken token)
     {
         final int nt = token.getType();
-        return blindSets.stream()
-            .filter(set -> set.contains(nt))
-            .findFirst()
-            .orElse(BlindSet.OTHERWISE_SET);
+        return blindSetTable.computeIfAbsent(
+            nt,
+            t -> blindSets.stream()
+                .filter(set -> set.contains(nt))
+                .findFirst()
+                .orElse(BlindSet.OTHERWISE_SET)
+        );
     }
 
     public final BlindLevel findBlindLevel(BlindSet needleSet, BlindSet haystackSet, BlindLevel blindLevel)

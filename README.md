@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/04/16, written on 2018/12/06*
+*updated on 2019/06/12, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -143,15 +143,22 @@ Special tokens can be used for detection by regular expression.
 They are regular expression characters with `$` at the head.
  - Grouping `$(`, `$)`
  - Longest Selection `$|`
-   - matches longest. `$(a$|aa$)` matches whole `aa` of `aa`;
+   - matches longest. `$(a$|aa$)` matches whole `aa` of `aa`.
  - First Selection `$/`
-   - matches first. `$(a$/aa$)` matches only first `a` of `aa`;
+   - matches first. `$(a$/aa$)` matches only first `a` of `aa`.
  - 0-or-more `$*`
    - matches longest.
  - 1-or-more `$+`
    - matches longest.
  - 0-or-1 `$?`
  - Any token `$.`
+ - Positive Look Ahead `$=`
+   - looks ahead match.
+     `a $= ;` matches `a ;`, not `a =`, and its result is just `a` (`;` is discarded).
+     With `$(`, `$)`, `$= $( a = b ; $)` looks ahead whole `a = b ;`.
+ - Negative Look Ahead `$!`
+   - looks ahead NOT match.
+     `a $! ;` matches `a =`, not `a ;`.
 
 Note: Identifiers whose first appearance is in selections or repetitions are NOT used for p-match.
 e.g. `a$*a` matches both `abc` and `aaa`. And `aa$*` matches `aaa` but not `abc`.

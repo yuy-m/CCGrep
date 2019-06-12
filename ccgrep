@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DPATH=${DPATH:-`dirname ${0}`}
-JARNAME="ccgrep.jar"
+JARNAME="CCGrep.jar"
 
 if [ "$DPATH" == "/usr/local/bin" ]; then
   DPATH="/usr/local/lib/ccgrep"

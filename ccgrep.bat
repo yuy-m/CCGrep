@@ -1,7 +1,7 @@
 @echo off
 
 set DPATH=%~dp0
-set JARNAME="ccgrep.jar"
+set JARNAME="CCGrep.jar"
 
 if %DPATH% == "C:\Program Files\ccgrep\bin" (
   set DPATH="C:\Program Files\ccgrep"

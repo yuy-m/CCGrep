@@ -1,6 +1,8 @@
 package jp.ac.osaka_u.ist.sel.ccgrep.model;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -23,8 +25,11 @@ public class Clone
 
     public List<String> getCodeByLine(boolean isMatchingOnly, int countLines)
     {
-        assert countLines > 0;
-        final List<String> lines = code.getCodeByLine(start.getLine(), start.getLine() + countLines - 1);
+        if(countLines <= 0)
+        {
+            throw new IllegalArgumentException("countLines <= 0");
+        }
+        final List<String> lines = code.getCodeByLine(getStartLine(), getStartLine() + countLines - 1);
         return isMatchingOnly? removeNonMatching(lines): lines;
     }
 
@@ -32,27 +37,27 @@ public class Clone
     {
         if(getStartLine() == getEndLine())
         {
-            lines.set(
-                0,
+            return Collections.singletonList(
                 lines.get(0).substring(getStartColumn() - 1, getEndColumn())
             );
         }
         else
         {
-            lines.set(
+            final ArrayList<String> newLines = new ArrayList<>(lines);
+            newLines.set(
                 0,
                 lines.get(0).substring(getStartColumn() - 1)
             );
             final int idxEnd = getEndLine() - getStartLine();
             if(idxEnd < lines.size())
             {
-                lines.set(
+                newLines.set(
                     idxEnd,
                     lines.get(idxEnd).substring(0, getEndColumn())
                 );
             }
+            return newLines;
         }
-        return lines;
     }
 
     public String getFileName()

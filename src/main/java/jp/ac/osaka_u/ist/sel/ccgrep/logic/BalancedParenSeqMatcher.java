@@ -14,13 +14,16 @@ public class BalancedParenSeqMatcher extends AbstractParser<GrepToken>
 {
     private static final Map<Language, Inner> innerMemo = new HashMap<>();
 
-    public BalancedParenSeqMatcher(Language language, GrepToken terminator)
+    public BalancedParenSeqMatcher(Language language, IParser<GrepToken> terminator)
     {
         super(
-            repeat(0, sequence(
-                discard(lookahead(not(value(terminator)))),
-                innerMemo.computeIfAbsent(language, Inner::new)
-            ))
+            sequence(
+                repeat(0, sequence(
+                    discard(lookahead(not(terminator))),
+                    innerMemo.computeIfAbsent(language, Inner::new)
+                )),
+                terminator
+            )
         );
     }
 

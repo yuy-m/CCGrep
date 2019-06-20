@@ -25,11 +25,11 @@ enum RegexDetectCompiler implements IParser<GrepToken>
      * OR_FIRST -> SEQ ('$/' SEQ)*
      * SEQ      -> SUFFIX+
      * SUFFIX   -> PREFIX ('$*' / '$+' / '$?')?
-     * PREFIX   -> ('$=' / '$!')? SINGLE
-     * SINGLE   -> SP_SEQ / PAREN / ONE
-     * SP_SEQ   -> '$$' !( '$$' / '$*' / '$+' / '$?' / '$=' / '$!' / '$(' / '$)' / '$|') &.
+     * PREFIX   -> ('$=' / '$!' / '$$')? SINGLE
+     * SINGLE   -> PAREN / ANY / SPID / ONE
      * PAREN    -> '$(' OR_LONG '$)'
-     * ONE      -> !( '$|' / '$)') .
+     * ANY      -> '$.'
+     * ONE      -> .
      */
     ROOT{
         @Override
@@ -153,6 +153,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 either(
                     value(r -> language.isSpecialLookaheadPos(r.front())
                             || language.isSpecialLookaheadNeg(r.front())
+                            || language.isSpecialSeq(r.front())
                     )
                 ),
                 SINGLE
@@ -173,6 +174,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                     final IParser<GrepToken> p1 = rmConstr(p, false);
                     return language.isSpecialLookaheadPos(t)? lookahead(p1)
                          : language.isSpecialLookaheadNeg(t)? lookahead(not(p1))
+                         : language.isSpecialSeq(t) ? new BalancedParenSeqMatcher(language, p)
                          : null;
                 }
             };
@@ -182,40 +184,12 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected IParser<GrepToken> from()
         {
-            return selectFirstEarly(SP_SEQ, PAREN, ONE);
+            return selectFirstEarly(PAREN, ANY, SPID, ONE);
         }
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
         {
             return Function.identity();
-        }
-    },
-    SP_SEQ{
-        @Override
-        protected IParser<GrepToken> from()
-        {
-            return sequence(
-                value(r -> language.isSpecialSeq(r.front())),
-                lookahead(
-                    value(r -> !language.isSpecialSeq(r.front())
-                            && !language.isSpecialMore0(r.front())
-                            && !language.isSpecialMore1(r.front())
-                            && !language.isSpecialEith(r.front())
-                            && !language.isSpecialLookaheadPos(r.front())
-                            && !language.isSpecialLookaheadNeg(r.front())
-                            && !language.isSpecialLpar(r.front())
-                            && !language.isSpecialRpar(r.front())
-                            && !language.isSpecialOrFst(r.front())
-                            && !language.isSpecialOrLng(r.front())
-                            && !language.isSpecialAny(r.front())
-                    )
-                )
-            );
-        }
-        @Override
-        protected Function<INode<GrepToken>, INode<GrepToken>> to()
-        {
-            return n -> new BalancedParenSeqMatcher(language, n.getChild(1).getValue());
         }
     },
     PAREN{
@@ -234,26 +208,40 @@ enum RegexDetectCompiler implements IParser<GrepToken>
             return n -> n.getChild(1);
         }
     },
-    ONE{
+    ANY{
         @Override
         protected IParser<GrepToken> from()
         {
-            return value(r -> !language.isSpecialSeq(r.front())
-                            && !language.isSpecialMore0(r.front())
-                            && !language.isSpecialMore1(r.front())
-                            && !language.isSpecialEith(r.front())
-                            && !language.isSpecialLpar(r.front())
-                            && !language.isSpecialRpar(r.front())
-                            && !language.isSpecialOrFst(r.front())
-                            && !language.isSpecialOrLng(r.front())
-                    );
+            return value(r -> language.isSpecialAny(r.front()));
         }
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
         {
-            return n -> language.isSpecialAny(n.getValue())
-                ? any()
-                : value(n.getValue());
+            return n -> any();
+        }
+    },
+    SPID{
+        @Override
+        protected IParser<GrepToken> from()
+        {
+            return value(r -> language.isSpecialId(r.front()));
+        }
+        @Override
+        protected Function<INode<GrepToken>, INode<GrepToken>> to()
+        {
+            return n -> value(n.getValue());
+        }
+    },
+    ONE{
+        @Override
+        protected IParser<GrepToken> from()
+        {
+            return value(r -> !language.isSomeSpecial(r.front()));
+        }
+        @Override
+        protected Function<INode<GrepToken>, INode<GrepToken>> to()
+        {
+            return n -> value(n.getValue());
         }
     };
 

@@ -335,6 +335,22 @@ public enum Language
         return token.getType() == specialSet.any;
     }
 
+    public final boolean isSomeSpecial(GrepToken token)
+    {
+        return isSpecialId(token)
+            || isSpecialSeq(token)
+            || isSpecialLpar(token)
+            || isSpecialRpar(token)
+            || isSpecialOrFst(token)
+            || isSpecialOrLng(token)
+            || isSpecialMore0(token)
+            || isSpecialMore1(token)
+            || isSpecialEith(token)
+            || isSpecialLookaheadPos(token)
+            || isSpecialLookaheadNeg(token)
+            || isSpecialAny(token);
+    }
+
     private static final class SpecialSet
     {
         final int id;

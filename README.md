@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/06/12, written on 2018/12/06*
+*updated on 2019/06/20, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -131,12 +131,12 @@ Note: You can escape `$` by backslash to use it as just a character (e.g. `\$ab`
 You can also use `--fix` option to fix identifiers.
 
 #### AnyTokenSequence `$$`
-Special token `$$` in a query matches any token sequences (0 or more length) with balanced parentheses/braces/brackets
+Special token `$$` in a query matches any token sequences (0 or more length) that have only balanced parentheses/braces/brackets
  (e.g. `{ set(get()).value(); }`).
 
 Example: `if($$){$$ return v;}` detects if-statements returning value at the end.
 
-Note: `$$` cannot use as first/final token in a query (e.g. `$$ { aaa }`, `{ aaa } $$`).
+You can also use `$#` for any sequence that can contain unbalanced brackets.
 
 #### RegularExpression
 Special tokens can be used for detection by regular expression.

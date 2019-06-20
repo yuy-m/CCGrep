@@ -959,6 +959,7 @@ CCG_SPECIAL_ID
     | '$' DigitSequence
     | '$' StringLiteral;
 CCG_SPECIAL_SEQ : '$$';
+CCG_SPECIAL_ANYSEQ : '$#';
 CCG_SPECIAL_LPAR  : '$(';
 CCG_SPECIAL_RPAR  : '$)';
 CCG_SPECIAL_ORLNG : '$|';

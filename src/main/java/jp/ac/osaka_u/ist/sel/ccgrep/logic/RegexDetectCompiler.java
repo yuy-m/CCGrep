@@ -25,7 +25,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
      * OR_FIRST -> SEQ ('$/' SEQ)*
      * SEQ      -> SUFFIX+
      * SUFFIX   -> PREFIX ('$*' / '$+' / '$?')?
-     * PREFIX   -> ('$=' / '$!' / '$$')? SINGLE
+     * PREFIX   -> ('$=' / '$!' / '$$' / '$#')? SINGLE
      * SINGLE   -> PAREN / ANY / SPID / ONE
      * PAREN    -> '$(' OR_LONG '$)'
      * ANY      -> '$.'
@@ -154,6 +154,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                     value(r -> language.isSpecialLookaheadPos(r.front())
                             || language.isSpecialLookaheadNeg(r.front())
                             || language.isSpecialSeq(r.front())
+                            || language.isSpecialAnySeq(r.front())
                     )
                 ),
                 SINGLE
@@ -175,6 +176,13 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                     return language.isSpecialLookaheadPos(t)? lookahead(p1)
                          : language.isSpecialLookaheadNeg(t)? lookahead(not(p1))
                          : language.isSpecialSeq(t) ? new BalancedParenSeqMatcher(language, p)
+                         : language.isSpecialAnySeq(t) ? sequence(
+                                repeat(0, sequence(
+                                    discard(lookahead(not(p))),
+                                    any()
+                                )),
+                                p
+                            )
                          : null;
                 }
             };

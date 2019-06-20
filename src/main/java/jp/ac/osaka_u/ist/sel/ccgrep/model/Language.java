@@ -285,6 +285,11 @@ public enum Language
         return token.getType() == specialSet.seq;
     }
 
+    public final boolean isSpecialAnySeq(GrepToken token)
+    {
+        return token.getType() == specialSet.anyseq;
+    }
+
     public final boolean isSpecialLpar(GrepToken token)
     {
         return token.getType() == specialSet.lpar;
@@ -339,6 +344,7 @@ public enum Language
     {
         return isSpecialId(token)
             || isSpecialSeq(token)
+            || isSpecialAnySeq(token)
             || isSpecialLpar(token)
             || isSpecialRpar(token)
             || isSpecialOrFst(token)
@@ -355,6 +361,7 @@ public enum Language
     {
         final int id;
         final int seq;
+        final int anyseq;
         final int lpar;
         final int rpar;
         final int orfst;
@@ -370,6 +377,7 @@ public enum Language
 	        try{
                 this.id    = cls.getField("CCG_SPECIAL_ID").getInt(null);
                 this.seq   = cls.getField("CCG_SPECIAL_SEQ").getInt(null);
+                this.anyseq   = cls.getField("CCG_SPECIAL_ANYSEQ").getInt(null);
                 this.lpar  = cls.getField("CCG_SPECIAL_LPAR").getInt(null);
                 this.rpar  = cls.getField("CCG_SPECIAL_RPAR").getInt(null);
                 this.orfst = cls.getField("CCG_SPECIAL_ORFST").getInt(null);

@@ -54,18 +54,36 @@ public class Traverser
             final CloneList.Statistic stat = new CloneList.Statistic();
             stat.startStopwatch();
 
-            final Iterator<String> it = s1.iterator();
-            boolean needDelim = false;
-            while(it.hasNext() && (maxCount < 0 || stat.countAllClone() < maxCount))
+            if(maxCount < 0)
             {
-                final int restCount = maxCount < 0? -1: maxCount - stat.countAllClone();
-                final CloneList cl = detector.detect(it.next(), restCount);
-                if(verbosePrinter.isFilePrintable(cl))
+                final boolean[] needDelim = {false};
+                s1.collect(Collectors.toList()).parallelStream()
+                    .map(fileName -> detector.detect(fileName, -1))
+                    .forEachOrdered(cloneList -> {
+                        if(verbosePrinter.isFilePrintable(cloneList))
+                        {
+                            verbosePrinter.printFileInLoop(cloneList, needDelim[0]);
+                            needDelim[0] = true;
+                        }
+                        stat.add(cloneList);
+                    });
+            }
+            else
+            {
+                final Iterator<String> it = s1.iterator();
+                boolean needDelim = false;
+                while(it.hasNext() && stat.countAllClone() < maxCount)
                 {
-                    verbosePrinter.printFileInLoop(cl, needDelim);
-                    needDelim = true;
+                    final String fileName = it.next();
+                    final int restCount = maxCount - stat.countAllClone();
+                    final CloneList cloneList = detector.detect(fileName, restCount);
+                    if(verbosePrinter.isFilePrintable(cloneList))
+                    {
+                        verbosePrinter.printFileInLoop(cloneList, needDelim);
+                        needDelim = true;
+                    }
+                    stat.add(cloneList);
                 }
-                stat.add(cl);
             }
 
             stat.stopStopwatch();

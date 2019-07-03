@@ -85,6 +85,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - With `-f` option, the language can be inferred from the file extension.
  - `-m,--max-count <NUM>`   stop after NUM clones.
  - `--no-messages`          suppress error messages.
+ - `--no-overlap`            search without overlap.
  - `-p,--print <OPTION>`    set printing option c/l/n/f/e like `-p fn`.
    - If `c` is given, print the count of clones file by file.
    - If `C` is given, print ONLY the count of all clones.

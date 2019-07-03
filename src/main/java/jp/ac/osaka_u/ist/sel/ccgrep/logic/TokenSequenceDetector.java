@@ -2,12 +2,9 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Objects;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.CCGrepException;
 import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.IParser;
@@ -16,17 +13,19 @@ import static jp.ac.osaka_u.ist.sel.ccgrep.util.Logger.debugLogger;
 
 public class TokenSequenceDetector implements IDetector
 {
-    final ITokenizer tokenizer;
+    private final ITokenizer tokenizer;
     private final IParser<GrepToken> matcher;
-    final BlindLevel blindLevel;
-    final boolean isFileMatchingEnabled;
+    private final BlindLevel blindLevel;
+    private final boolean isFileMatchingEnabled;
+    private final boolean isNoOverlapEnabled;
 
     private final HashMap<String, String> defaultIdmap = new HashMap<>();
 
     public TokenSequenceDetector(
         ITokenizer tokenizer, List<GrepToken> needle,
         BlindLevel blindLevel, List<String> fixedIds,
-        boolean isFileMatchingEnabled
+        boolean isFileMatchingEnabled,
+        boolean isNoOverlapEnabled
     ) throws CCGrepException
     {
         this.tokenizer = tokenizer;
@@ -35,6 +34,7 @@ public class TokenSequenceDetector implements IDetector
         this.matcher = RegexDetectCompiler.compile(needle);
         fixedIds.forEach(id -> defaultIdmap.put(id, id));
         this.isFileMatchingEnabled = isFileMatchingEnabled;
+        this.isNoOverlapEnabled = isNoOverlapEnabled;
     }
 
     @Override
@@ -59,12 +59,25 @@ public class TokenSequenceDetector implements IDetector
             }
             else
             {
-                final Stream<Clone> stream = IntStream.range(0, hTokens.size())
-                        .mapToObj(idx -> matchClone(hCode, hTokens, idx))
-                        .filter(Objects::nonNull);
+                clones = new ArrayList<>();
+                for(int idx = 0; idx < hTokens.size() && (maxCount < 0 || clones.size() < maxCount); ++idx)
+                {
+                    final Clone clone = matchClone(hCode, hTokens, idx);
+                    if(clone == null)
+                    {
+                        continue;
+                    }
+                    clones.add(clone);
 
-                clones = (maxCount < 0? stream: stream.limit(maxCount))
-                        .collect(Collectors.toList());
+                    if(!isNoOverlapEnabled)
+                    {
+                        continue;
+                    }
+                    while(idx < hTokens.size() && hTokens.get(idx) != clone.end)
+                    {
+                        ++idx;
+                    }
+                }
             }
             debugLogger.println("(" + clones.size() + " clones)finish.");
             return new CloneList(hCode, clones);

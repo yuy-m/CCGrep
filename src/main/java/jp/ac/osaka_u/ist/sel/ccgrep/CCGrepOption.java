@@ -24,6 +24,7 @@ public final class CCGrepOption
     List<String> excludePatterns = Collections.emptyList();
     boolean isIgnoreExtensionEnabled = false;
     boolean isParallelEnabled = false;
+    boolean isNoOverlapEnabled = false;
 
     String needle = "";
     int needleType = NEEDLE_NONE;
@@ -133,6 +134,11 @@ public final class CCGrepOption
     public void enableParallel(boolean enable)
     {
         this.isParallelEnabled = enable;
+    }
+
+    public void enableNoOverlap(boolean enable)
+    {
+        this.isNoOverlapEnabled = enable;
     }
 
     /** -e=text */

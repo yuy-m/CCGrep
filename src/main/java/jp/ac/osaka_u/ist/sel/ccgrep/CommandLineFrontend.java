@@ -128,6 +128,10 @@ public class CommandLineFrontend
             {
                 option.enableParallel(true);
             }
+            if(cl.hasOption("no-overlap"))
+            {
+                option.enableNoOverlap(true);
+            }
             List<String> restArgs = cl.getArgList();
             if(option.getNeedleType() == CCGrepOption.NEEDLE_NONE)
             {
@@ -350,6 +354,12 @@ public class CommandLineFrontend
             Option.builder()
             .longOpt("parallel")
             .desc("search each file in parallel.")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("no-overlap")
+            .desc("search without overlap.")
             .build()
         );
 }

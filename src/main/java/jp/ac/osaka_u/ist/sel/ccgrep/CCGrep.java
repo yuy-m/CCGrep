@@ -67,7 +67,12 @@ public class CCGrep
         nTokens.forEach(debugLogger::println);
 
         debugLogger.println("The query has " + nTokens.size() + " token(s).");
-        return new TokenSequenceDetector(tokenizer, nTokens, blindLevel, option.fixedIds, option.isFileMatchingEnabled);
+        return new TokenSequenceDetector(
+            tokenizer, nTokens, blindLevel,
+            option.fixedIds,
+            option.isFileMatchingEnabled,
+            option.isNoOverlapEnabled
+        );
     }
 
     private ITokenizer.Result tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle) throws CCGrepException

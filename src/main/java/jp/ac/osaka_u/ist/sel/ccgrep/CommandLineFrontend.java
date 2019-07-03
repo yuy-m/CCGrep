@@ -124,6 +124,10 @@ public class CommandLineFrontend
             {
                 option.enableIgnoreExtension(true);
             }
+            if(cl.hasOption("parallel"))
+            {
+                option.enableParallel(true);
+            }
             List<String> restArgs = cl.getArgList();
             if(option.getNeedleType() == CCGrepOption.NEEDLE_NONE)
             {
@@ -340,6 +344,12 @@ public class CommandLineFrontend
             Option.builder()
             .longOpt("ignore-extension")
             .desc("search all files ignoring file extensions.")
+            .build()
+        )
+        .addOption(
+            Option.builder()
+            .longOpt("parallel")
+            .desc("search each file in parallel.")
             .build()
         );
 }

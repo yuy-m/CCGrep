@@ -88,7 +88,8 @@ public class CCGrep
                 detector, option.isRecursiveEnabled,
                 option.isIgnoreExtensionEnabled? null: language.getExtensions(),
                 option.includePatterns, option.excludePatterns,
-                createPrinter()
+                createPrinter(),
+                option.isParallelEnabled
             )
             .traverse(option.haystackNames, option.maxCount);
         debugLogger.println("finish.");

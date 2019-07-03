@@ -23,6 +23,7 @@ public final class CCGrepOption
     List<String> includePatterns = Collections.emptyList();
     List<String> excludePatterns = Collections.emptyList();
     boolean isIgnoreExtensionEnabled = false;
+    boolean isParallelEnabled = false;
 
     String needle = "";
     int needleType = NEEDLE_NONE;
@@ -126,6 +127,12 @@ public final class CCGrepOption
     public void enableIgnoreExtension(boolean enable)
     {
         this.isIgnoreExtensionEnabled = enable;
+    }
+
+    /** --parallel */
+    public void enableParallel(boolean enable)
+    {
+        this.isParallelEnabled = enable;
     }
 
     /** -e=text */

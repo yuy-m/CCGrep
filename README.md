@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/06/20, written on 2018/12/06*
+*updated on 2019/07/03, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -8,13 +8,13 @@ CCGrep is a easy-to-use code clone detector like *grep* command.
 Many code clone detectors already exist, but their installation, configuration and execution are difficult to use.
 CCGrep is a simple clone detector based on grep command interface and you can use it instantly.
 
-CCGrep can detect Type 1, 2(p-match or not), 3 clones.
+CCGrep can detect Type 1, 2(parameterized-clone or not), 3 clones.
 
 #### Language
  - C (c, h)
  - C++ (cpp, cc, c++, cxx, c, h, hpp)
  - Java (java)
- - Python3 (py) *(experimental)*
+ - Python3 (py)
 
 ## Demo
 Output samples with target [**Apache HTTP Server**](http://httpd.apache.org/).
@@ -95,6 +95,7 @@ Without install, `ccgrep` and `CCGrep.jar` must be in same directory.
    - If `f` is given, print whole code of clones.
    - If `o` is given, print only the matched parts of a clone code.
    - If `e` is given, comment out the file name and line numbers.
+ - `--parallel`        search each file in parallel.
  - `-r,--recursive`         traverse directories recursively.
  - `-s,--stdin-query`       obtain query from standard input. CANNOT give
                         query as code string at once.

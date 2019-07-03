@@ -24,11 +24,13 @@ public class Traverser
     private final Predicate<String> includeMatcher;
     private final Predicate<String> excludeMatcher;
     private final IPrinter verbosePrinter;
+    private final boolean isParallelEnabled;
 
     public Traverser(
         IDetector detector, boolean isRecursiveEnabled,
         List<String> extensions, List<String> includePatterns, List<String> excludePatterns,
-        IPrinter verbosePrinter
+        IPrinter verbosePrinter,
+        boolean isParallelEnabled
     )
     {
         this.detector = detector;
@@ -44,52 +46,56 @@ public class Traverser
                 excludePatterns.stream().anyMatch(
                     p -> FilenameUtils.wildcardMatchOnSystem(fileName, p));
         this.verbosePrinter = verbosePrinter;
+        this.isParallelEnabled = isParallelEnabled;
     }
 
     public CloneList.Statistic traverse(List<String> haystackNames, int maxCount)
     {
-        try(Stream<String> s1 = haystackNames.stream().flatMap(this::fileStream))
-        {
-            verbosePrinter.printHeader();
-            final CloneList.Statistic stat = new CloneList.Statistic();
-            stat.startStopwatch();
+        verbosePrinter.printHeader();
+        final CloneList.Statistic stat = new CloneList.Statistic();
+        stat.startStopwatch();
 
-            if(maxCount < 0)
-            {
-                final boolean[] needDelim = {false};
-                s1.collect(Collectors.toList()).parallelStream()
-                    .map(fileName -> detector.detect(fileName, -1))
-                    .forEachOrdered(cloneList -> {
-                        if(verbosePrinter.isFilePrintable(cloneList))
-                        {
-                            verbosePrinter.printFileInLoop(cloneList, needDelim[0]);
-                            needDelim[0] = true;
-                        }
-                        stat.add(cloneList);
-                    });
-            }
-            else
-            {
-                final Iterator<String> it = s1.iterator();
-                boolean needDelim = false;
-                while(it.hasNext() && stat.countAllClone() < maxCount)
-                {
-                    final String fileName = it.next();
-                    final int restCount = maxCount - stat.countAllClone();
-                    final CloneList cloneList = detector.detect(fileName, restCount);
+        final List<String> fileNames = haystackNames.stream()
+            .flatMap(this::fileStream)
+            .collect(Collectors.toList());
+
+        if(maxCount < 0)
+        {
+            final boolean[] needDelim = {false};
+            (isParallelEnabled? fileNames.parallelStream(): fileNames.stream())
+                .map(fileName -> detector.detect(fileName, -1))
+                .forEachOrdered(cloneList -> {
                     if(verbosePrinter.isFilePrintable(cloneList))
                     {
-                        verbosePrinter.printFileInLoop(cloneList, needDelim);
-                        needDelim = true;
+                        verbosePrinter.printFileInLoop(cloneList, needDelim[0]);
+                        needDelim[0] = true;
                     }
                     stat.add(cloneList);
-                }
-            }
-
-            stat.stopStopwatch();
-            verbosePrinter.printFooter(stat);
-            return stat;
+                });
         }
+        else
+        {
+            boolean needDelim = false;
+            for(String fileName: fileNames)
+            {
+                if(stat.countAllClone() >= maxCount)
+                {
+                    break;
+                }
+                final int restCount = maxCount - stat.countAllClone();
+                final CloneList cloneList = detector.detect(fileName, restCount);
+                if(verbosePrinter.isFilePrintable(cloneList))
+                {
+                    verbosePrinter.printFileInLoop(cloneList, needDelim);
+                    needDelim = true;
+                }
+                stat.add(cloneList);
+            }
+        }
+
+        stat.stopStopwatch();
+        verbosePrinter.printFooter(stat);
+        return stat;
     }
 
     private Stream<String> fileStream(String haystackName)

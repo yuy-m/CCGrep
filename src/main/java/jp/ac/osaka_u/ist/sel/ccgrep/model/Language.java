@@ -12,12 +12,7 @@ import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.*;
 
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.c.CLexer;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.cpp14.CPP14Lexer;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.Java9Lexer;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.java9.Java9QueryLexer;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.Python3Lexer;
-import jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3.Python3Parser;
+import jp.ac.osaka_u.ist.sel.ccgrep.antlr.*;
 
 
 public enum Language

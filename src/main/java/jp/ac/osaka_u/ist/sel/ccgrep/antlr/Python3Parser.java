@@ -1,6 +1,6 @@
 // Generated from Python3.g4 by ANTLR 4.7.2
 
-package jp.ac.osaka_u.ist.sel.ccgrep.antlr.python3;
+package jp.ac.osaka_u.ist.sel.ccgrep.antlr;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;

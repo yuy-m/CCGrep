@@ -257,11 +257,11 @@ enum RegexDetectCompiler implements IParser<GrepToken>
 
     public static void setLanguage(Language language)
     {
-        if(RegexDetectCompiler.language != null)
-        {
-            throw new IllegalStateException("language already set.");
-        }
         RegexDetectCompiler.language = Objects.requireNonNull(language);
+        for(RegexDetectCompiler p: values())
+        {
+            p.parser = null;
+        }
     }
 
     private IParser<GrepToken> parser;

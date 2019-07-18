@@ -41,7 +41,7 @@ public class CCGrepTest
     @Before
     public void before() throws IOException
     {
-        Files.writeString(targetFilePath, target);
+        Files.write(targetFilePath, target.getBytes());
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }

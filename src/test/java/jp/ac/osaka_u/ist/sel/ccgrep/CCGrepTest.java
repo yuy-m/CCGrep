@@ -5,35 +5,37 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 
-import java.io.IOException;
+import java.util.*;
 import java.io.*;
 import java.nio.file.*;
 
 
 public class CCGrepTest
 {
-    private final String targetFileName = "________test_target.java";
-    private final Path targetFilePath = Paths.get(targetFileName);
-    private final String target =
-          "package jp.ac.osaka_u.ist.sel.ccgrep.model;\n"
-        + "import org.antlr.v4.runtime.Token;\n"
-        + "public class GrepToken {\n"
-        + "  @Override public String toString() {\n"
-        + "    return getLine() + \",\" + getColumn() + \",\" + getType() + \",\" + getText();\n"
-        + "  }\n"
-        + "  public String getText() { return text; }\n"
-        + "  public void setText(String text) { this.text = text; }\n"
-        + "  public int getLine() { return line; }\n"
-        + "  public int getColumn() { return column; }\n"
-        + "  private String text;\n"
-        + "  private final int line;\n"
-        + "  private final int column;\n"
-        + "  public GrepToken(Token token) {\n"
-        + "    this.text = token.getText();\n"
-        + "    this.line = token.getLine();\n"
-        + "    this.column = token.getCharPositionInLine() + 1;\n"
-        + "  }\n"
-        + "}\n";
+    private static final String targetFileName = "__ccgrep_test_target.java";
+    private static final Path targetFilePath = Paths.get(targetFileName);
+    private static final List<String> target = Arrays.asList(
+        "package jp.ac.osaka_u.ist.sel.ccgrep.model;",
+        "import org.antlr.v4.runtime.Token;",
+        "public class GrepToken {",
+        "  @Override public String toString() {",
+        "    return getLine() + \",\" + getColumn() + \",\" + getType() + \",\" + getText();",
+        "  }",
+        "  public String getText() { return text; }",
+        "  public void setText(String text) { this.text = text; }",
+        "  public int getLine() { return line; }",
+        "  public int getColumn() { return column; }",
+        "  private String text;",
+        "  private final int line;",
+        "  private final int column;",
+        "  public GrepToken(Token token) {",
+        "    this.text = token.getText();",
+        "    this.line = token.getLine();",
+        "    this.column = token.getCharPositionInLine() + 1;",
+        "  }",
+        "}",
+        ""
+    );
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -41,7 +43,7 @@ public class CCGrepTest
     @Before
     public void before() throws IOException
     {
-        Files.write(targetFilePath, target.getBytes());
+        Files.write(targetFilePath, target);
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
@@ -54,53 +56,92 @@ public class CCGrepTest
         Files.delete(targetFilePath);
     }
 
-    @Test(expected = Test.None.class)
-    public void Test1() throws CCGrepException
+    @Test
+    public void testLinePrint() throws CCGrepException
     {
         final CCGrepOption option = CommandLineFrontend.process(new String[]{
             "T f() { return a; }", targetFileName, "-pn"
         });
         assertThat(option).isNotNull();
-        assertThat(new CCGrep(option).grep())
+        final int[] result = {-1};
+        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+            .doesNotThrowAnyException();
+        assertThat(result[0])
             .isEqualTo(0);
         assertThat(outContent.toString()).isEqualToNormalizingNewlines(
-              targetFileName + ":7:  public String getText() { return text; }\n"
-            + targetFileName + ":9:  public int getLine() { return line; }\n"
-            + targetFileName + ":10:  public int getColumn() { return column; }\n"
+              targetFileName + ":7:" + target.get(6) + "\n"
+            + targetFileName + ":9:" + target.get(8) + "\n"
+            + targetFileName + ":10:" + target.get(9) + "\n"
         );
+        assertThat(errContent.toString()).isEqualToNormalizingNewlines("");
     }
 
-    @Test(expected = Test.None.class)
-    public void Test1m() throws CCGrepException
+    @Test
+    public void testMaxNum() throws CCGrepException
     {
         final CCGrepOption option = CommandLineFrontend.process(new String[]{
             "T f() { return a; }", targetFileName, "-pn", "-m2"
         });
         assertThat(option).isNotNull();
-        assertThat(new CCGrep(option).grep())
+        final int[] result = {-1};
+        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+            .doesNotThrowAnyException();
+        assertThat(result[0])
             .isEqualTo(0);
         assertThat(outContent.toString()).isEqualToNormalizingNewlines(
-              targetFileName + ":7:  public String getText() { return text; }\n"
-            + targetFileName + ":9:  public int getLine() { return line; }\n"
+              targetFileName + ":7:" + target.get(6) + "\n"
+            + targetFileName + ":9:" + target.get(8) + "\n"
         );
+        assertThat(errContent.toString()).isEqualToNormalizingNewlines("");
     }
 
-    @Test(expected = Test.None.class)
-    public void Test2() throws CCGrepException
+    @Test
+    public void testFullPrint() throws CCGrepException
     {
         final CCGrepOption option = CommandLineFrontend.process(new String[]{
             "$( $this.a = $$; $) $+", targetFileName, "-pnf", "--no-overlap"
         });
         assertThat(option).isNotNull();
-        assertThat(new CCGrep(option).grep())
+        final int[] result = {-1};
+        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+            .doesNotThrowAnyException();
+        assertThat(result[0])
             .isEqualTo(0);
         assertThat(outContent.toString()).isEqualToNormalizingNewlines(
               targetFileName + "\n"
-            + "8:  public void setText(String text) { this.text = text; }\n"
+            + "8:" + target.get(7) + "\n"
             + targetFileName + "\n"
-            + "15:    this.text = token.getText();\n"
-            + "16:    this.line = token.getLine();\n"
-            + "17:    this.column = token.getCharPositionInLine() + 1;\n"
+            + "15:" + target.get(14) + "\n"
+            + "16:" + target.get(15) + "\n"
+            + "17:" + target.get(16) + "\n"
         );
+        assertThat(errContent.toString()).isEqualToNormalizingNewlines("");
+    }
+
+    @Test
+    public void testNotFound() throws CCGrepException
+    {
+        final CCGrepOption option = CommandLineFrontend.process(new String[]{
+            "for($$){$$}", targetFileName
+        });
+        assertThat(option).isNotNull();
+        final int[] result = {-1};
+        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+            .doesNotThrowAnyException();
+        assertThat(result[0])
+            .isEqualTo(1);
+        assertThat(outContent.toString()).isEqualToNormalizingNewlines("");
+        assertThat(errContent.toString()).isEqualToNormalizingNewlines("");
+    }
+
+    @Test
+    public void TestQueryError() throws CCGrepException
+    {
+        final CCGrepOption option = CommandLineFrontend.process(new String[]{
+            "$)", targetFileName
+        });
+        assertThat(option).isNotNull();
+        assertThatExceptionOfType(CCGrepException.class)
+            .isThrownBy(() -> new CCGrep(option).grep());
     }
 }

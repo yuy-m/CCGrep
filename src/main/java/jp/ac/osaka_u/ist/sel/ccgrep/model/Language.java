@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.stream.IntStream;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Lexer;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.antlr.*;
 
@@ -167,6 +169,8 @@ public enum Language
         this.blindSets = blindSets;
 
         this.tokenListFilter = tokenListFilter;
+        IntStream.range(0, 256)
+            .forEach(this::findBlindSet);
     }
 
     public static final Language getDefaultLanguage()
@@ -201,11 +205,15 @@ public enum Language
     private final HashMap<Integer, BlindSet> blindSetTable = new HashMap<>();
     final BlindSet findBlindSet(GrepToken token)
     {
-        final int nt = token.getType();
+        return findBlindSet(token.getType());
+    }
+
+    final synchronized BlindSet findBlindSet(int tokenType)
+    {
         return blindSetTable.computeIfAbsent(
-            nt,
+            tokenType,
             t -> blindSets.stream()
-                .filter(set -> set.contains(nt))
+                .filter(set -> set.contains(tokenType))
                 .findFirst()
                 .orElse(BlindSet.OTHERWISE_SET)
         );

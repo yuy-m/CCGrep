@@ -56,9 +56,9 @@ public class AntlrTokenizer implements ITokenizer
 
     private Optional<Result> extractFromFileInner(String filename, boolean isQuery)
     {
+        String code = null;
+        CharStream cs;
         try{
-            String code = null;
-            CharStream cs;
             if(filename.equals("-"))
             {
                 try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in)))
@@ -72,14 +72,6 @@ public class AntlrTokenizer implements ITokenizer
             {
                 cs = CharStreams.fromFileName(filename);
             }
-            return Optional.of(
-                extract(
-                    isQuery
-                        ?getLanguage().createQueryLexer(cs)
-                        : getLanguage().createLexer(cs),
-                    code
-                )
-            );
         }
         catch(IOException e)
         {
@@ -87,12 +79,21 @@ public class AntlrTokenizer implements ITokenizer
                 "ccgrep: " + e.getMessage()
                 + (filename.equals(e.getMessage())? ": Cannot be read": "")
             );
+            return Optional.empty();
         }
         catch(Exception e)
         {
             errorLogger.println("ccgrep: " + filename + ": Cannot be read: " + e);
+            return Optional.empty();
         }
-        return Optional.empty();
+        return Optional.of(
+            extract(
+                isQuery
+                    ?getLanguage().createQueryLexer(cs)
+                    : getLanguage().createLexer(cs),
+                code
+            )
+        );
     }
 
     private Result extract(Lexer lexer, String code)

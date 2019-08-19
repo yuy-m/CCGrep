@@ -13,7 +13,7 @@ public enum BlindLevel
 {
     NONE(
         new String[]{"none"},
-        0,
+        Integer.MAX_VALUE,
         __ -> Collections.emptyMap(),
         (t1, t2, __) -> t1.equals(t2)
     ),

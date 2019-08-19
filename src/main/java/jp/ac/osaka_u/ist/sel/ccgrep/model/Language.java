@@ -33,7 +33,7 @@ public enum Language
         ),
         Arrays.<BlindSet>asList(
             new BlindSet(
-                BlindLevel.NONE,
+                null,
                 CLexer.Char, CLexer.Double, CLexer.Float,
                 CLexer.Int, CLexer.Long, CLexer.Short,
                 CLexer.Void, CLexer.Bool, CLexer.Identifier
@@ -59,7 +59,7 @@ public enum Language
         ),
         Arrays.<BlindSet>asList(
             new BlindSet(
-                BlindLevel.NONE,
+                null,
                 CPP14Lexer.Auto, CPP14Lexer.Bool, CPP14Lexer.Char,
                 CPP14Lexer.Char16, CPP14Lexer.Char32, CPP14Lexer.Double,
                 CPP14Lexer.Float, CPP14Lexer.Int, CPP14Lexer.Long,
@@ -91,7 +91,7 @@ public enum Language
         ),
         Arrays.<BlindSet>asList(
             new BlindSet(
-                BlindLevel.NONE,
+                null,
                 Java9Lexer.BOOLEAN, Java9Lexer.BYTE, Java9Lexer.CHAR,
                 Java9Lexer.DOUBLE, Java9Lexer.FLOAT, Java9Lexer.INT,
                 Java9Lexer.LONG, Java9Lexer.SHORT, Java9Lexer.SUPER,
@@ -123,7 +123,7 @@ public enum Language
             new BracketPair(Python3Parser.INDENT, Python3Parser.DEDENT)
         ),
         Arrays.<BlindSet>asList(
-            new BlindSet(BlindLevel.NONE, Python3Lexer.NAME),
+            new BlindSet(null, Python3Lexer.NAME),
             new BlindSet(
                 BlindLevel.FULL,
                 Python3Lexer.STRING, Python3Lexer.NUMBER, Python3Lexer.INTEGER,
@@ -450,7 +450,7 @@ public enum Language
 
         BlindLevel findBlindLevel(BlindLevel blindLevel)
         {
-            return blindLevel.value >= minLevel.value
+            return minLevel == null || blindLevel.value >= minLevel.value
                     ? blindLevel: minLevel;
         }
     }

@@ -23,9 +23,10 @@ enum RegexDetectCompiler implements IParser<GrepToken>
      * ROOT     -> OR_LONG !.
      * OR_LONG  -> OR_FIRST ('$|' OR_FIRST)*
      * OR_FIRST -> SEQ ('$/' SEQ)*
-     * SEQ      -> SUFFIX+
+     * SEQ      -> ANYSEQ+
+     * ANYSEQ   -> ('$$' / '$#')? SUFFIX
      * SUFFIX   -> PREFIX ('$*' / '$+' / '$?')?
-     * PREFIX   -> ('$=' / '$!' / '$$' / '$#')? SINGLE
+     * PREFIX   -> ('$=' / '$!')? SINGLE
      * SINGLE   -> PAREN / ANY / SPID / ONE
      * PAREN    -> '$(' OR_LONG '$)'
      * ANY      -> '$.'
@@ -100,7 +101,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         @Override
         protected IParser<GrepToken> from()
         {
-            return repeatFullMatch(1, SUFFIX);
+            return repeatFullMatch(1, ANYSEQ);
         }
         @Override
         protected Function<INode<GrepToken>, INode<GrepToken>> to()
@@ -108,6 +109,44 @@ enum RegexDetectCompiler implements IParser<GrepToken>
             return n -> n.countChildren() == 1
                 ? n.getCastedChild(0)
                 : sequence(n.getCastedChildren());
+        }
+    },
+    ANYSEQ{
+        @Override
+        protected IParser<GrepToken> from()
+        {
+            return sequence(
+                either(
+                    value(r -> language.isSpecialSeq(r.front())
+                            || language.isSpecialAnySeq(r.front())
+                    )
+                ),
+                SUFFIX
+            );
+        }
+        @Override
+        protected Function<INode<GrepToken>, INode<GrepToken>> to()
+        {
+            return n -> {
+                final IParser<GrepToken> p = n.getCastedChild(1);
+                if(n.getChild(0).countChildren() == 0)
+                {
+                    return p;
+                }
+                else
+                {
+                    final GrepToken t = n.getChild(0).getChild(0).getValue();
+                    return language.isSpecialSeq(t) ? new BalancedParenSeqMatcher(language, p)
+                         : language.isSpecialAnySeq(t) ? sequence(
+                                repeat(0, sequence(
+                                    discard(lookahead(not(p))),
+                                    any()
+                                )),
+                                p
+                            )
+                         : null;
+                }
+            };
         }
     },
     SUFFIX{
@@ -153,8 +192,6 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 either(
                     value(r -> language.isSpecialLookaheadPos(r.front())
                             || language.isSpecialLookaheadNeg(r.front())
-                            || language.isSpecialSeq(r.front())
-                            || language.isSpecialAnySeq(r.front())
                     )
                 ),
                 SINGLE
@@ -175,14 +212,6 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                     final IParser<GrepToken> p1 = rmConstr(p, false);
                     return language.isSpecialLookaheadPos(t)? lookahead(p1)
                          : language.isSpecialLookaheadNeg(t)? lookahead(not(p1))
-                         : language.isSpecialSeq(t) ? new BalancedParenSeqMatcher(language, p)
-                         : language.isSpecialAnySeq(t) ? sequence(
-                                repeat(0, sequence(
-                                    discard(lookahead(not(p))),
-                                    any()
-                                )),
-                                p
-                            )
                          : null;
                 }
             };

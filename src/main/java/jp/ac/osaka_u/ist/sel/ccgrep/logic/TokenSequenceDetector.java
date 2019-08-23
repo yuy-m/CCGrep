@@ -30,8 +30,7 @@ public class TokenSequenceDetector implements IDetector
     {
         this.tokenizer = tokenizer;
         this.blindLevel = blindLevel;
-        RegexDetectCompiler.setLanguage(tokenizer.getLanguage());
-        this.matcher = RegexDetectCompiler.compile(needle);
+        this.matcher = new RegexDetectCompiler(tokenizer.getLanguage()).compile(needle);
         fixedIds.forEach(id -> defaultIdmap.put(id, id));
         this.isFileMatchingEnabled = isFileMatchingEnabled;
         this.isNoOverlapEnabled = isNoOverlapEnabled;

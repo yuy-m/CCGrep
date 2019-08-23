@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.function.Function;
 
 import jp.ac.osaka_u.ist.sel.ccgrep.model.BlindLevel;
@@ -17,7 +16,7 @@ import jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Range;
 import static jp.ac.osaka_u.ist.sel.ccgrep.miniparser.Parsers.*;
 
 
-enum RegexDetectCompiler implements IParser<GrepToken>
+class RegexDetectCompiler
 {
     /**
      * ROOT     -> OR_LONG !.
@@ -32,7 +31,7 @@ enum RegexDetectCompiler implements IParser<GrepToken>
      * ANY      -> '$.'
      * ONE      -> .
      */
-    ROOT{
+    private final Rule ROOT = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -46,8 +45,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return n -> n.getChild(0);
         }
-    },
-    OR_LONG{
+    };
+    private final Rule OR_LONG = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -71,8 +70,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 return selectLongest(l);
             };
         }
-    },
-    OR_FIRST{
+    };
+    private final Rule OR_FIRST = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -96,8 +95,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 return selectFirst(l);
             };
         }
-    },
-    SEQ{
+    };
+    private final Rule SEQ = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -110,8 +109,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 ? n.getCastedChild(0)
                 : sequence(n.getCastedChildren());
         }
-    },
-    ANYSEQ{
+    };
+    private final Rule ANYSEQ = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -148,8 +147,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 }
             };
         }
-    },
-    SUFFIX{
+    };
+    private final Rule SUFFIX = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -183,8 +182,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 }
             };
         }
-    },
-    PREFIX{
+    };
+    private final Rule PREFIX = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -216,8 +215,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
                 }
             };
         }
-    },
-    SINGLE{
+    };
+    private final Rule SINGLE = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -228,8 +227,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return Function.identity();
         }
-    },
-    PAREN{
+    };
+    private final Rule PAREN = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -244,8 +243,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return n -> n.getChild(1);
         }
-    },
-    ANY{
+    };
+    private final Rule ANY = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -256,8 +255,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return n -> any();
         }
-    },
-    SPID{
+    };
+    private final Rule SPID = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -268,8 +267,8 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         {
             return n -> value(n.getValue());
         }
-    },
-    ONE{
+    };
+    private final Rule ONE = new Rule() {
         @Override
         protected IParser<GrepToken> from()
         {
@@ -282,43 +281,37 @@ enum RegexDetectCompiler implements IParser<GrepToken>
         }
     };
 
-    private static Language language;
-
-    public static void setLanguage(Language language)
+    private abstract class Rule implements IParser<GrepToken>
     {
-        RegexDetectCompiler.language = Objects.requireNonNull(language);
-        for(RegexDetectCompiler p: values())
+        private IParser<GrepToken> parser;
+        private IParser<GrepToken> getParser()
         {
-            p.parser = null;
-        }
-    }
-
-    private IParser<GrepToken> parser;
-    private IParser<GrepToken> getParser()
-    {
-        if(parser == null)
-        {
-            parser = mapper(from(), to());
-        }
-        return parser;
-    }
-
-    @Override
-    public INode<GrepToken> parse(Range<GrepToken> range)
-    {
-        return getParser().parse(range);
-    }
-
-    protected abstract IParser<GrepToken> from();
-    protected abstract Function<INode<GrepToken>, INode<GrepToken>> to();
-
-    static IParser<GrepToken> compile(List<GrepToken> needle) throws CCGrepException
-    {
-        if(language == null)
-        {
-            throw new IllegalStateException("set language before.");
+            if(parser == null)
+            {
+                parser = mapper(from(), to());
+            }
+            return parser;
         }
 
+        @Override
+        public INode<GrepToken> parse(Range<GrepToken> range)
+        {
+            return getParser().parse(range);
+        }
+
+        protected abstract IParser<GrepToken> from();
+        protected abstract Function<INode<GrepToken>, INode<GrepToken>> to();
+    }
+
+    private final Language language;
+
+    RegexDetectCompiler(Language language)
+    {
+        this.language = language;
+    }
+
+    IParser<GrepToken> compile(List<GrepToken> needle) throws CCGrepException
+    {
         final Range<GrepToken> cRange = new Range<GrepToken>(needle);
         final INode<GrepToken> n = ROOT.parse(cRange);
         if(n == null)

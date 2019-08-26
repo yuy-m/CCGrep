@@ -529,10 +529,9 @@ public enum Language
 
     private static List<GrepToken> filterJavaDollar(List<GrepToken> tokens)
     {
-        for(GrepToken t: tokens)
-        {
-            t.setText(t.getText().replace("\\$", "$"));
-        }
+        tokens.stream()
+            .filter(t -> t.getType() == Java9QueryLexer.Identifier || t.getType() == Java9QueryLexer.CCG_SPECIAL_ID)
+            .forEach(t -> t.setText(t.getText().replace("\\$", "$")));
         return tokens;
     }
 }

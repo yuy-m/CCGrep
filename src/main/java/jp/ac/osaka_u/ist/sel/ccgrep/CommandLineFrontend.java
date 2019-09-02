@@ -93,12 +93,12 @@ public class CommandLineFrontend
         nTokens.forEach(debugLogger::println);
 
         debugLogger.println("The query has " + nTokens.size() + " token(s).");
-        return new TokenSequenceDetector(
-            tokenizer, nTokens, blindLevel,
-            option.fixedIds,
-            option.isFileMatchingEnabled,
-            option.isNoOverlapEnabled
-        );
+        final TokenSequenceDetector detector = new TokenSequenceDetector(tokenizer, nTokens);
+        detector.setBlindLevel(blindLevel);
+        detector.setFixedIds(option.fixedIds);
+        detector.enableFileMatching(option.isFileMatchingEnabled);
+        detector.enableNoOverlap(option.isNoOverlapEnabled);
+        return detector;
     }
 
     private ITokenizer.Result tokenizeQuery(ITokenizer tokenizer, int queryType, String query) throws CCGrepException

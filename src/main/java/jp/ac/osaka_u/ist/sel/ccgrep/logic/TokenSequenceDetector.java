@@ -2,8 +2,10 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -16,25 +18,36 @@ public class TokenSequenceDetector implements IDetector
 {
     private final ITokenizer tokenizer;
     private final IParser<GrepToken> matcher;
-    private final BlindLevel blindLevel;
-    private final boolean isFileMatchingEnabled;
-    private final boolean isNoOverlapEnabled;
+    private BlindLevel blindLevel = BlindLevel.CONSISTENT;
+    private boolean isFileMatchingEnabled = false;
+    private boolean isNoOverlapEnabled = false;
 
     private final HashMap<String, String> defaultIdmap = new HashMap<>();
 
-    public TokenSequenceDetector(
-        ITokenizer tokenizer, List<GrepToken> query,
-        BlindLevel blindLevel, List<String> fixedIds,
-        boolean isFileMatchingEnabled,
-        boolean isNoOverlapEnabled
-    ) throws CCGrepException
+    public TokenSequenceDetector(ITokenizer tokenizer, List<GrepToken> query) throws CCGrepException
     {
         this.tokenizer = tokenizer;
-        this.blindLevel = blindLevel;
         this.matcher = new RegexDetectCompiler(tokenizer.getLanguage()).compile(query);
+    }
+
+    public void setBlindLevel(BlindLevel blindLevel)
+    {
+        this.blindLevel = Objects.requireNonNull(blindLevel);
+    }
+
+    public void setFixedIds(Collection<String> fixedIds)
+    {
+        defaultIdmap.clear();
         fixedIds.forEach(id -> defaultIdmap.put(id, id));
-        this.isFileMatchingEnabled = isFileMatchingEnabled;
-        this.isNoOverlapEnabled = isNoOverlapEnabled;
+    }
+
+    public void enableFileMatching(boolean enable)
+    {
+        this.isFileMatchingEnabled = enable;
+    }
+    public void enableNoOverlap(boolean enable)
+    {
+        this.isNoOverlapEnabled = enable;
     }
 
     @Override

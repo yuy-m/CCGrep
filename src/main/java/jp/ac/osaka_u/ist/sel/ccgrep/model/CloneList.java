@@ -52,6 +52,11 @@ public class CloneList
         return clones.stream();
     }
 
+    public Clone get(int index)
+    {
+        return clones.get(index);
+    }
+
     public void forEach(Consumer<Clone> action)
     {
         clones.forEach(action);

@@ -6,9 +6,14 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
 public interface IDetector
 {
-    CloneList detect(String targetFileName, int maxCount);
-    default CloneList detect(String targetFileName)
+    CloneList detectString(String targetCode, int maxCount);
+    default CloneList detectString(String targetCode)
     {
-        return detect(targetFileName, -1);
+        return detectFile(targetCode, -1);
+    }
+    CloneList detectFile(String targetFileName, int maxCount);
+    default CloneList detectFile(String targetFileName)
+    {
+        return detectFile(targetFileName, -1);
     }
 }

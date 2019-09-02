@@ -63,7 +63,7 @@ public class Traverser
         {
             final boolean[] needDelim = {false};
             (isParallelEnabled? fileNames.parallelStream(): fileNames.stream())
-                .map(fileName -> detector.detect(fileName, -1))
+                .map(fileName -> detector.detectFile(fileName, -1))
                 .forEachOrdered(cloneList -> {
                     if(verbosePrinter.isFilePrintable(cloneList))
                     {
@@ -83,7 +83,7 @@ public class Traverser
                     break;
                 }
                 final int restCount = maxCount - stat.countAllClone();
-                final CloneList cloneList = detector.detect(fileName, restCount);
+                final CloneList cloneList = detector.detectFile(fileName, restCount);
                 if(verbosePrinter.isFilePrintable(cloneList))
                 {
                     verbosePrinter.printFileInLoop(cloneList, needDelim);

@@ -34,27 +34,36 @@ public class AntlrTokenizer implements ITokenizer
     }
 
     @Override
-    public Result extractQueryFromString(String code)
+    public Result tokenizeFromString(String code)
     {
-        return extract(
+        return tokenize(
+            getLanguage().createLexer(CharStreams.fromString(code, "<string>")),
+            code
+        );
+    }
+
+    @Override
+    public Result tokenizeQueryFromString(String code)
+    {
+        return tokenize(
             getLanguage().createQueryLexer(CharStreams.fromString(code, "<string>")),
             code
         );
     }
 
     @Override
-    public Optional<Result> extractFromFile(String filename)
+    public Optional<Result> tokenizeFromFile(String filename)
     {
-        return extractFromFileInner(filename, false);
+        return tokenizeFromFileImpl(filename, false);
     }
 
     @Override
-    public Optional<Result> extractQueryFromFile(String filename)
+    public Optional<Result> tokenizeQueryFromFile(String filename)
     {
-        return extractFromFileInner(filename, true);
+        return tokenizeFromFileImpl(filename, true);
     }
 
-    private Optional<Result> extractFromFileInner(String filename, boolean isQuery)
+    private Optional<Result> tokenizeFromFileImpl(String filename, boolean isQuery)
     {
         String code = null;
         CharStream cs;
@@ -87,7 +96,7 @@ public class AntlrTokenizer implements ITokenizer
             return Optional.empty();
         }
         return Optional.of(
-            extract(
+            tokenize(
                 isQuery
                     ?getLanguage().createQueryLexer(cs)
                     : getLanguage().createLexer(cs),
@@ -96,7 +105,7 @@ public class AntlrTokenizer implements ITokenizer
         );
     }
 
-    private Result extract(Lexer lexer, String code)
+    private Result tokenize(Lexer lexer, String code)
     {
         lexer.removeErrorListeners();
         final CommonTokenStream cts = new CommonTokenStream(lexer);

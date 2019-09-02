@@ -9,9 +9,10 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 public interface ITokenizer
 {
     Language getLanguage();
-    Result extractQueryFromString(String code);
-    Optional<Result> extractFromFile(String filename);
-    Optional<Result> extractQueryFromFile(String filename);
+    Result tokenizeFromString(String code);
+    Result tokenizeQueryFromString(String code);
+    Optional<Result> tokenizeFromFile(String filename);
+    Optional<Result> tokenizeQueryFromFile(String filename);
 
     public static class Result
     {

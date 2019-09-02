@@ -2,6 +2,7 @@ package jp.ac.osaka_u.ist.sel.ccgrep.logic;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,51 +38,65 @@ public class TokenSequenceDetector implements IDetector
     }
 
     @Override
-    public CloneList detect(final String targetFileName, int maxCount)
+    public CloneList detectString(String targetCode, int maxCount)
     {
+        return detectImpl(targetCode, maxCount, false);
+    }
+
+    @Override
+    public CloneList detectFile(final String targetFileName, int maxCount)
+    {
+        return detectImpl(targetFileName, maxCount, true);
+    }
+
+    private CloneList detectImpl(final String target, int maxCount, boolean isFromFile)
+    {
+        final String targetFileName = isFromFile? target: "<string>";
         debugLogger.print(" tokenizing " + targetFileName + "...");
-        return tokenizer.extractFromFile(targetFileName).map(targetResult -> {
-            final List<GrepToken> hTokens = targetResult.tokens;
-            final GrepCode hCode = targetResult.code;
+        return (isFromFile? tokenizer.tokenizeFromFile(target)
+                          : Optional.of(tokenizer.tokenizeFromString(target)))
+            .map(targetResult -> match(targetResult.tokens, targetResult.code, maxCount))
+            .orElseGet(() -> CloneList.empty(targetFileName));
+    }
 
-            debugLogger.print("(" + hTokens.size() + " tokens),detecting...");
+    private CloneList match(List<GrepToken> hTokens, GrepCode hCode, int maxCount)
+    {
+        debugLogger.print("(" + hTokens.size() + " tokens),detecting...");
 
-            List<Clone> clones;
-            if(isFileMatchingEnabled)
+        List<Clone> clones;
+        if(isFileMatchingEnabled)
+        {
+            final Clone clone = matchClone(hCode, hTokens, 0);
+            clones = clone != null
+                && clone.getStartTokenIndex() == hTokens.get(0).getTokenIndex()
+                && clone.getEndTokenIndex() == hTokens.get(hTokens.size() - 1).getTokenIndex()
+                ? Collections.singletonList(clone)
+                : Collections.emptyList();
+        }
+        else
+        {
+            clones = new ArrayList<>();
+            for(int idx = 0; idx < hTokens.size() && (maxCount < 0 || clones.size() < maxCount); ++idx)
             {
-                final Clone clone = matchClone(hCode, hTokens, 0);
-                clones = clone != null
-                    && clone.getStartTokenIndex() == hTokens.get(0).getTokenIndex()
-                    && clone.getEndTokenIndex() == hTokens.get(hTokens.size() - 1).getTokenIndex()
-                    ? Collections.singletonList(clone)
-                    : Collections.emptyList();
-            }
-            else
-            {
-                clones = new ArrayList<>();
-                for(int idx = 0; idx < hTokens.size() && (maxCount < 0 || clones.size() < maxCount); ++idx)
+                final Clone clone = matchClone(hCode, hTokens, idx);
+                if(clone == null)
                 {
-                    final Clone clone = matchClone(hCode, hTokens, idx);
-                    if(clone == null)
-                    {
-                        continue;
-                    }
-                    clones.add(clone);
+                    continue;
+                }
+                clones.add(clone);
 
-                    if(!isNoOverlapEnabled)
-                    {
-                        continue;
-                    }
-                    while(idx < hTokens.size() && hTokens.get(idx) != clone.end)
-                    {
-                        ++idx;
-                    }
+                if(!isNoOverlapEnabled)
+                {
+                    continue;
+                }
+                while(idx < hTokens.size() && hTokens.get(idx) != clone.end)
+                {
+                    ++idx;
                 }
             }
-            debugLogger.println("(" + clones.size() + " clones)finish.");
-            return new CloneList(hCode, clones);
-        })
-        .orElseGet(() -> CloneList.empty(targetFileName));
+        }
+        debugLogger.println("(" + clones.size() + " clones)finish.");
+        return new CloneList(hCode, clones);
     }
 
     private Clone matchClone(GrepCode code, List<GrepToken> target, int index)

@@ -78,9 +78,9 @@ public class CCGrep
     private ITokenizer.Result tokenizeQuery(ITokenizer tokenizer, int queryType, String query) throws CCGrepException
     {
         final Optional<ITokenizer.Result> tResult =
-            queryType == CCGrepOption.QUERY_CODE? Optional.of(tokenizer.extractQueryFromString(query))
-          : queryType == CCGrepOption.QUERY_FILE? tokenizer.extractQueryFromFile(query)
-          : queryType == CCGrepOption.QUERY_STDIN? tokenizer.extractQueryFromFile("-")
+            queryType == CCGrepOption.QUERY_CODE? Optional.of(tokenizer.tokenizeQueryFromString(query))
+          : queryType == CCGrepOption.QUERY_FILE? tokenizer.tokenizeQueryFromFile(query)
+          : queryType == CCGrepOption.QUERY_STDIN? tokenizer.tokenizeQueryFromFile("-")
           : null;
         return tResult.orElseThrow(() -> new CCGrepException("ccgrep: Cannot tokenize the query"));
     }

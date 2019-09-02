@@ -22,7 +22,7 @@ public class TokenSequenceDetector implements IDetector
     private final HashMap<String, String> defaultIdmap = new HashMap<>();
 
     public TokenSequenceDetector(
-        ITokenizer tokenizer, List<GrepToken> needle,
+        ITokenizer tokenizer, List<GrepToken> query,
         BlindLevel blindLevel, List<String> fixedIds,
         boolean isFileMatchingEnabled,
         boolean isNoOverlapEnabled
@@ -30,19 +30,19 @@ public class TokenSequenceDetector implements IDetector
     {
         this.tokenizer = tokenizer;
         this.blindLevel = blindLevel;
-        this.matcher = new RegexDetectCompiler(tokenizer.getLanguage()).compile(needle);
+        this.matcher = new RegexDetectCompiler(tokenizer.getLanguage()).compile(query);
         fixedIds.forEach(id -> defaultIdmap.put(id, id));
         this.isFileMatchingEnabled = isFileMatchingEnabled;
         this.isNoOverlapEnabled = isNoOverlapEnabled;
     }
 
     @Override
-    public CloneList detect(final String haystackFileName, int maxCount)
+    public CloneList detect(final String targetFileName, int maxCount)
     {
-        debugLogger.print(" tokenizing " + haystackFileName + "...");
-        return tokenizer.extractFromFile(haystackFileName).map(haystackResult -> {
-            final List<GrepToken> hTokens = haystackResult.tokens;
-            final GrepCode hCode = haystackResult.code;
+        debugLogger.print(" tokenizing " + targetFileName + "...");
+        return tokenizer.extractFromFile(targetFileName).map(targetResult -> {
+            final List<GrepToken> hTokens = targetResult.tokens;
+            final GrepCode hCode = targetResult.code;
 
             debugLogger.print("(" + hTokens.size() + " tokens),detecting...");
 
@@ -81,13 +81,13 @@ public class TokenSequenceDetector implements IDetector
             debugLogger.println("(" + clones.size() + " clones)finish.");
             return new CloneList(hCode, clones);
         })
-        .orElseGet(() -> CloneList.empty(haystackFileName));
+        .orElseGet(() -> CloneList.empty(targetFileName));
     }
 
-    private Clone matchClone(GrepCode code, List<GrepToken> haystack, int index)
+    private Clone matchClone(GrepCode code, List<GrepToken> target, int index)
     {
         final Map<String, String> idmap = blindLevel.createConstraint(defaultIdmap);
-        final GrepRange range = new GrepRange(haystack, index, blindLevel, idmap);
+        final GrepRange range = new GrepRange(target, index, blindLevel, idmap);
         return matcher.matches(range)
             ? new Clone(code, range.getMatchedFirst(), range.getMatchedLast())
             : null;

@@ -49,13 +49,13 @@ public class Traverser
         this.isParallelEnabled = isParallelEnabled;
     }
 
-    public CloneList.Statistic traverse(List<String> haystackNames, int maxCount)
+    public CloneList.Statistic traverse(List<String> targetNames, int maxCount)
     {
         verbosePrinter.printHeader();
         final CloneList.Statistic stat = new CloneList.Statistic();
         stat.startStopwatch();
 
-        final List<String> fileNames = haystackNames.stream()
+        final List<String> fileNames = targetNames.stream()
             .flatMap(this::fileStream)
             .collect(Collectors.toList());
 
@@ -98,41 +98,41 @@ public class Traverser
         return stat;
     }
 
-    private Stream<String> fileStream(String haystackName)
+    private Stream<String> fileStream(String targetName)
     {
-        if("-".equals(haystackName))
+        if("-".equals(targetName))
         {
-            return Stream.of(haystackName);
+            return Stream.of(targetName);
         }
-        Path haystackPath;
+        Path targetPath;
         try{
-            haystackPath = Paths.get(haystackName);
+            targetPath = Paths.get(targetName);
         }
         catch(InvalidPathException e)
         {
-            errorLogger.println("ccgrep: " + haystackName + ": No such file or directory");
+            errorLogger.println("ccgrep: " + targetName + ": No such file or directory");
             return Stream.empty();
         }
-        if(!Files.isReadable(haystackPath))
+        if(!Files.isReadable(targetPath))
         {
-            errorLogger.println("ccgrep: " + haystackName + ": Cannot be read");
+            errorLogger.println("ccgrep: " + targetName + ": Cannot be read");
             return Stream.empty();
         }
-        else if(!Files.isDirectory(haystackPath))
+        else if(!Files.isDirectory(targetPath))
         {
-            final String name = FilenameUtils.getName(haystackName);
-            if( ( includeMatcher.test(haystackName) ||  includeMatcher.test(name))
-             && (!excludeMatcher.test(haystackName) && !excludeMatcher.test(name))
-             && (extensionMatcher.test(haystackName) || isTextFile(haystackPath))
+            final String name = FilenameUtils.getName(targetName);
+            if( ( includeMatcher.test(targetName) ||  includeMatcher.test(name))
+             && (!excludeMatcher.test(targetName) && !excludeMatcher.test(name))
+             && (extensionMatcher.test(targetName) || isTextFile(targetPath))
             )
             {
-                return Stream.of(haystackName);
+                return Stream.of(targetName);
             }
             return Stream.empty();
         }
         else if(isRecursiveEnabled)
         {
-            return list(haystackPath)
+            return list(targetPath)
                 .filter(p -> extensionMatcher.test(p.toString()))
                 .filter(p -> !excludeMatcher.test(FilenameUtils.getName(p.toString())))
                 .filter(p -> includeMatcher.test(FilenameUtils.getName(p.toString())))
@@ -151,7 +151,7 @@ public class Traverser
         }
         else
         {
-            errorLogger.println("ccgrep: " + haystackName + ": Is a directory");
+            errorLogger.println("ccgrep: " + targetName + ": Is a directory");
             return Stream.empty();
         }
     }

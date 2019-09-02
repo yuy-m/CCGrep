@@ -16,7 +16,7 @@ public class CCGrep
 
     private final Language language;
     private final BlindLevel blindLevel;
-    private GrepCode needle;
+    private GrepCode query;
     private final IDetector detector;
 
     public CCGrep(CCGrepOption option) throws CCGrepException
@@ -42,11 +42,11 @@ public class CCGrep
             return Language.findByName(option.languageName)
                 .orElseThrow(() -> new CCGrepException("The language " + option.languageName + " is not supported."));
         }
-        else if(option.needleType == CCGrepOption.NEEDLE_FILE)
+        else if(option.queryType == CCGrepOption.QUERY_FILE)
         {
-            return Language.findByFileNameWithExtension(option.needle)
+            return Language.findByFileNameWithExtension(option.query)
                 .orElseThrow(() -> new CCGrepException(
-                    "No language found from the extension of " + option.needle
+                    "No language found from the extension of " + option.query
                     + System.lineSeparator() + "specify languge by `-l LANG` or `-f FILE.EXT`"
                 ));
         }
@@ -59,8 +59,8 @@ public class CCGrep
     private IDetector createDetector(ITokenizer tokenizer) throws CCGrepException
     {
         debugLogger.print("tokenizing query...");
-        final ITokenizer.Result nResult = tokenizeNeedle(tokenizer, option.needleType, option.needle);
-        this.needle = nResult.code;
+        final ITokenizer.Result nResult = tokenizeQuery(tokenizer, option.queryType, option.query);
+        this.query = nResult.code;
         final List<GrepToken> nTokens = nResult.tokens;
 
         debugLogger.println("finish.");
@@ -75,12 +75,12 @@ public class CCGrep
         );
     }
 
-    private ITokenizer.Result tokenizeNeedle(ITokenizer tokenizer, int needleType, String needle) throws CCGrepException
+    private ITokenizer.Result tokenizeQuery(ITokenizer tokenizer, int queryType, String query) throws CCGrepException
     {
         final Optional<ITokenizer.Result> tResult =
-            needleType == CCGrepOption.NEEDLE_CODE? Optional.of(tokenizer.extractQueryFromString(needle))
-          : needleType == CCGrepOption.NEEDLE_FILE? tokenizer.extractQueryFromFile(needle)
-          : needleType == CCGrepOption.NEEDLE_STDIN? tokenizer.extractQueryFromFile("-")
+            queryType == CCGrepOption.QUERY_CODE? Optional.of(tokenizer.extractQueryFromString(query))
+          : queryType == CCGrepOption.QUERY_FILE? tokenizer.extractQueryFromFile(query)
+          : queryType == CCGrepOption.QUERY_STDIN? tokenizer.extractQueryFromFile("-")
           : null;
         return tResult.orElseThrow(() -> new CCGrepException("ccgrep: Cannot tokenize the query"));
     }
@@ -96,7 +96,7 @@ public class CCGrep
                 createPrinter(),
                 option.isParallelEnabled
             )
-            .traverse(option.haystackNames, option.maxCount);
+            .traverse(option.targetNames, option.maxCount);
         debugLogger.println("finish.");
         debugLogger.println(stat.countAllClone() + " clone(s) found.");
 
@@ -111,8 +111,8 @@ public class CCGrep
     private IPrinter createPrinter()
     {
         final PrintOption po = new PrintOption(language, option.printOption);
-        return option.isJsonEnabled? new JsonPrinter(po, needle, language, blindLevel)
-             : option.isXmlEnabled? new XmlPrinter(po, needle, language, blindLevel)
+        return option.isJsonEnabled? new JsonPrinter(po, query, language, blindLevel)
+             : option.isXmlEnabled? new XmlPrinter(po, query, language, blindLevel)
              : new GrepPrinter(po);
     }
 }

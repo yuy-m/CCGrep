@@ -10,14 +10,14 @@ import jp.ac.osaka_u.ist.sel.ccgrep.model.*;
 
 public class JsonPrinter extends AbstractPrinter
 {
-    final GrepCode needle;
+    final GrepCode query;
     final Language language;
     final BlindLevel blindLevel;
 
-    public JsonPrinter(PrintOption option, GrepCode needle, Language language, BlindLevel blindLevel)
+    public JsonPrinter(PrintOption option, GrepCode query, Language language, BlindLevel blindLevel)
     {
         super(option);
-        this.needle = needle;
+        this.query = query;
         this.language = language;
         this.blindLevel = blindLevel;
     }
@@ -25,7 +25,7 @@ public class JsonPrinter extends AbstractPrinter
     @Override
     public void printHeader()
     {
-        final String qtext = needle.getCodeByLine().stream()
+        final String qtext = query.getCodeByLine().stream()
             .map(s -> escaped(s))
             .collect(Collectors.joining("\\n"));
         stream.println(

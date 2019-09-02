@@ -219,10 +219,10 @@ public enum Language
         );
     }
 
-    public final BlindLevel findBlindLevel(BlindSet needleSet, BlindSet haystackSet, BlindLevel blindLevel)
+    public final BlindLevel findBlindLevel(BlindSet querySet, BlindSet targetSet, BlindLevel blindLevel)
     {
-        return needleSet == haystackSet
-            ? needleSet.findBlindLevel(blindLevel)
+        return querySet == targetSet
+            ? querySet.findBlindLevel(blindLevel)
             : BlindLevel.ONLY_TOKEN_TYPE;
     }
 

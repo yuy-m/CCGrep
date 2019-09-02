@@ -26,13 +26,13 @@ public final class CCGrepOption
     boolean isParallelEnabled = false;
     boolean isNoOverlapEnabled = false;
 
-    String needle = "";
-    int needleType = NEEDLE_NONE;
-    public static final int NEEDLE_NONE = -1;
-    public static final int NEEDLE_CODE = 0;
-    public static final int NEEDLE_FILE = 1;
-    public static final int NEEDLE_STDIN = 2;
-    List<String> haystackNames = Collections.emptyList();
+    String query = "";
+    int queryType = QUERY_NONE;
+    public static final int QUERY_NONE = -1;
+    public static final int QUERY_CODE = 0;
+    public static final int QUERY_FILE = 1;
+    public static final int QUERY_STDIN = 2;
+    List<String> targetNames = Collections.emptyList();
 
     /** --help */
     public void enableHelp(boolean enable)
@@ -142,39 +142,39 @@ public final class CCGrepOption
     }
 
     /** -e=text */
-    public void setNeedleCode(String text)
+    public void setQueryCode(String text)
     {
-        this.needle = requireNonNullElse(text, "");
-        this.needleType = NEEDLE_CODE;
+        this.query = requireNonNullElse(text, "");
+        this.queryType = QUERY_CODE;
     }
 
     /** --file=fileName */
-    public void setNeedleFileName(String fileName)
+    public void setQueryFileName(String fileName)
     {
-        this.needle = requireNonNullElse(fileName, "");
-        this.needleType = NEEDLE_FILE;
+        this.query = requireNonNullElse(fileName, "");
+        this.queryType = QUERY_FILE;
     }
 
     /** --stdin-query */
-    public void setNeedleStdin()
+    public void setQueryStdin()
     {
-        this.needle = null;
-        this.needleType = NEEDLE_STDIN;
+        this.query = null;
+        this.queryType = QUERY_STDIN;
     }
 
-    public int getNeedleType()
+    public int getQueryType()
     {
-        return this.needleType;
+        return this.queryType;
     }
 
     /** File names that are searched, '-' is STDIN */
-    public void setHaystackNames(List<String> haystackNames) throws CCGrepException
+    public void setTargetNames(List<String> targetNames) throws CCGrepException
     {
-        this.haystackNames = requireNonNullElse(haystackNames, Collections.emptyList());
-        final long stdinCnt = this.haystackNames.stream()
+        this.targetNames = requireNonNullElse(targetNames, Collections.emptyList());
+        final long stdinCnt = this.targetNames.stream()
             .filter("-"::equals)
             .count();
-        if(this.needleType == NEEDLE_STDIN && stdinCnt != 0)
+        if(this.queryType == QUERY_STDIN && stdinCnt != 0)
         {
             throw new CCGrepException("Standard input cannot be used for both query and target.");
         }

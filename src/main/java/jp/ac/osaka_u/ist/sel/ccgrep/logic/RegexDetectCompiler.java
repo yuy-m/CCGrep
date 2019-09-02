@@ -310,9 +310,9 @@ class RegexDetectCompiler
         this.language = language;
     }
 
-    IParser<GrepToken> compile(List<GrepToken> needle) throws CCGrepException
+    IParser<GrepToken> compile(List<GrepToken> query) throws CCGrepException
     {
-        final Range<GrepToken> cRange = new Range<GrepToken>(needle);
+        final Range<GrepToken> cRange = new Range<GrepToken>(query);
         final INode<GrepToken> n = ROOT.parse(cRange);
         if(n == null)
         {

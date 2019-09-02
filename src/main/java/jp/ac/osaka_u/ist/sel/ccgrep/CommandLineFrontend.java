@@ -98,15 +98,15 @@ public class CommandLineFrontend
             }
             if(cl.hasOption("file"))
             {
-                option.setNeedleFileName(cl.getOptionValue("file"));
+                option.setQueryFileName(cl.getOptionValue("file"));
             }
             if(cl.hasOption("stdin-query"))
             {
-                option.setNeedleStdin();
+                option.setQueryStdin();
             }
             if(cl.hasOption("e"))
             {
-                option.setNeedleCode(String.join(" $| ", cl.getOptionValues("e")));
+                option.setQueryCode(String.join(" $| ", cl.getOptionValues("e")));
             }
             if(cl.hasOption("fix"))
             {
@@ -133,11 +133,11 @@ public class CommandLineFrontend
                 option.enableNoOverlap(true);
             }
             List<String> restArgs = cl.getArgList();
-            if(option.getNeedleType() == CCGrepOption.NEEDLE_NONE)
+            if(option.getQueryType() == CCGrepOption.QUERY_NONE)
             {
                 if(!restArgs.isEmpty())
                 {
-                    option.setNeedleCode(restArgs.get(0));
+                    option.setQueryCode(restArgs.get(0));
                     restArgs = restArgs.subList(1, restArgs.size());
                 }
                 else
@@ -146,7 +146,7 @@ public class CommandLineFrontend
                     return null;
                 }
             }
-            option.setHaystackNames(
+            option.setTargetNames(
                 !restArgs.isEmpty()? restArgs
                 : option.isRecursiveEnabled? Collections.singletonList(".")
                 : Collections.singletonList("-")

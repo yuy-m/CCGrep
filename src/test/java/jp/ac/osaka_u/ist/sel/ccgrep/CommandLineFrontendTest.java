@@ -10,7 +10,7 @@ import java.io.*;
 import java.nio.file.*;
 
 
-public class CCGrepTest
+public class CommandLineFrontendTest
 {
     private static final String targetFileName = "__ccgrep_test_target.java";
     private static final Path targetFilePath = Paths.get(targetFileName);
@@ -59,12 +59,12 @@ public class CCGrepTest
     @Test
     public void testLinePrint() throws CCGrepException
     {
-        final CCGrepOption option = CommandLineFrontend.process(new String[]{
+        final CCGrepOption option = CommandLineProcessor.process(new String[]{
             "T f() { return a; }", targetFileName, "-pn"
         });
         assertThat(option).isNotNull();
         final int[] result = {-1};
-        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+        assertThatCode(() -> result[0] = new CommandLineFrontend(option).grep())
             .doesNotThrowAnyException();
         assertThat(result[0])
             .isEqualTo(0);
@@ -79,12 +79,12 @@ public class CCGrepTest
     @Test
     public void testMaxNum() throws CCGrepException
     {
-        final CCGrepOption option = CommandLineFrontend.process(new String[]{
+        final CCGrepOption option = CommandLineProcessor.process(new String[]{
             "T f() { return a; }", targetFileName, "-pn", "-m2"
         });
         assertThat(option).isNotNull();
         final int[] result = {-1};
-        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+        assertThatCode(() -> result[0] = new CommandLineFrontend(option).grep())
             .doesNotThrowAnyException();
         assertThat(result[0])
             .isEqualTo(0);
@@ -98,12 +98,12 @@ public class CCGrepTest
     @Test
     public void testFullPrint() throws CCGrepException
     {
-        final CCGrepOption option = CommandLineFrontend.process(new String[]{
+        final CCGrepOption option = CommandLineProcessor.process(new String[]{
             "$( $this.a = $$; $) $+", targetFileName, "-pnf", "--no-overlap"
         });
         assertThat(option).isNotNull();
         final int[] result = {-1};
-        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+        assertThatCode(() -> result[0] = new CommandLineFrontend(option).grep())
             .doesNotThrowAnyException();
         assertThat(result[0])
             .isEqualTo(0);
@@ -121,12 +121,12 @@ public class CCGrepTest
     @Test
     public void testNotFound() throws CCGrepException
     {
-        final CCGrepOption option = CommandLineFrontend.process(new String[]{
+        final CCGrepOption option = CommandLineProcessor.process(new String[]{
             "for($$){$$}", targetFileName
         });
         assertThat(option).isNotNull();
         final int[] result = {-1};
-        assertThatCode(() -> result[0] = new CCGrep(option).grep())
+        assertThatCode(() -> result[0] = new CommandLineFrontend(option).grep())
             .doesNotThrowAnyException();
         assertThat(result[0])
             .isEqualTo(1);
@@ -137,11 +137,11 @@ public class CCGrepTest
     @Test
     public void TestQueryError() throws CCGrepException
     {
-        final CCGrepOption option = CommandLineFrontend.process(new String[]{
+        final CCGrepOption option = CommandLineProcessor.process(new String[]{
             "$)", targetFileName
         });
         assertThat(option).isNotNull();
         assertThatExceptionOfType(CCGrepException.class)
-            .isThrownBy(() -> new CCGrep(option).grep());
+            .isThrownBy(() -> new CommandLineFrontend(option).grep());
     }
 }

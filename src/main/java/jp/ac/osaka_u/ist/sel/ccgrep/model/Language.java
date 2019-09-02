@@ -107,7 +107,12 @@ public enum Language
                 Java9Lexer.CharacterLiteral, Java9Lexer.StringLiteral, Java9Lexer.NullLiteral
             )
         ),
-        Language::filterJavaDollar
+        tokens -> {
+            tokens.stream()
+                .filter(t -> t.getType() == Java9QueryLexer.Identifier || t.getType() == Java9QueryLexer.CCG_SPECIAL_ID)
+                .forEach(t -> t.setText(t.getText().replace("\\$", "$")));
+            return tokens;
+        }
     ),
     PYTHON3(
         Arrays.asList("python", "python3"),
@@ -134,6 +139,39 @@ public enum Language
             )
         ),
         t -> filterPythonDedent(t, Python3Parser.NEWLINE, Python3Parser.INDENT, Python3Parser.DEDENT)
+    ),
+    JAVASCRIPT(
+        Arrays.asList("javascript", "js"),
+        Arrays.asList("js"),
+        JavaScriptQueryLexer::new,
+        JavaScriptLexer::new,
+        new SpecialSet(JavaScriptQueryLexer.class),
+        new CommentSet("//", "/*", "*/"),
+        Arrays.<BracketPair>asList(
+            new BracketPair(JavaScriptLexer.OpenBracket, JavaScriptLexer.CloseBracket),
+            new BracketPair(JavaScriptLexer.OpenParen, JavaScriptLexer.CloseParen),
+            new BracketPair(JavaScriptLexer.OpenBrace, JavaScriptLexer.CloseBrace)
+        ),
+        Arrays.<BlindSet>asList(
+            new BlindSet(
+                null,
+                JavaScriptLexer.This, JavaScriptLexer.Super, JavaScriptLexer.Identifier
+            ),
+            new BlindSet(
+                BlindLevel.FULL,
+                JavaScriptLexer.RegularExpressionLiteral, JavaScriptLexer.NullLiteral,
+                JavaScriptLexer.BooleanLiteral, JavaScriptLexer.DecimalLiteral,
+                JavaScriptLexer.HexIntegerLiteral, JavaScriptLexer.OctalIntegerLiteral,
+                JavaScriptLexer.OctalIntegerLiteral2, JavaScriptLexer.BinaryIntegerLiteral,
+                JavaScriptLexer.StringLiteral, JavaScriptLexer.TemplateStringLiteral
+            )
+        ),
+        tokens -> {
+            tokens.stream()
+                .filter(t -> t.getType() == JavaScriptQueryLexer.Identifier || t.getType() == JavaScriptQueryLexer.CCG_SPECIAL_ID)
+                .forEach(t -> t.setText(t.getText().replace("\\$", "$")));
+            return tokens;
+        }
     );
 
     private final List<String> names;
@@ -524,14 +562,6 @@ public enum Language
                 }
             }
         }
-        return tokens;
-    }
-
-    private static List<GrepToken> filterJavaDollar(List<GrepToken> tokens)
-    {
-        tokens.stream()
-            .filter(t -> t.getType() == Java9QueryLexer.Identifier || t.getType() == Java9QueryLexer.CCG_SPECIAL_ID)
-            .forEach(t -> t.setText(t.getText().replace("\\$", "$")));
         return tokens;
     }
 }

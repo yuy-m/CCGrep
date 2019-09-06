@@ -92,7 +92,11 @@ public class GrepPrinter extends AbstractPrinter
     @Override
     public void printClone(Clone clone)
     {
-        if(option.isCodeEnabled)
+        if(option.isRemoveNewLineEnabled)
+        {
+            printCloneWithFullCodeInOneLine(clone);
+        }
+        else if(option.isCodeEnabled)
         {
             printCloneWithFullCode(clone);
         }
@@ -100,6 +104,29 @@ public class GrepPrinter extends AbstractPrinter
         {
             printCloneWithOneLine(clone);
         }
+    }
+
+    private void printCloneWithFullCodeInOneLine(Clone clone)
+    {
+        final StringJoiner sj = new StringJoiner(":", option.isEscapeEnabled? option.language.blockCommentBegin(): "", "");
+        if(option.isFileNameEnabled)
+        {
+            sj.add(clone.getFileName());
+        }
+        if(option.isLineEnabled)
+        {
+            sj.add(
+                option.isLinePairEnabled
+                    ? clone.getStartLine() + "-" + clone.getEndLine()
+                    : "" + clone.getStartLine()
+            );
+        }
+        final String line = String.join("", clone.getCodeByLine(option.isMatchingOnlyEnabled));
+        sj.add(option.isEscapeEnabled
+            ? option.language.blockCommentEnd() + line
+            : line
+        );
+        stream.println(sj);
     }
 
     private void printCloneWithFullCode(Clone clone)

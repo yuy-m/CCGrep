@@ -202,6 +202,7 @@ public class CommandLineProcessor
                 + " If `n` is given, print line numbers."
                 + " If `N` is given, print pairs of start and end line number."
                 + " If `f` is given, print whole code of clones."
+                + " If `r` is given, print whole code of clones in one line."
                 + " If `o` is given, print only the matched parts of a clone code."
                 + " If `e` is given, comment out the file name and line numbers."
                 + " If `m` is given, in XML/JSON, NOT print clone-code or files-without-clone."

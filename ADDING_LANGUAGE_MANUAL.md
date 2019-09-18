@@ -20,8 +20,8 @@
 
       ```java
       CCG_SPECIAL_ID
+               // modify followings to rules of your language
          : '$' Identifier
-          // modify followings to literal rules of your language
          | '$' IntegerLiteral
          | '$' FloatingPointLiteral
          | '$' BooleanLiteral

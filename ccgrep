@@ -3,11 +3,15 @@
 DPATH=${DPATH:-`dirname ${0}`}
 JARNAME="CCGrep.jar"
 
+
 if [ "$DPATH" == "/usr/local/bin" ]; then
-  DPATH="/usr/local/lib/ccgrep"
+  if [ -e "/usr/local/lib/ccgrep/$JARNAME" ] then
+    java -jar "/usr/local/lib/ccgrep/$JARNAME" "$@"
+    exit
+  fi
 fi
 
-if [ -f "$DPATH/$JARNAME" ]; then
+if [ -e "$DPATH/$JARNAME" ]; then
   java -jar "$DPATH/$JARNAME" "$@"
 else
   echo "$JARNAME not found."

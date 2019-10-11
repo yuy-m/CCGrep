@@ -1,15 +1,19 @@
 @echo off
 
 set DPATH=%~dp0
-set JARNAME="CCGrep.jar"
+set JARNAME=CCGrep.jar
+set INSTPATH=C:\Program Files\ccgrep
 
-if %DPATH% == "C:\Program Files\ccgrep\bin" (
-  set DPATH="C:\Program Files\ccgrep"
+if "%DPATH%" == "%INSTPATH%\bin\" (
+  if exist "%INSTPATH%\%JARNAME%" (
+    java -jar "%INSTPATH%\%JARNAME%" %*
+    exit /b
+  )
 )
 
 if exist "%DPATH%\%JARNAME%" (
   java -jar "%DPATH%\%JARNAME%" %*
 ) else (
   echo "%JARNAME% not found."
-  exit 2
+  exit /b 2
 )

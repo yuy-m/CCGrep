@@ -5,7 +5,7 @@ JARNAME="CCGrep.jar"
 
 
 if [ "$DPATH" == "/usr/local/bin" ]; then
-  if [ -e "/usr/local/lib/ccgrep/$JARNAME" ] then
+  if [ -e "/usr/local/lib/ccgrep/$JARNAME" ]; then
     java -jar "/usr/local/lib/ccgrep/$JARNAME" "$@"
     exit
   fi

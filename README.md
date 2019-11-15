@@ -10,11 +10,8 @@ CCGrep is a simple clone detector based on grep command interface and you can us
 
 CCGrep can detect Type 1, 2(parameterized-clone or not), 3 clones.
 
-#### Language
- - C (c, h)
- - C++ (cpp, cc, c++, cxx, c, h, hpp)
- - Java (java)
- - Python3 (py)
+#### Paper
+- [grep風コードクローン検索ツールの提案(SES2019)](https://ipsj.ixsq.nii.ac.jp/ej/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=198962&item_no=1&page_id=13&block_id=8)
 
 ## Demo
 Output samples with target [**Apache HTTP Server**](http://httpd.apache.org/).
@@ -49,7 +46,6 @@ httpd-2.4.33/modules/aaa/mod_access_compat.c
 330:    }
 ```
 
-## VS.
 ## Requirement
  - Java8
  - Apache Maven *(required only to build, not to use)*
@@ -69,6 +65,12 @@ add the path `C:\Program Files\ccgrep\bin` to PATH if you need.
 ## Usage
  - `$ ccgrep [OPTIONS]... QUERY_CODE [TARGETS]...`
  - `$ ccgrep [OPTIONS]... -f QUERY_FILE [TARGETS]...`
+
+#### Language
+ - C (c, h)
+ - C++ (cpp, cc, c++, cxx, c, h, hpp)
+ - Java (java)
+ - Python3 (py)
 
 #### Options
  - `-b,--blind <LEVEL>`     set blind level.

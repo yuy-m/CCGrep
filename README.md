@@ -11,7 +11,7 @@ CCGrep is a simple clone detector based on grep command interface and you can us
 CCGrep can detect Type 1, 2(parameterized-clone or not), 3 clones.
 
 #### Document in Japanese
-- [grep風コードクローン検索ツールの提案(SES2019 paper)](https://ipsj.ixsq.nii.ac.jp/ej/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=198962&item_no=1&page_id=13&block_id=8)
+- [grep風コードクローン検索ツールの提案(SES2019 paper)](http://sel.ist.osaka-u.ac.jp/lab-db/betuzuri/contents.ja/1171.html)
 
 ## Demo
 Output samples with target [**Apache HTTP Server**](http://httpd.apache.org/).

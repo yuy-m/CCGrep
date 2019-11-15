@@ -1,6 +1,6 @@
 CCGrep
 ====
-*updated on 2019/10/11, written on 2018/12/06*
+*updated on 2019/11/15, written on 2018/12/06*
 
 CCGrep is a easy-to-use code clone detector like *grep* command.
 
@@ -10,8 +10,8 @@ CCGrep is a simple clone detector based on grep command interface and you can us
 
 CCGrep can detect Type 1, 2(parameterized-clone or not), 3 clones.
 
-#### Paper
-- [grep風コードクローン検索ツールの提案(SES2019)](https://ipsj.ixsq.nii.ac.jp/ej/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=198962&item_no=1&page_id=13&block_id=8)
+#### Document in Japanese
+- [grep風コードクローン検索ツールの提案(SES2019 paper)](https://ipsj.ixsq.nii.ac.jp/ej/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=198962&item_no=1&page_id=13&block_id=8)
 
 ## Demo
 Output samples with target [**Apache HTTP Server**](http://httpd.apache.org/).
